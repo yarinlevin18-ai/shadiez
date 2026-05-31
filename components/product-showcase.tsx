@@ -3,7 +3,6 @@
 import { useRef } from "react"
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { HeroReveal, HeroRevealItem } from "@/components/patterns/hero-reveal"
 import {
   ScrollStagger,
   ScrollStaggerItem,
@@ -59,121 +58,104 @@ export function ProductShowcase() {
               md:aspect-[5/6] (portrait, too tall, left a void below text); now square
               so the composition matches the text column's natural height. */}
           <div className="relative md:aspect-square">
-            {/* Mobile-only stack. */}
+            {/* Mobile-only stack. No HeroReveal — SectionReveal handles the section
+                entrance. Containers carry bg-cream so the empty state during image
+                load looks intentional, not broken. */}
             <div className="grid gap-4 md:hidden">
-              <HeroReveal soft>
-                <HeroRevealItem>
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-md shadow-[0_30px_60px_-30px_rgba(60,40,20,0.35)]">
-                    <Image
-                      src="/4.jpeg"
-                      alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-                      fill
-                      sizes="(min-width: 768px) 28rem, 100vw"
-                      quality={92}
-                      className="object-cover"
-                    />
-                  </div>
-                </HeroRevealItem>
-                <HeroRevealItem>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-md shadow-[0_18px_40px_-24px_rgba(60,40,20,0.30)]">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-cream/40 shadow-[0_30px_60px_-30px_rgba(60,40,20,0.35)]">
+                <Image
+                  src="/4.jpeg"
+                  alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+                  fill
+                  sizes="(min-width: 768px) 28rem, 100vw"
+                  quality={92}
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.30)]">
+                <Image
+                  src="/lifestyle-shade-beach.png"
+                  alt="SHADIEZ sun-shade in use on the beach"
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.30)]">
+                <Image
+                  src="/lifestyle-tote-walk.png"
+                  alt="SHADIEZ matching tote on the way to the beach"
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Desktop layout (md+). Studio shot dominates the left two-thirds; the
+                two lifestyle shots form a curated pair on the right with a slight
+                horizontal offset. No HeroReveal here — the outer SectionReveal owns
+                the section's entrance animation. Adding a second rise animation per
+                image caused a visible "jump" when images finished loading. Containers
+                carry a warm bg color so empty space during load reads as a placeholder,
+                not a void. */}
+            <div className="hidden md:block">
+              {/* Studio — base layer, anchored top-left, ~64% wide / 100% tall. */}
+              <div className="absolute left-0 top-0 z-10 h-full w-[64%]">
+                <div className="relative h-full w-full overflow-hidden rounded-md bg-cream/40 shadow-[0_30px_60px_-30px_rgba(60,40,20,0.35)]">
+                  <Image
+                    src="/4.jpeg"
+                    alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+                    fill
+                    sizes="(min-width: 1280px) 36rem, (min-width: 1024px) 32rem, 28rem"
+                    quality={92}
+                    priority
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Beach lifestyle — upper-right corner. Parallax-only animation. */}
+              <motion.div
+                style={{ y: yBeach }}
+                className="absolute right-0 top-0 z-20 w-[40%]"
+              >
+                <CardHover glow={false} lift={6} tilt={0}>
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_22px_45px_-22px_rgba(60,40,20,0.42)] ring-1 ring-background/70">
                     <Image
                       src="/lifestyle-shade-beach.png"
                       alt="SHADIEZ sun-shade in use on the beach"
                       fill
-                      sizes="100vw"
+                      sizes="(min-width: 1024px) 16rem, 12rem"
+                      quality={90}
+                      priority
                       className="object-cover"
                     />
                   </div>
-                </HeroRevealItem>
-                <HeroRevealItem>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-md shadow-[0_18px_40px_-24px_rgba(60,40,20,0.30)]">
+                </CardHover>
+              </motion.div>
+
+              {/* Tote lifestyle — lower-right, pulled slightly LEFT of the beach
+                  shot above. Slightly narrower so it doesn't crash into beach's
+                  bottom edge. */}
+              <motion.div
+                style={{ y: yTote }}
+                className="absolute bottom-0 right-[8%] z-20 w-[32%]"
+              >
+                <CardHover glow={false} lift={6} tilt={0}>
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_22px_45px_-22px_rgba(60,40,20,0.5)] ring-1 ring-background/70">
                     <Image
                       src="/lifestyle-tote-walk.png"
                       alt="SHADIEZ matching tote on the way to the beach"
                       fill
-                      sizes="100vw"
+                      sizes="(min-width: 1024px) 14rem, 10rem"
+                      quality={90}
+                      priority
                       className="object-cover"
                     />
                   </div>
-                </HeroRevealItem>
-              </HeroReveal>
-            </div>
-
-            {/* Desktop layout (md+). Studio shot dominates the left two-thirds; the
-                two lifestyle shots form a curated vertical pair on the right with a
-                slight horizontal offset (tote pulled left of beach) so they read as a
-                staggered stack, not a stiff column. HeroReveal staggers all three;
-                the two lifestyle shots carry scroll-driven parallax. */}
-            <div className="hidden md:block">
-              <HeroReveal soft stagger={0.15}>
-                {/* Studio — base layer, anchored top-left, ~64% wide / 100% tall.
-                    Quality 92 + larger sizes attr so the image isn't downsampled. */}
-                <HeroRevealItem>
-                  <div className="absolute left-0 top-0 z-10 h-full w-[64%]">
-                    <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_30px_60px_-30px_rgba(60,40,20,0.35)]">
-                      <Image
-                        src="/4.jpeg"
-                        alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-                        fill
-                        sizes="(min-width: 1280px) 36rem, (min-width: 1024px) 32rem, 28rem"
-                        quality={92}
-                        priority
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-                </HeroRevealItem>
-
-                {/* Beach lifestyle — upper-right corner, flush to top + right. */}
-                <HeroRevealItem>
-                  <motion.div
-                    style={{ y: yBeach }}
-                    className="absolute right-0 top-0 z-20 w-[40%]"
-                  >
-                    <CardHover glow={false} lift={6} tilt={0}>
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-md shadow-[0_22px_45px_-22px_rgba(60,40,20,0.42)] ring-1 ring-background/70">
-                        <Image
-                          src="/lifestyle-shade-beach.png"
-                          alt="SHADIEZ sun-shade in use on the beach"
-                          fill
-                          sizes="(min-width: 1024px) 16rem, 12rem"
-                          quality={90}
-                          // priority so the image loads on initial page hit, not when
-                          // the section scrolls into view. Without this the picture
-                          // pops in AFTER the SectionReveal animation, looking broken.
-                          priority
-                          className="object-cover"
-                        />
-                      </div>
-                    </CardHover>
-                  </motion.div>
-                </HeroRevealItem>
-
-                {/* Tote lifestyle — lower-right, pulled slightly LEFT of the beach
-                    shot above. Slightly narrower so it doesn't crash into beach's
-                    bottom edge. The horizontal offset breaks the pair into a stagger
-                    so they read as a composition, not a list. */}
-                <HeroRevealItem>
-                  <motion.div
-                    style={{ y: yTote }}
-                    className="absolute bottom-0 right-[8%] z-20 w-[32%]"
-                  >
-                    <CardHover glow={false} lift={6} tilt={0}>
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-md shadow-[0_22px_45px_-22px_rgba(60,40,20,0.5)] ring-1 ring-background/70">
-                        <Image
-                          src="/lifestyle-tote-walk.png"
-                          alt="SHADIEZ matching tote on the way to the beach"
-                          fill
-                          sizes="(min-width: 1024px) 14rem, 10rem"
-                          quality={90}
-                          priority
-                          className="object-cover"
-                        />
-                      </div>
-                    </CardHover>
-                  </motion.div>
-                </HeroRevealItem>
-              </HeroReveal>
+                </CardHover>
+              </motion.div>
             </div>
           </div>
 
