@@ -1,0 +1,86 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-fraunces);
+
+  --color-wood: var(--wood);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-ink: var(--ink);
+  --color-navy: var(--navy);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* SHADIEZ brand tokens (DRAFT per CLAUDE.md — confirm against real assets) */
+  --wood:   #8A5A38;
+  --cream:  #F3ECE0;
+  --sand:   #E4D9C6;
+  --ink:    #2B2723;
+  --navy:   #1F3A5F;
+
+  /* shadcn semantic tokens — warm/light, mapped to brand */
+  --background: #FAF7F1;
+  --foreground: #2B2723;
+  --card: #FAF7F1;
+  --card-foreground: #2B2723;
+  --popover: #FAF7F1;
+  --popover-foreground: #2B2723;
+  --primary: #2B2723;
+  --primary-foreground: #F3ECE0;
+  --secondary: #E4D9C6;
+  --secondary-foreground: #2B2723;
+  --muted: #E4D9C6;
+  --muted-foreground: #8A8170;
+  --accent: #1F3A5F;
+  --accent-foreground: #F3ECE0;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #F3ECE0;
+  --border: rgba(43, 39, 35, 0.15);
+  --input: rgba(43, 39, 35, 0.15);
+  --ring: #1F3A5F;
+
+  --radius: 0.25rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    min-height: 100vh;
+  }
+  html {
+    font-family: var(--font-sans);
+  }
+}
