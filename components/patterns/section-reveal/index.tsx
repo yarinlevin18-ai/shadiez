@@ -40,9 +40,17 @@ const EASING: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
 
 export function SectionReveal({
   children,
-  distance = 48,
-  duration = 0.9,
-  amount = 0.15,
+  // Smaller default rise (was 48) — large translation made the section feel like
+  // it was "loading in" on slow image fetches. 20px is enough to register as a
+  // deliberate motion without screaming.
+  distance = 20,
+  // Shorter default duration (was 0.9) — quicker settle, less time for the user
+  // to perceive any in-flight image loads happening behind the animation.
+  duration = 0.6,
+  // Trigger as soon as the section starts peeking into view (was 0.15). Earlier
+  // trigger = section's already settled by the time the user reads it on a
+  // scroll-through.
+  amount = 0.05,
   once = true,
   className,
 }: SectionRevealProps) {

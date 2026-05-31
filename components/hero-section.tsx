@@ -185,6 +185,25 @@ export function HeroSection() {
       ref={heroRef}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-12"
     >
+      {/* Preload all 5 colorway images into the browser cache as soon as the page
+          mounts. They're rendered 1×1 in display:none — Next/Image still issues the
+          fetch (it injects <link rel="preload"> into <head>). By the time the
+          auto-cycle or a user click swaps the visible card, the next colorway is
+          already cached and the wipe shows the new image with no network delay. */}
+      <div className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0">
+        {colorways.map((cw) => (
+          <Image
+            key={`preload-${cw.id}`}
+            src={cw.img}
+            alt=""
+            width={1}
+            height={1}
+            priority
+            aria-hidden
+          />
+        ))}
+      </div>
+
       {/* ── VIDEO BACKDROP ──────────────────────────────────────────────────────
           Same beach footage as FinalCTA but heavily treated: scale-110 hides the
           blurred edges, blur+brightness desaturates it into atmospheric texture
@@ -239,8 +258,9 @@ export function HeroSection() {
           transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
           // Hero product photo. Fixed 43:24 ratio so the box never resizes on swap.
           // Stronger shadow than before to lift off the video; thin background-tone
-          // ring frames the card cleanly against the moving backdrop.
-          className="relative aspect-[43/24] w-full overflow-hidden rounded-md shadow-[0_40px_80px_-30px_rgba(20,15,10,0.55)] ring-1 ring-background/40"
+          // ring frames the card cleanly against the moving backdrop. bg-cream gives
+          // the card a warm placeholder during initial colorway load.
+          className="relative aspect-[43/24] w-full overflow-hidden rounded-md bg-cream/60 shadow-[0_40px_80px_-30px_rgba(20,15,10,0.55)] ring-1 ring-background/40"
         >
           {/* Settled base layer. */}
           <div className="absolute inset-0">
@@ -250,7 +270,11 @@ export function HeroSection() {
               alt={`SHADIEZ wooden sun-shade — ${baseCw.name} canvas`}
               fill
               sizes="(min-width: 1024px) 48rem, (min-width: 768px) 42rem, 90vw"
-              priority={baseId === "cream"}
+              // All 5 colorways need to be ready up-front because the auto-cycle
+              // will swap to each within ~21s. priority=true preloads them on
+              // initial page hit so no swatch ever "pops in" late.
+              priority
+              quality={88}
               onError={() => handleImageError(baseCw.id)}
               className="object-cover"
             />
@@ -274,6 +298,8 @@ export function HeroSection() {
                 fill
                 sizes="(min-width: 1024px) 48rem, (min-width: 768px) 42rem, 90vw"
                 loading="eager"
+                priority
+                quality={88}
                 onError={() => handleImageError(incomingCw.id)}
                 className="object-cover"
               />

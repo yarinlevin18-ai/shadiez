@@ -1,8 +1,4 @@
 import Image from "next/image"
-import {
-  ScrollStagger,
-  ScrollStaggerItem,
-} from "@/components/patterns/scroll-stagger"
 import { CardHover } from "@/components/patterns/card-hover"
 import { Wordmark } from "@/components/logo"
 
@@ -31,28 +27,26 @@ export function CollectionsGrid() {
           Our <Wordmark className="text-[0.9em]" /> Collections
         </h2>
 
-        {/* Tiles stagger in on enter; each card lifts on hover (no glow — the default
-            purple glow doesn't fit the warm palette). Tilt disabled for a calmer, more
-            editorial feel; pure lift only. */}
-        <ScrollStagger>
-          <div className="grid gap-4 md:grid-cols-3 md:gap-6">
-            {collections.map((kit) => (
-              <ScrollStaggerItem key={kit.src}>
-                <CardHover glow={false} lift={6} tilt={0}>
-                  <div className="relative aspect-square overflow-hidden rounded-md bg-cream/30 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.35)]">
-                    <Image
-                      src={kit.src}
-                      alt={kit.alt}
-                      fill
-                      sizes="(min-width: 768px) 22rem, 100vw"
-                      className="object-cover"
-                    />
-                  </div>
-                </CardHover>
-              </ScrollStaggerItem>
-            ))}
-          </div>
-        </ScrollStagger>
+        {/* No ScrollStagger — SectionReveal in page.tsx already drives the entrance,
+            and a second layer was causing image-load pop. CardHover lifts each tile
+            on hover (no glow — palette correct). bg-cream placeholder keeps empty
+            tiles warm during initial image fetch. */}
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
+          {collections.map((kit) => (
+            <CardHover key={kit.src} glow={false} lift={6} tilt={0}>
+              <div className="relative aspect-square overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.35)]">
+                <Image
+                  src={kit.src}
+                  alt={kit.alt}
+                  fill
+                  sizes="(min-width: 768px) 22rem, 100vw"
+                  quality={88}
+                  className="object-cover"
+                />
+              </div>
+            </CardHover>
+          ))}
+        </div>
       </div>
     </section>
   )
