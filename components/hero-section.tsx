@@ -5,7 +5,9 @@ import Image from "next/image"
 import { ChevronDown } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { TextEffect } from "@/components/patterns/text-effect"
+import { TitleReveal } from "@/components/patterns/title-reveal"
 import { Wordmark } from "@/components/logo"
+import { useLeadDialog } from "@/components/lead-dialog"
 
 type Colorway = {
   id: string
@@ -61,6 +63,7 @@ function wipeMask(p: number): string {
 }
 
 export function HeroSection() {
+  const { openDialog } = useLeadDialog()
   const [baseId, setBaseId] = useState<string>("cream")
   const [incomingId, setIncomingId] = useState<string | null>(null)
   const [failedIds, setFailedIds] = useState<Set<string>>(() => new Set())
@@ -78,8 +81,6 @@ export function HeroSection() {
   const srcFor = (id: string, img: string) => (failedIds.has(id) ? FALLBACK_IMG : img)
 
   // ── WIPE ANIMATION ──────────────────────────────────────────────────────────
-  // Drive the wipe with rAF whenever an incoming colorway mounts. Identical to the
-  // earlier implementation — preserved so the colorway swap UX doesn't regress.
   useEffect(() => {
     if (incomingId == null) return
 
@@ -117,20 +118,10 @@ export function HeroSection() {
     }
   }, [incomingId])
 
-  // Wipe trigger. Stable identity (no deps) so the auto-cycle effect can call it
-  // without re-creating the function each tick. fromUser=true marks the first real
-  // click and disables auto-cycling for the rest of the session.
   const handleSelectColor = useCallback(
     (id: string, fromUser: boolean) => {
       if (fromUser) setUserInteracted(true)
-      // Read latest state directly via the setters — avoids stale closures and lets
-      // the auto-cycle effect call this with stable identity.
       setIncomingId((curIncoming) => {
-        // Already showing this colorway, nothing to do.
-        if (curIncoming == null) {
-          // Need baseId — read via setBaseId trick or accept slight inefficiency.
-          // Inline read here is fine since we control the flow.
-        }
         if (id === curIncoming) return curIncoming
         if (curIncoming != null) {
           if (rafRef.current != null) {
@@ -146,9 +137,6 @@ export function HeroSection() {
   )
 
   // ── AUTO-CYCLE ──────────────────────────────────────────────────────────────
-  // Advance to the next colorway every AUTO_CYCLE_MS while the user hasn't
-  // interacted. Effect re-runs when baseId/incomingId change so the next tick is
-  // always scheduled from the latest settled colorway → consistent 4s spacing.
   useEffect(() => {
     if (userInteracted) return
     const reduce =
@@ -160,17 +148,15 @@ export function HeroSection() {
       const currentId = incomingId ?? baseId
       const idx = colorways.findIndex((c) => c.id === currentId)
       const nextId = colorways[(idx + 1) % colorways.length].id
-      handleSelectColor(nextId, false) // fromUser=false so userInteracted stays
+      handleSelectColor(nextId, false)
     }, AUTO_CYCLE_MS)
     return () => window.clearTimeout(timeoutId)
   }, [userInteracted, baseId, incomingId, handleSelectColor])
 
   // ── PARALLAX ────────────────────────────────────────────────────────────────
-  // Product drifts UP and video drifts DOWN slightly as user scrolls. Range is
-  // intentionally small — depth cue, not a roller coaster.
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    offset: ["start start", "end start"], // 0 at top, 1 when hero leaves
+    offset: ["start start", "end start"],
   })
   const productY = useTransform(scrollYProgress, [0, 1], [0, -80])
   const videoY = useTransform(scrollYProgress, [0, 1], [0, 40])
@@ -186,11 +172,8 @@ export function HeroSection() {
       ref={heroRef}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-12"
     >
-      {/* Preload all 5 colorway images into the browser cache as soon as the page
-          mounts. They're rendered 1×1 in display:none — Next/Image still issues the
-          fetch (it injects <link rel="preload"> into <head>). By the time the
-          auto-cycle or a user click swaps the visible card, the next colorway is
-          already cached and the wipe shows the new image with no network delay. */}
+      {/* Preload all colorway images so the wipe shows the next one with no
+          network delay. */}
       <div className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0">
         {colorways.map((cw) => (
           <Image
@@ -205,10 +188,7 @@ export function HeroSection() {
         ))}
       </div>
 
-      {/* ── VIDEO BACKDROP ──────────────────────────────────────────────────────
-          Same beach footage as FinalCTA but heavily treated: scale-110 hides the
-          blurred edges, blur+brightness desaturates it into atmospheric texture
-          rather than a foreground asset. Slight parallax drift. */}
+      {/* ── VIDEO BACKDROP ────────────────────────────────────────────────── */}
       <motion.div
         className="absolute inset-0 z-0"
         style={{ y: videoY }}
@@ -228,14 +208,12 @@ export function HeroSection() {
         </video>
       </motion.div>
 
-      {/* Cream wash — pulls the video toward the page palette so it reads warm,
-          not "video on a webpage". Stronger at top/bottom, weaker in the middle. */}
+      {/* Cream wash — pulls the video toward the page palette. */}
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-background/55"
         aria-hidden
       />
-      {/* Vignette + focal pool — brightens the center area where the product lives
-          so it stays readable, fades to a slightly darker edge for cinematic feel. */}
+      {/* Vignette + focal pool. */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
@@ -245,11 +223,7 @@ export function HeroSection() {
         aria-hidden
       />
 
-      {/* ── PRODUCT IMAGE (parallax + float) ────────────────────────────────────
-          Two nested motion.divs: outer applies scroll-parallax y, inner applies
-          the gentle infinite vertical bob. They compose via DOM hierarchy. The
-          OUTER carries the width so the inner's `w-full` has a parent to fill —
-          without this both collapse to 0. */}
+      {/* ── PRODUCT IMAGE (parallax + float) ────────────────────────────── */}
       <motion.div
         className="relative z-10 mb-12 w-full max-w-2xl lg:max-w-3xl"
         style={{ y: productY }}
@@ -257,10 +231,6 @@ export function HeroSection() {
         <motion.div
           animate={{ y: [0, -8, 0] }}
           transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-          // Hero product photo. Fixed 43:24 ratio so the box never resizes on swap.
-          // Stronger shadow than before to lift off the video; thin background-tone
-          // ring frames the card cleanly against the moving backdrop. bg-cream gives
-          // the card a warm placeholder during initial colorway load.
           className="relative aspect-[43/24] w-full overflow-hidden rounded-md bg-cream/60 shadow-[0_40px_80px_-30px_rgba(20,15,10,0.55)] ring-1 ring-background/40"
         >
           {/* Settled base layer. */}
@@ -271,9 +241,6 @@ export function HeroSection() {
               alt={`SHADIEZ wooden sun-shade — ${baseCw.name} canvas`}
               fill
               sizes="(min-width: 1024px) 48rem, (min-width: 768px) 42rem, 90vw"
-              // All 5 colorways need to be ready up-front because the auto-cycle
-              // will swap to each within ~21s. priority=true preloads them on
-              // initial page hit so no swatch ever "pops in" late.
               priority
               quality={88}
               onError={() => handleImageError(baseCw.id)}
@@ -309,15 +276,13 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Headline. drop-shadow keeps the dark serif legible over the cream/video. */}
+      {/* Headline. */}
       <h1 className="relative z-10 mb-4 text-center font-serif text-4xl font-light tracking-wide text-ink drop-shadow-[0_1px_2px_rgba(250,247,241,0.6)] md:text-5xl lg:text-6xl text-balance">
-        Pick Your Style of{" "}
-        <Wordmark className="text-[0.9em]" />
+        <TitleReveal duration={1} delay={0.15}>
+          Pick Your Style of <Wordmark className="text-[0.9em]" />
+        </TitleReveal>
       </h1>
 
-      {/* Subhead characters cascade up once on load — above the fold, so the effect
-          fires in view (below-fold text-effects would run too early since Next renders
-          the whole document at load). */}
       <p className="relative z-10 mb-8 text-center font-sans text-base text-ink/70 md:text-lg">
         <TextEffect
           text="Shade, crafted in wood and canvas."
@@ -327,12 +292,13 @@ export function HeroSection() {
         />
       </p>
 
-      <a
-        href="#shop"
+      <button
+        type="button"
+        onClick={openDialog}
         className="relative z-10 mb-10 inline-flex items-center justify-center rounded-[4px] bg-navy px-8 py-3.5 font-sans text-sm tracking-wide text-primary-foreground shadow-[0_12px_24px_-8px_rgba(31,58,95,0.5)] transition-colors hover:bg-navy/90"
       >
-        Shop the shade
-      </a>
+        Get on the list
+      </button>
 
       {/* Colorway selector. */}
       <div

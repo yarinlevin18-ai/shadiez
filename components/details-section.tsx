@@ -5,6 +5,7 @@ import { useMotionValue } from "framer-motion"
 import { Shade3D } from "@/components/three/shade-3d"
 import { Hotspot } from "@/components/patterns/hotspots"
 import { HeroReveal, HeroRevealItem } from "@/components/patterns/hero-reveal"
+import { TitleReveal } from "@/components/patterns/title-reveal"
 import {
   ScrollStagger,
   ScrollStaggerItem,
@@ -118,12 +119,10 @@ export function DetailsSection() {
           {/* RIGHT — story copy. Title fades in soft; the 4 feature blocks
               stagger in as the section enters view. */}
           <div className="flex flex-col">
+            <h2 className="mb-3 font-serif text-3xl font-light tracking-wide text-ink md:text-4xl lg:text-5xl text-balance">
+              <TitleReveal>In the details</TitleReveal>
+            </h2>
             <HeroReveal soft>
-              <HeroRevealItem>
-                <h2 className="mb-3 font-serif text-3xl font-light tracking-wide text-ink md:text-4xl lg:text-5xl text-balance">
-                  In the details
-                </h2>
-              </HeroRevealItem>
               <HeroRevealItem>
                 <p className="mb-10 max-w-sm font-sans text-sm text-muted-foreground md:text-base">
                   A closer look at what&rsquo;s holding it together.

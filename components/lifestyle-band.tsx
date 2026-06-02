@@ -3,6 +3,7 @@
 import { useRef } from "react"
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { TitleReveal } from "@/components/patterns/title-reveal"
 
 // Full-bleed editorial band between the product showcase and the collections grid.
 // Big mood shot, bottom-up dark scrim so the cream copy reads cleanly, copy left-aligned
@@ -54,7 +55,7 @@ export function LifestyleBand() {
       <div className="absolute inset-x-0 bottom-0 px-6 pb-16 md:pb-20 lg:pb-24">
         <div className="mx-auto max-w-6xl">
           <h2 className="max-w-2xl font-serif text-3xl font-light leading-tight tracking-wide text-cream drop-shadow-[0_2px_8px_rgba(20,12,6,0.45)] md:text-4xl lg:text-5xl text-balance">
-            Lie back. We&rsquo;ve got the sun.
+            <TitleReveal>Lie back. We&rsquo;ve got the sun.</TitleReveal>
           </h2>
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
   ScrollStaggerItem,
 } from "@/components/patterns/scroll-stagger"
 import { CardHover } from "@/components/patterns/card-hover"
+import { TitleReveal } from "@/components/patterns/title-reveal"
 
 const features = [
   {
@@ -162,7 +163,7 @@ export function ProductShowcase() {
           {/* RIGHT — headline + 4 points. Points stagger in as the section enters. */}
           <div className="flex flex-col justify-center">
             <h2 className="mb-10 font-serif text-3xl font-light tracking-wide text-ink md:text-4xl lg:text-5xl text-balance">
-              Built for the sun
+              <TitleReveal>Built for the sun</TitleReveal>
             </h2>
 
             <ScrollStagger>

@@ -17,9 +17,11 @@ import { motion, useInView } from "framer-motion";
 
 export interface SectionRevealProps {
   children: ReactNode;
-  // Section content shifts upward by this many px while hidden. Default 48 reads as
-  // "settling into place" without being a noticeable jump.
+  // Section content shifts upward by this many px while hidden.
   distance?: number;
+  // Section settles up from this scale — a subtle "push in" that gives the entrance
+  // more presence than a flat rise. 1 disables it.
+  scaleFrom?: number;
   // Tween duration in seconds. ~1s feels editorial — fast enough to never block, slow
   // enough to register as a deliberate motion.
   duration?: number;
@@ -34,22 +36,17 @@ export interface SectionRevealProps {
   className?: string;
 }
 
-// Custom easing: a soft "outQuint"-ish curve — quick to depart from start, slow to
-// settle. Less mechanical than the built-in easeOut.
-const EASING: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
+// Expo-out: leaves the start fast, settles slow. Reads as a deliberate, premium
+// arrival rather than a mechanical fade.
+const EASING: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export function SectionReveal({
   children,
-  // Smaller default rise (was 48) — large translation made the section feel like
-  // it was "loading in" on slow image fetches. 20px is enough to register as a
-  // deliberate motion without screaming.
-  distance = 20,
-  // Shorter default duration (was 0.9) — quicker settle, less time for the user
-  // to perceive any in-flight image loads happening behind the animation.
-  duration = 0.6,
-  // Trigger as soon as the section starts peeking into view (was 0.15). Earlier
-  // trigger = section's already settled by the time the user reads it on a
-  // scroll-through.
+  // Rise + scale together so each section "arrives" with weight. Transform-only
+  // (no filter) so the 3D canvas / video sections stay cheap and jank-free.
+  distance = 56,
+  scaleFrom = 0.975,
+  duration = 1,
   amount = 0.05,
   once = true,
   className,
@@ -60,9 +57,14 @@ export function SectionReveal({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: distance }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: distance }}
+      initial={{ opacity: 0, y: distance, scale: scaleFrom }}
+      animate={
+        inView
+          ? { opacity: 1, y: 0, scale: 1 }
+          : { opacity: 0, y: distance, scale: scaleFrom }
+      }
       transition={{ duration, ease: EASING }}
+      style={{ willChange: "transform, opacity" }}
       className={className}
     >
       {children}
