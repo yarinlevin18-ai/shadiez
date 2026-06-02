@@ -1,17 +1,17 @@
 "use client"
 
-import { ShoppingBag, Menu, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Logo } from "@/components/logo"
+import { useLeadDialog } from "@/components/lead-dialog"
 
 // Threshold (px) at which the header swaps from transparent (over hero) to
-// translucent-on-cream (over everything else). Roughly 60% of an average viewport so
-// it triggers before the hero is fully out of frame.
+// translucent-on-cream (over everything else). Roughly 60% of an average viewport
+// so it triggers before the hero is fully out of frame.
 const SCROLL_THRESHOLD = 480
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { openDialog } = useLeadDialog()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -38,76 +38,16 @@ export function Header() {
           <Logo />
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
-          <a
-            href="#shop"
-            className="text-sm tracking-wide text-ink/70 transition-colors hover:text-ink"
-          >
-            Shop
-          </a>
-          <a
-            href="#colorways"
-            className="text-sm tracking-wide text-ink/70 transition-colors hover:text-ink"
-          >
-            Colorways
-          </a>
-          <a
-            href="#about"
-            className="text-sm tracking-wide text-ink/70 transition-colors hover:text-ink"
-          >
-            About
-          </a>
-          <button
-            type="button"
-            aria-label="Shopping cart"
-            className="text-ink/70 transition-colors hover:text-ink"
-          >
-            <ShoppingBag className="h-5 w-5" strokeWidth={1.5} />
-          </button>
-        </div>
-
+        {/* Single CTA — opens the lead dialog. Styling matches the hero button
+            so the brand voice stays consistent throughout the page. */}
         <button
           type="button"
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileMenuOpen}
-          className="md:hidden"
-          onClick={() => setMobileMenuOpen((v) => !v)}
+          onClick={openDialog}
+          className="inline-flex items-center justify-center rounded-[4px] bg-navy px-5 py-2 font-sans text-sm tracking-wide text-primary-foreground shadow-[0_8px_20px_-8px_rgba(31,58,95,0.5)] transition-colors hover:bg-navy/90 md:px-6 md:py-2.5"
         >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6 text-ink" strokeWidth={1.5} />
-          ) : (
-            <Menu className="h-6 w-6 text-ink" strokeWidth={1.5} />
-          )}
+          Contact us
         </button>
       </nav>
-
-      {mobileMenuOpen && (
-        <div className="border-t border-border/50 bg-background/95 backdrop-blur-md px-6 py-4 md:hidden">
-          <div className="flex flex-col gap-4">
-            <a
-              href="#shop"
-              className="text-sm tracking-wide text-ink/70"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shop
-            </a>
-            <a
-              href="#colorways"
-              className="text-sm tracking-wide text-ink/70"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Colorways
-            </a>
-            <a
-              href="#about"
-              className="text-sm tracking-wide text-ink/70"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              About
-            </a>
-          </div>
-        </div>
-      )}
     </header>
   )
 }

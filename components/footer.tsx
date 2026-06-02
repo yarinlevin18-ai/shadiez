@@ -1,8 +1,12 @@
+"use client"
+
+import Link from "next/link"
 import { Logo } from "@/components/logo"
 import {
   ScrollStagger,
   ScrollStaggerItem,
 } from "@/components/patterns/scroll-stagger"
+import { useLeadDialog } from "@/components/lead-dialog"
 
 // Inline IG mark — the lucide-react v1.17 we ship doesn't export Instagram, and we
 // don't want an icon dep upgrade just for the footer.
@@ -25,14 +29,9 @@ function InstagramIcon({ className }: { className?: string }) {
   )
 }
 
-const navLinks = [
-  { label: "Shop", href: "#shop" },
-  { label: "Colorways", href: "#colorways" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-]
-
 export function Footer() {
+  const { openDialog } = useLeadDialog()
+
   return (
     <footer className="border-t border-border/50 px-6 py-16 md:py-20">
       <div className="mx-auto max-w-6xl">
@@ -52,19 +51,29 @@ export function Footer() {
               </div>
             </ScrollStaggerItem>
 
-            {/* Right cluster: nav + social, kept on a single row on md+. */}
+            {/* Right cluster: legal nav + contact + social. */}
             <ScrollStaggerItem>
               <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-10">
                 <nav className="flex flex-wrap justify-center gap-x-7 gap-y-3 md:justify-end">
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
+                  <Link
+                    href="/privacy"
+                    className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink"
+                  >
+                    Privacy
+                  </Link>
+                  <Link
+                    href="/terms"
+                    className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink"
+                  >
+                    Terms
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={openDialog}
+                    className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink"
+                  >
+                    Contact
+                  </button>
                 </nav>
 
                 <a
@@ -80,15 +89,4 @@ export function Footer() {
             </ScrollStaggerItem>
           </div>
 
-          <ScrollStaggerItem>
-            <div className="mt-12 border-t border-border/30 pt-8 text-center">
-              <p className="font-sans text-xs text-muted-foreground">
-                &copy; {new Date().getFullYear()} SHADIEZ. All rights reserved.
-              </p>
-            </div>
-          </ScrollStaggerItem>
-        </ScrollStagger>
-      </div>
-    </footer>
-  )
-}
+          <Sc
