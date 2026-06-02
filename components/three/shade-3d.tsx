@@ -204,11 +204,7 @@ export function Shade3D({
       <CanvasSetup
         // Continuously animated (idle breathing + drag), so render every frame.
         frameloop="always"
-        // Framing: pulled in + narrower fov so the shade fills ~2/3 of the square
-        // instead of floating small. Camera (not model scale) is the lever here —
-        // it magnifies the model AND its sibling hotspots together, keeping them
-        // in sync. Narrower fov also flattens perspective for a cleaner hero look.
-        camera={{ position: [0, 0.25, 3.4], fov: 30 }}
+        camera={{ position: [0, 0.3, 4.5], fov: 35 }}
         dpr={[1, 2]}
         // alpha:true clears to transparent so the page/gradient behind shows through.
         // ACES tone mapping + exposure < 1 keeps the bright canvas from blowing out

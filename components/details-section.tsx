@@ -36,6 +36,15 @@ const features = [
   },
 ]
 
+// Product dimensions. ⚠️ PLACEHOLDER values — replace with SHADIEZ's real spec sheet
+// before shipping. Edit the values here; the layout below adapts automatically.
+const dimensions = [
+  { label: "Set up", value: "70 × 55 × 62 cm" },
+  { label: "Folded", value: "62 × 16 × 8 cm" },
+  { label: "Weight", value: "2.6 kg" },
+  { label: "Recline", value: "5 notched angles" },
+]
+
 // Auto-orbit period — full back-and-forth in seconds. Long enough to feel like
 // natural drift, not a turntable.
 const ORBIT_PERIOD_S = 24
@@ -153,6 +162,29 @@ export function DetailsSection() {
                 ))}
               </div>
             </ScrollStagger>
+
+            {/* Dimensions — quick spec read. ⚠️ Values are placeholders; edit the
+                `dimensions` array up top with the real measurements. */}
+            <div className="mt-10 border-t border-border/40 pt-6 md:mt-12">
+              <h3 className="mb-5 font-sans text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                Dimensions
+              </h3>
+              <dl className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+                {dimensions.map((d) => (
+                  <div
+                    key={d.label}
+                    className="flex items-baseline justify-between gap-4 border-b border-border/30 py-2.5"
+                  >
+                    <dt className="font-serif text-base font-light tracking-wide text-ink">
+                      {d.label}
+                    </dt>
+                    <dd className="font-sans text-sm tabular-nums text-muted-foreground">
+                      {d.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </div>
       </div>
