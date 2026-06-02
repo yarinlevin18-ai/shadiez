@@ -309,18 +309,23 @@ export function HeroSection() {
           const pattern = PATTERN_CONFIG[cw.swatch]
           const isActive = cw.id === selectedId
           return (
-            <button
+            <motion.button
               key={cw.id}
               type="button"
               onClick={() => handleSelectColor(cw.id, true)}
               aria-label={cw.name}
               aria-pressed={isActive}
-              className={`group relative h-7 w-7 rounded-full shadow-[0_3px_8px_-2px_rgba(20,12,6,0.4)] transition-transform duration-200 md:h-8 md:w-8 ${
-                isActive
-                  ? "scale-110 ring-2 ring-navy ring-offset-2 ring-offset-background"
-                  : "hover:scale-105"
+              className={`group relative h-7 w-7 rounded-full shadow-[0_3px_8px_-2px_rgba(20,12,6,0.4)] md:h-8 md:w-8 ${
+                isActive ? "ring-2 ring-navy ring-offset-2 ring-offset-background" : ""
               }`}
               style={!pattern ? { backgroundColor: cw.swatch } : undefined}
+              // Scale is framer-driven (not Tailwind) so hover/tap can't fight the
+              // active-state scale. Active beads rest slightly larger; hover lifts +
+              // grows; tap presses in for a tactile click, then springs back.
+              animate={{ scale: isActive ? 1.12 : 1 }}
+              whileHover={{ scale: isActive ? 1.16 : 1.09, y: -2 }}
+              whileTap={{ scale: isActive ? 1.02 : 0.9, y: 0 }}
+              transition={{ type: "spring", stiffness: 420, damping: 20, mass: 0.6 }}
             >
               <span className="absolute inset-0 overflow-hidden rounded-full border border-border/60">
                 {pattern && (
@@ -356,7 +361,7 @@ export function HeroSection() {
               <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-ink/90 px-2 py-1 font-sans text-[10px] uppercase tracking-wider text-cream opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100">
                 {cw.name}
               </span>
-            </button>
+            </motion.button>
           )
         })}
       </div>
