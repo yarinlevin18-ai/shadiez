@@ -72,6 +72,10 @@ export function Footer() {
               <p className="font-sans text-xs text-muted-foreground">
                 &copy; {new Date().getFullYear()} SHADIEZ. All rights reserved.
               </p>
+              <p className="mt-1.5 font-sans text-xs text-muted-foreground/70">
+                Made by{" "}
+                <span className="text-muted-foreground">DGL Solutions</span>
+              </p>
             </div>
           </ScrollStaggerItem>
         </ScrollStagger>
