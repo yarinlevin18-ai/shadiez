@@ -1,4 +1,8 @@
 import { Logo } from "@/components/logo"
+import {
+  ScrollStagger,
+  ScrollStaggerItem,
+} from "@/components/patterns/scroll-stagger"
 
 // Inline IG mark — the lucide-react v1.17 we ship doesn't export Instagram, and we
 // don't want an icon dep upgrade just for the footer.
@@ -32,48 +36,58 @@ export function Footer() {
   return (
     <footer className="border-t border-border/50 px-6 py-16 md:py-20">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col items-center gap-10 md:flex-row md:items-start md:justify-between md:gap-16">
-          {/* Wordmark + tagline */}
-          <div className="text-center md:text-left">
-            <div className="text-lg text-ink">
-              <Logo />
-            </div>
-            <p className="mt-2 font-sans text-sm text-muted-foreground">
-              Something New Under The Sun
-            </p>
-          </div>
+        {/* Footer clusters cascade in as it enters view. threshold low so it triggers
+            even when the footer is short and mostly below the fold on entry. */}
+        <ScrollStagger stagger={0.1} threshold={0.15}>
+          <div className="flex flex-col items-center gap-10 md:flex-row md:items-start md:justify-between md:gap-16">
+            {/* Wordmark + tagline */}
+            <ScrollStaggerItem>
+              <div className="text-center md:text-left">
+                <div className="text-lg text-ink">
+                  <Logo />
+                </div>
+                <p className="mt-2 font-sans text-sm text-muted-foreground">
+                  Something New Under The Sun
+                </p>
+              </div>
+            </ScrollStaggerItem>
 
-          {/* Right cluster: nav + social, kept on a single row on md+. */}
-          <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-10">
-            <nav className="flex flex-wrap justify-center gap-x-7 gap-y-3 md:justify-end">
-              {navLinks.map((link) => (
+            {/* Right cluster: nav + social, kept on a single row on md+. */}
+            <ScrollStaggerItem>
+              <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-10">
+                <nav className="flex flex-wrap justify-center gap-x-7 gap-y-3 md:justify-end">
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+
                 <a
-                  key={link.label}
-                  href={link.href}
-                  className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink"
+                  href="https://instagram.com/"
+                  aria-label="SHADIEZ on Instagram"
+                  className="text-muted-foreground transition-colors hover:text-ink"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  {link.label}
+                  <InstagramIcon className="h-5 w-5" />
                 </a>
-              ))}
-            </nav>
-
-            <a
-              href="https://instagram.com/"
-              aria-label="SHADIEZ on Instagram"
-              className="text-muted-foreground transition-colors hover:text-ink"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <InstagramIcon className="h-5 w-5" />
-            </a>
+              </div>
+            </ScrollStaggerItem>
           </div>
-        </div>
 
-        <div className="mt-12 border-t border-border/30 pt-8 text-center">
-          <p className="font-sans text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} SHADIEZ. All rights reserved.
-          </p>
-        </div>
+          <ScrollStaggerItem>
+            <div className="mt-12 border-t border-border/30 pt-8 text-center">
+              <p className="font-sans text-xs text-muted-foreground">
+                &copy; {new Date().getFullYear()} SHADIEZ. All rights reserved.
+              </p>
+            </div>
+          </ScrollStaggerItem>
+        </ScrollStagger>
       </div>
     </footer>
   )

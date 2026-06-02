@@ -2,6 +2,7 @@ import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero-section";
 import { ProductShowcase } from "@/components/product-showcase";
 import { LifestyleBand } from "@/components/lifestyle-band";
+import { TaglineMarquee } from "@/components/tagline-marquee";
 import { CollectionsGrid } from "@/components/collections-grid";
 import { DetailsSection } from "@/components/details-section";
 import { FinalCTA } from "@/components/final-cta";
@@ -20,6 +21,8 @@ export default function Home() {
       <SectionReveal>
         <LifestyleBand />
       </SectionReveal>
+      {/* Slim brand beat — no SectionReveal; it's a thin always-running band. */}
+      <TaglineMarquee />
       <SectionReveal>
         <CollectionsGrid />
       </SectionReveal>

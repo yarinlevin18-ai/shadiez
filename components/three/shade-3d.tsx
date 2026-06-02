@@ -9,17 +9,16 @@ import {
   type ReactNode,
 } from "react"
 import Image from "next/image"
-import { Canvas, useFrame } from "@react-three/fiber"
-import {
-  ContactShadows,
-  Environment,
-  OrbitControls,
-  useGLTF,
-} from "@react-three/drei"
+import { useFrame } from "@react-three/fiber"
+import { ContactShadows, Environment, OrbitControls } from "@react-three/drei"
 import type { MotionValue } from "framer-motion"
+import { damp } from "maath/easing"
 import * as THREE from "three"
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib"
 import { isWebGLAvailable } from "@/lib/webgl-detect"
+import { CanvasSetup } from "@/components/patterns/canvas-setup"
+import { Model } from "@/components/patterns/glb-loader"
+import { AssetBoundary } from "@/components/patterns/error-boundary"
 import { CanvasErrorBoundary } from "./canvas-error-boundary"
 
 // Compressed build of the GLB ships first; ~5% smaller and the source of truth for prod.
@@ -30,99 +29,79 @@ const DEFAULT_FALLBACK_IMAGE = "/shade-hero.jpg"
 const BASE_ROTATION_Y = THREE.MathUtils.degToRad(25)
 
 // Scroll-driven rotation arc. 0.30π ≈ 54° total turn from base — enough to feel alive
-// without the model spinning past its photogenic 3/4-front quadrant. Was 0.45π (~81°),
-// which pushed it nearly head-on by the bottom of the section.
+// without the model spinning past its photogenic 3/4-front quadrant.
 const SCROLL_ROTATION_ARC = Math.PI * 0.30
+
+// maath/damp smoothing time (s). Replaces the old hand-rolled lerp(…, 0.08); damp is
+// framerate-independent so the follow feels identical at 60/120Hz. Lower = snappier.
+const ROTATION_SMOOTH_TIME = 0.22
 
 type DraggingRef = MutableRefObject<boolean>
 
 function ShadeModel({
   progress,
-  offsetY,
-  scale,
   isDraggingRef,
   children,
 }: {
   progress: MotionValue<number>
-  offsetY?: MotionValue<number>
-  scale?: MotionValue<number>
   isDraggingRef: DraggingRef
   children?: ReactNode
 }) {
+  // groupRef rotates (model + any hotspot children turn together). fitRef wraps ONLY
+  // the model and carries the normalize/center transform — measuring it never picks
+  // up hotspot markers, which would otherwise skew the bounding box.
   const groupRef = useRef<THREE.Group>(null)
-  const transformRef = useRef<THREE.Group>(null)
-  const { scene } = useGLTF(MODEL_URL)
+  const fitRef = useRef<THREE.Group>(null)
 
+  // Suspense (in the parent) guarantees the GLB has mounted by the time ShadeModel
+  // commits, so a one-shot effect is enough — no need to poll in useFrame.
   useEffect(() => {
-    scene.traverse((obj) => {
+    const fit = fitRef.current
+    if (!fit) return
+
+    fit.traverse((obj) => {
       const mesh = obj as THREE.Mesh
       if (!mesh.isMesh) return
       const mat = mesh.material as THREE.MeshStandardMaterial | undefined
       if (!mat) return
-      // glb still ships with metallicFactor=1.0 (CLAUDE.md). Wood + canvas are non-metallic.
-      // Roughness pushed close to full matte — the brief is matte / no harsh specular.
+      // glb still ships with metallicFactor=1.0 (CLAUDE.md). Wood + canvas are
+      // non-metallic; roughness near full matte per the brief.
       mat.metalness = 0
       mat.roughness = 0.88
       mat.needsUpdate = true
     })
 
-    // Normalize scale FIRST, then recenter — otherwise scaling around the un-centered local
-    // origin re-introduces a vertical offset (model floats off-center).
-    const preBox = new THREE.Box3().setFromObject(scene)
+    // Normalize scale FIRST, then recenter — scaling around the un-centered local
+    // origin would re-introduce a vertical offset (model floats off-center).
+    const preBox = new THREE.Box3().setFromObject(fit)
     const size = preBox.getSize(new THREE.Vector3())
     const maxDim = Math.max(size.x, size.y, size.z)
-    if (maxDim > 0) {
-      // Hero-product fit: generous negative space around the model on its stage.
-      // 1.2 reads as a small physical object sitting back from camera, with clear
-      // sky/cream above and sand below. Was 1.4; trimmed for a quieter, more
-      // editorial hero presence — matches the warmer indirect lighting added below.
-      scene.scale.setScalar(1.2 / maxDim)
-    }
-    const postBox = new THREE.Box3().setFromObject(scene)
+    if (maxDim > 0) fit.scale.setScalar(1.2 / maxDim)
+    const postBox = new THREE.Box3().setFromObject(fit)
     const center = postBox.getCenter(new THREE.Vector3())
-    // eslint-disable-next-line react-hooks/immutability -- recentering the loaded glTF scene graph in place is the standard drei/useGLTF pattern; the Object3D is mutable by design.
-    scene.position.x -= center.x
-    scene.position.y -= center.y
-    scene.position.z -= center.z
-  }, [scene])
+    fit.position.x -= center.x
+    fit.position.y -= center.y
+    fit.position.z -= center.z
+  }, [])
 
-  useFrame(() => {
-    // Inner group: rotation, paused while user is actively dragging the camera.
-    if (groupRef.current && !isDraggingRef.current) {
+  useFrame((_, dt) => {
+    const group = groupRef.current
+    if (!group) return
+    // Rotation, paused while the user is actively dragging the camera. damp eases the
+    // group's Y toward the scroll/idle target framerate-independently (replaces the
+    // old hand-rolled lerp(…, 0.08)).
+    if (!isDraggingRef.current) {
       const target = BASE_ROTATION_Y + progress.get() * SCROLL_ROTATION_ARC
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(
-        groupRef.current.rotation.y,
-        target,
-        0.08,
-      )
-    }
-    // Outer group: scroll-driven position + scale transition between scene stages.
-    // Lerps separately so the easing stays smooth even when scroll is choppy.
-    if (transformRef.current) {
-      if (offsetY) {
-        transformRef.current.position.y = THREE.MathUtils.lerp(
-          transformRef.current.position.y,
-          offsetY.get(),
-          0.08,
-        )
-      }
-      if (scale) {
-        const next = THREE.MathUtils.lerp(
-          transformRef.current.scale.x,
-          scale.get(),
-          0.08,
-        )
-        transformRef.current.scale.setScalar(next)
-      }
+      damp(group.rotation, "y", target, ROTATION_SMOOTH_TIME, dt)
     }
   })
 
   return (
-    <group ref={transformRef}>
-      <group ref={groupRef} rotation={[0, BASE_ROTATION_Y, 0]}>
-        <primitive object={scene} />
-        {children}
+    <group ref={groupRef} rotation={[0, BASE_ROTATION_Y, 0]}>
+      <group ref={fitRef}>
+        <Model url={MODEL_URL} />
       </group>
+      {children}
     </group>
   )
 }
@@ -179,15 +158,11 @@ type Status = "pending" | "available" | "unavailable"
 
 export function Shade3D({
   progress,
-  offsetY,
-  scale,
   fallbackSrc = DEFAULT_FALLBACK_IMAGE,
   fallbackAlt = "SHADIEZ wooden sun-shade with cream canvas",
   children,
 }: {
   progress: MotionValue<number>
-  offsetY?: MotionValue<number>
-  scale?: MotionValue<number>
   fallbackSrc?: string
   fallbackAlt?: string
   children?: ReactNode
@@ -217,6 +192,8 @@ export function Shade3D({
   }
 
   return (
+    // DOM-level boundary: if the whole Canvas / WebGL context throws, fall back to a
+    // flat product image (AssetBoundary below only catches in-scene asset loads).
     <CanvasErrorBoundary
       fallback={
         <div className="relative h-full w-full">
@@ -224,13 +201,14 @@ export function Shade3D({
         </div>
       }
     >
-      <Canvas
+      <CanvasSetup
+        // Continuously animated (idle breathing + drag), so render every frame.
+        frameloop="always"
         camera={{ position: [0, 0.3, 4.5], fov: 35 }}
         dpr={[1, 2]}
-        // alpha:true clears the canvas to transparent so anything behind in the DOM
-        // (the beach video, the sand-bg) shows through under the model.
-        // ACES tone mapping + exposure < 1 prevents the bright canvas from blowing out
-        // under the HDRI; gives a slightly filmic warmth. Was implicit linear.
+        // alpha:true clears to transparent so the page/gradient behind shows through.
+        // ACES tone mapping + exposure < 1 keeps the bright canvas from blowing out
+        // under the HDRI and lends a filmic warmth.
         gl={{
           antialias: true,
           alpha: true,
@@ -239,41 +217,27 @@ export function Shade3D({
         }}
       >
         {/* HDRI environment — single biggest upgrade for matte PBR materials.
-            'apartment' gives soft warm indirect light that wraps the canvas and picks
-            out the wood grain without scenery. environmentIntensity stays modest so the
-            direct lights still own the form. */}
+            'apartment' gives soft warm indirect light that wraps the canvas and
+            picks out the wood grain. Intensity stays modest so direct lights own
+            the form. (Kept bespoke rather than three-lab's lighting-rig, whose
+            cool key/rim three-point setup would fight the warm brand.) */}
         <Environment preset="apartment" environmentIntensity={0.55} />
-
-        {/* Direct lights: warmer, more uniform fill so BOTH canvas faces (front seat
-            panel + shadowed back panel) read cream. A gentle warm key from front-right
-            gives the form; a cooler-warm fill from the opposite side lifts the back
-            panel out of gray without producing harsh specular. With the HDRI doing the
-            indirect lifting now, these are pulled back so nothing clips. */}
         <ambientLight intensity={0.25} color="#f8f1e1" />
-        <hemisphereLight args={["#f4e8d4", "#2a1f14", 0.20]} />
-        <directionalLight
-          position={[4, 2.8, 2.2]}
-          intensity={0.65}
-          color="#ffdcb0"
-        />
-        <directionalLight
-          position={[-3, 1.6, 1.0]}
-          intensity={0.35}
-          color="#f8f3e8"
-        />
-        <Suspense fallback={null}>
-          <ShadeModel
-            progress={progress}
-            offsetY={offsetY}
-            scale={scale}
-            isDraggingRef={isDraggingRef}
-          >
-            {children}
-          </ShadeModel>
-        </Suspense>
-        {/* Grounding — soft contact shadow under the model so it doesn't float. Fixed
-            opacity reads the same in both Details and CTA states; the model still
-            "settles" downward into the CTA via offsetY animation. */}
+        <hemisphereLight args={["#f4e8d4", "#2a1f14", 0.2]} />
+        <directionalLight position={[4, 2.8, 2.2]} intensity={0.65} color="#ffdcb0" />
+        <directionalLight position={[-3, 1.6, 1.0]} intensity={0.35} color="#f8f3e8" />
+
+        {/* AssetBoundary → Suspense → Model: a failed GLB/draco fetch shows the 3D
+            fallback (and bubbles to the image fallback) instead of hanging Suspense. */}
+        <AssetBoundary>
+          <Suspense fallback={null}>
+            <ShadeModel progress={progress} isDraggingRef={isDraggingRef}>
+              {children}
+            </ShadeModel>
+          </Suspense>
+        </AssetBoundary>
+
+        {/* Grounding — soft contact shadow so the model doesn't float. */}
         <ContactShadows
           position={[0, -1.4, 0]}
           scale={5}
@@ -285,9 +249,9 @@ export function Shade3D({
           frames={1}
         />
         {allowDrag && <InteractiveControls isDraggingRef={isDraggingRef} />}
-      </Canvas>
+      </CanvasSetup>
     </CanvasErrorBoundary>
   )
 }
 
-useGLTF.preload(MODEL_URL)
+Model.preload(MODEL_URL)

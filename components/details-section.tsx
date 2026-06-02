@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { useMotionValue } from "framer-motion"
 import { Shade3D } from "@/components/three/shade-3d"
+import { Hotspot } from "@/components/patterns/hotspots"
 import { HeroReveal, HeroRevealItem } from "@/components/patterns/hero-reveal"
 import {
   ScrollStagger,
@@ -98,7 +99,16 @@ export function DetailsSection() {
                 progress={progress}
                 fallbackSrc="/shade-hero.jpg"
                 fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-              />
+              >
+                {/* Feature callouts anchored to the model in its normalized,
+                    centered space (≈ ±0.55 half-extent). occlude fades each one
+                    out as the geometry rotates in front of it. Positions are a
+                    first pass — fine-tune against the live model. */}
+                <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
+                <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
+                <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
+                <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
+              </Shade3D>
             </div>
             <p className="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.20em] text-muted-foreground">
               Drag to rotate

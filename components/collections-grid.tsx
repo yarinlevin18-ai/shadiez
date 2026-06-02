@@ -1,5 +1,9 @@
 import Image from "next/image"
 import { CardHover } from "@/components/patterns/card-hover"
+import {
+  ScrollStagger,
+  ScrollStaggerItem,
+} from "@/components/patterns/scroll-stagger"
 import { Wordmark } from "@/components/logo"
 
 // Each tile = one kit colorway. Square crops so the grid reads as a clean set, not a
@@ -27,26 +31,30 @@ export function CollectionsGrid() {
           Our <Wordmark className="text-[0.9em]" /> Collections
         </h2>
 
-        {/* No ScrollStagger — SectionReveal in page.tsx already drives the entrance,
-            and a second layer was causing image-load pop. CardHover lifts each tile
-            on hover (no glow — palette correct). bg-cream placeholder keeps empty
-            tiles warm during initial image fetch. */}
-        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
-          {collections.map((kit) => (
-            <CardHover key={kit.src} glow={false} lift={6} tilt={0}>
-              <div className="relative aspect-square overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.35)]">
-                <Image
-                  src={kit.src}
-                  alt={kit.alt}
-                  fill
-                  sizes="(min-width: 768px) 22rem, 100vw"
-                  quality={88}
-                  className="object-cover"
-                />
-              </div>
-            </CardHover>
-          ))}
-        </div>
+        {/* Cards cascade in as the grid enters view, then CardHover lifts each tile on
+            hover (no glow — palette correct). The container bg-cream placeholder keeps
+            empty tiles warm during initial image fetch so a slightly-late image fades
+            in rather than popping onto a void. */}
+        <ScrollStagger stagger={0.12} threshold={0.2}>
+          <div className="grid gap-4 md:grid-cols-3 md:gap-6">
+            {collections.map((kit) => (
+              <ScrollStaggerItem key={kit.src}>
+                <CardHover glow={false} lift={6} tilt={0}>
+                  <div className="relative aspect-square overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.35)]">
+                    <Image
+                      src={kit.src}
+                      alt={kit.alt}
+                      fill
+                      sizes="(min-width: 768px) 22rem, 100vw"
+                      quality={88}
+                      className="object-cover"
+                    />
+                  </div>
+                </CardHover>
+              </ScrollStaggerItem>
+            ))}
+          </div>
+        </ScrollStagger>
       </div>
     </section>
   )

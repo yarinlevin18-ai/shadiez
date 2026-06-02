@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { ChevronDown } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { TextEffect } from "@/components/patterns/text-effect"
 import { Wordmark } from "@/components/logo"
 
 type Colorway = {
@@ -314,8 +315,16 @@ export function HeroSection() {
         <Wordmark className="text-[0.9em]" />
       </h1>
 
+      {/* Subhead characters cascade up once on load — above the fold, so the effect
+          fires in view (below-fold text-effects would run too early since Next renders
+          the whole document at load). */}
       <p className="relative z-10 mb-8 text-center font-sans text-base text-ink/70 md:text-lg">
-        Shade, crafted in wood and canvas.
+        <TextEffect
+          text="Shade, crafted in wood and canvas."
+          effect="cascade"
+          speed={13}
+          startDelay={0.4}
+        />
       </p>
 
       <a

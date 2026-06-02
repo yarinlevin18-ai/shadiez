@@ -31,7 +31,7 @@ export function CardHover({
   lift = 6,
   tilt = 4,
   glow = true,
-  glowColor = "#7C7CFF",
+  glowColor = "#1F3A5F", // SHADIEZ navy accent (was motion-lab's #7C7CFF dark-theme purple)
   duration = 0.3,
   scale = 1,
   disabled = false,
