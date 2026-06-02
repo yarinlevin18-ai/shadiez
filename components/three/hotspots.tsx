@@ -80,6 +80,7 @@ export function HotspotProjector({
       const el = wrappersRef.current?.[i]
       if (el) {
         // One wrapper, one transform — dot/line/label are positioned via CSS inside.
+        // eslint-disable-next-line react-hooks/immutability -- imperative per-frame DOM write on a ref'd element inside useFrame; this is the intended r3f pattern, not state mutation.
         el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0)`
         el.style.opacity = `${opacity}`
         // Hide pointer-events when faded out so back-facing hotspots aren't clickable.

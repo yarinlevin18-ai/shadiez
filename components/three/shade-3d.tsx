@@ -80,6 +80,7 @@ function ShadeModel({
     }
     const postBox = new THREE.Box3().setFromObject(scene)
     const center = postBox.getCenter(new THREE.Vector3())
+    // eslint-disable-next-line react-hooks/immutability -- recentering the loaded glTF scene graph in place is the standard drei/useGLTF pattern; the Object3D is mutable by design.
     scene.position.x -= center.x
     scene.position.y -= center.y
     scene.position.z -= center.z
@@ -197,6 +198,7 @@ export function Shade3D({
   const isDraggingRef = useRef(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- detecting WebGL + pointer capability is a one-shot read of an external system (the browser) that can't run during SSR/render; this is the intended effect use.
     setStatus(isWebGLAvailable() ? "available" : "unavailable")
     if (typeof window === "undefined") return
     const mql = window.matchMedia("(pointer: coarse)")

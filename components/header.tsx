@@ -1,6 +1,7 @@
 "use client"
 
 import { ShoppingBag, Menu, X } from "lucide-react"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Logo } from "@/components/logo"
 
@@ -29,13 +30,13 @@ export function Header() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
-        <a
+        <Link
           href="/"
           aria-label="SHADIEZ — home"
           className="text-lg text-ink transition-opacity hover:opacity-80"
         >
           <Logo />
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-8 md:flex">
           <a

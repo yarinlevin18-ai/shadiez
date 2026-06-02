@@ -95,7 +95,7 @@ async function run() {
     const padT = Math.floor(padY / 2)
     const padB = padY - padT
 
-    const info = await sharp(resized)
+    await sharp(resized)
       .extend({ top: padT, bottom: padB, left: padL, right: padR, background: BG })
       .jpeg({ quality: 88, mozjpeg: true })
       .toFile(out)
