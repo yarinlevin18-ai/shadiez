@@ -47,10 +47,13 @@ export interface CanvasSetupProps extends Partial<CanvasProps> {
 //      catches that drift and re-nudges. This is the failure that showed up only
 //      in production/CDN, where the model loads after the burst window closes.
 //
-// Sizing is compared with clientWidth/clientHeight (layout box), not
-// getBoundingClientRect — the latter includes ancestor CSS transforms (scroll
-// reveals, etc.) and would report a transformed size that never "matches",
-// keeping the nudge running forever.
+// "Filled" is judged by RATIO (canvas vs host), not an exact pixel match. An
+// ancestor scroll-reveal applies a transient transform (scale ~0.975 + offset)
+// while the section animates in, so the canvas legitimately sits a hair under
+// its host. A ratio gate cleanly separates the real failure (the ~300px default
+// in a 500px+ host → ratio ~0.5) from a fully-sized canvas (ratio ~0.98) without
+// spamming resizes forever chasing a pixel-exact match. clientWidth/Height are
+// used (layout box, transform-independent) for a stable comparison.
 export function CanvasSetup({
   children,
   dpr = [1, 2],
@@ -89,11 +92,10 @@ export function CanvasSetup({
 
     const matched = () => {
       const canvas = host.querySelector("canvas");
+      if (!canvas || host.clientWidth < 1 || host.clientHeight < 1) return false;
       return (
-        !!canvas &&
-        host.clientWidth > 0 &&
-        Math.abs(canvas.clientWidth - host.clientWidth) <= 2 &&
-        Math.abs(canvas.clientHeight - host.clientHeight) <= 2
+        canvas.clientWidth / host.clientWidth >= 0.9 &&
+        canvas.clientHeight / host.clientHeight >= 0.9
       );
     };
 
