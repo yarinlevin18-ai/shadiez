@@ -295,7 +295,7 @@ export function HeroSection() {
       <button
         type="button"
         onClick={openDialog}
-        className="group relative z-10 mb-10 inline-flex items-center justify-center gap-2 overflow-hidden rounded-[4px] bg-navy px-8 py-3.5 font-sans text-sm tracking-wide text-primary-foreground shadow-[0_12px_24px_-8px_rgba(31,58,95,0.5)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-navy/90 hover:shadow-[0_18px_32px_-10px_rgba(31,58,95,0.6)] active:translate-y-0"
+        className="group relative z-10 mb-10 inline-flex items-center justify-center gap-2 overflow-hidden rounded-[4px] bg-navy px-8 py-3.5 font-serif text-base font-normal tracking-wide text-primary-foreground shadow-[0_12px_24px_-8px_rgba(31,58,95,0.5)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-navy/90 hover:shadow-[0_18px_32px_-10px_rgba(31,58,95,0.6)] active:translate-y-0"
       >
         {/* Soft light sweep on hover — premium, barely-there sheen. */}
         <span

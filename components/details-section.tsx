@@ -96,20 +96,27 @@ export function DetailsSection() {
                 }}
                 aria-hidden
               />
-              <Shade3D
-                progress={progress}
-                fallbackSrc="/shade-hero.jpg"
-                fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-              >
-                {/* Feature callouts anchored to the model in its normalized,
-                    centered space (≈ ±0.55 half-extent). occlude fades each one
-                    out as the geometry rotates in front of it. Positions are a
-                    first pass — fine-tune against the live model. */}
-                <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
-                <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
-                <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
-                <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
-              </Shade3D>
+              {/* absolute inset-0 gives the r3f <Canvas> an explicitly-sized box
+                  to measure at mount. Relying on the aspect-square parent's
+                  aspect-ratio sizing instead left the canvas stuck at THREE's
+                  300×150 default until a resize fired — the model rendered into a
+                  tiny letterbox and looked small/off-center. */}
+              <div className="absolute inset-0">
+                <Shade3D
+                  progress={progress}
+                  fallbackSrc="/shade-hero.jpg"
+                  fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+                >
+                  {/* Feature callouts anchored to the model in its normalized,
+                      centered space (≈ ±0.55 half-extent). occlude fades each one
+                      out as the geometry rotates in front of it. Positions are a
+                      first pass — fine-tune against the live model. */}
+                  <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
+                  <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
+                  <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
+                  <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
+                </Shade3D>
+              </div>
             </div>
             <p className="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.20em] text-muted-foreground">
               Drag to rotate

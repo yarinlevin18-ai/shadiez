@@ -72,7 +72,7 @@ export function FinalCTA() {
           type="button"
           size="lg"
           variant="glass"
-          className="group relative gap-2 overflow-hidden px-8 tracking-wide"
+          className="group relative gap-2 overflow-hidden border-cream/50 px-8 font-serif text-base font-normal tracking-wide hover:border-cream/80"
           onClick={openDialog}
         >
           {/* Soft light sweep on hover — premium, barely-there sheen. */}
