@@ -325,7 +325,7 @@ export function HeroSection() {
       {/* Colorway selector. */}
       <div
         id="colorways"
-        className="scroll-mt-24 relative z-10 mb-12 flex items-center gap-2.5 md:gap-3"
+        className="scroll-mt-24 relative z-10 mb-12 flex items-center gap-4 md:gap-3"
       >
         {colorways.map((cw) => {
           const pattern = PATTERN_CONFIG[cw.swatch]
@@ -337,7 +337,7 @@ export function HeroSection() {
               onClick={() => handleSelectColor(cw.id, true)}
               aria-label={cw.name}
               aria-pressed={isActive}
-              className={`group relative h-7 w-7 rounded-full shadow-[0_3px_8px_-2px_rgba(20,12,6,0.4)] md:h-8 md:w-8 ${
+              className={`group relative h-7 w-7 rounded-full shadow-[0_3px_8px_-2px_rgba(20,12,6,0.4)] md:h-8 md:w-8 before:absolute before:left-1/2 before:top-1/2 before:h-11 before:w-11 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:content-[''] ${
                 isActive ? "ring-2 ring-navy ring-offset-2 ring-offset-background" : ""
               }`}
               style={!pattern ? { backgroundColor: cw.swatch } : undefined}
@@ -393,7 +393,7 @@ export function HeroSection() {
       <a
         href="#about"
         aria-label="Scroll to product details"
-        className="group absolute bottom-8 left-1/2 z-10 -translate-x-1/2 rounded-full p-2 text-ink/60 transition-colors hover:text-ink"
+        className="group absolute bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-full p-3 text-ink/60 transition-colors hover:text-ink"
       >
         <ChevronDown
           className="h-5 w-5 animate-bounce [animation-duration:2.4s] group-hover:animate-none"

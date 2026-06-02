@@ -6,6 +6,8 @@
 @theme inline {
   --font-sans: var(--font-inter);
   --font-serif: var(--font-fraunces);
+  --font-hebrew: var(--font-heebo);
+  --font-hebrew-serif: var(--font-frank-ruhl);
 
   --color-wood: var(--wood);
   --color-cream: var(--cream);

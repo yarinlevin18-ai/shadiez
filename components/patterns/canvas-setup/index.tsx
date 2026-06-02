@@ -34,11 +34,23 @@ export interface CanvasSetupProps extends Partial<CanvasProps> {
 // square; gating the mount until the container was measured did NOT help.) The
 // one thing that reliably forces r3f to re-measure is a window 'resize' event.
 //
-// So: (1) gate the <Canvas> mount until our own host <div> has a non-zero box,
-// then (2) once mounted, dispatch window 'resize' until the canvas actually
-// fills the host, and re-run that whenever the host is genuinely resized. Both
-// run as plain DOM-level effects (reliable on every mount, unlike an r3f
-// scene-graph child).
+// The guard has three parts:
+//   1. Gate the <Canvas> mount until our own host <div> has a non-zero box, so
+//      r3f never initialises against a zero/undefined size.
+//   2. An initial burst that dispatches window 'resize' until the canvas fills
+//      the host — retried for a few seconds to beat the race where the first
+//      nudge fires before r3f has attached its own resize listener.
+//   3. Persistent ResizeObservers on BOTH the host and the canvas, so the fix is
+//      self-healing: a late layout shift or the heavy GLB finishing its load
+//      (slower over a CDN than from local disk) can re-render and reset the
+//      canvas back to the default AFTER the burst ends — the canvas observer
+//      catches that drift and re-nudges. This is the failure that showed up only
+//      in production/CDN, where the model loads after the burst window closes.
+//
+// Sizing is compared with clientWidth/clientHeight (layout box), not
+// getBoundingClientRect — the latter includes ancestor CSS transforms (scroll
+// reveals, etc.) and would report a transformed size that never "matches",
+// keeping the nudge running forever.
 export function CanvasSetup({
   children,
   dpr = [1, 2],
@@ -64,40 +76,52 @@ export function CanvasSetup({
     return () => ro.disconnect();
   }, []);
 
-  // Nudge: after mount, push window 'resize' until the canvas fills the host.
-  // Stops as soon as it matches (typically a few frames) or after a 3s cap, and
-  // restarts on a genuine host resize so responsive layouts stay correct.
+  // Nudge + self-heal: keep the canvas filling the host for the lifetime of the
+  // component, correcting both the missed initial measure and any later reset.
   useEffect(() => {
     if (!ready) return;
     const host = hostRef.current;
     if (!host) return;
 
-    let timer = 0;
-    const settle = () => {
-      window.clearInterval(timer);
-      const start = performance.now();
-      timer = window.setInterval(() => {
-        const canvas = host.querySelector("canvas");
-        const h = host.getBoundingClientRect();
-        const c = canvas?.getBoundingClientRect();
-        const matched =
-          !!c &&
-          h.width > 0 &&
-          Math.abs(c.width - h.width) < 2 &&
-          Math.abs(c.height - h.height) < 2;
-        if (matched || performance.now() - start > 3000) {
-          window.clearInterval(timer);
-          return;
-        }
-        window.dispatchEvent(new Event("resize"));
-      }, 50);
+    let burstTimer = 0;
+    let observingCanvas = false;
+    const ro = new ResizeObserver(() => check());
+
+    const matched = () => {
+      const canvas = host.querySelector("canvas");
+      return (
+        !!canvas &&
+        host.clientWidth > 0 &&
+        Math.abs(canvas.clientWidth - host.clientWidth) <= 2 &&
+        Math.abs(canvas.clientHeight - host.clientHeight) <= 2
+      );
     };
 
-    settle();
-    const ro = new ResizeObserver(settle);
+    const check = () => {
+      const canvas = host.querySelector("canvas");
+      // Start watching the canvas itself as soon as it exists, so a later reset
+      // back to the default size is caught and corrected.
+      if (canvas && !observingCanvas) {
+        ro.observe(canvas);
+        observingCanvas = true;
+      }
+      if (!matched()) window.dispatchEvent(new Event("resize"));
+    };
+
+    // Initial burst — retry past the listener-attach race, then the observers
+    // take over.
+    const startedAt = performance.now();
+    const burst = () => {
+      check();
+      if (!matched() && performance.now() - startedAt < 4000) {
+        burstTimer = window.setTimeout(burst, 60);
+      }
+    };
+    burst();
     ro.observe(host);
+
     return () => {
-      window.clearInterval(timer);
+      window.clearTimeout(burstTimer);
       ro.disconnect();
     };
   }, [ready]);

@@ -53,7 +53,7 @@ export function Header() {
         <button
           type="button"
           onClick={openDialog}
-          className="inline-flex items-center justify-center rounded-[4px] bg-navy px-5 py-2 font-serif text-base font-normal tracking-wide text-primary-foreground shadow-[0_8px_20px_-8px_rgba(31,58,95,0.5)] transition-colors hover:bg-navy/90 md:px-6 md:py-2.5"
+          className="inline-flex items-center justify-center rounded-[4px] bg-navy px-5 py-2.5 font-serif text-base font-normal tracking-wide text-primary-foreground shadow-[0_8px_20px_-8px_rgba(31,58,95,0.5)] transition-colors hover:bg-navy/90 md:px-6"
         >
           Contact us
         </button>

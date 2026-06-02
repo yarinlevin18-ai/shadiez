@@ -48,16 +48,19 @@ export function Footer() {
 
             <ScrollStaggerItem>
               <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-10">
-                <nav className="flex flex-wrap justify-center gap-x-7 gap-y-3 md:justify-end">
-                  <Link href="/privacy" className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Privacy</Link>
-                  <Link href="/terms" className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Terms</Link>
-                  <button type="button" onClick={openDialog} className="font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Contact</button>
+                <nav className="-my-2 flex flex-wrap justify-center gap-x-7 md:justify-end">
+                  <Link href="/privacy" className="inline-flex min-h-[44px] items-center font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Privacy</Link>
+                  <Link href="/terms" className="inline-flex min-h-[44px] items-center font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Terms</Link>
+                  <Link href="/shipping-policy" className="inline-flex min-h-[44px] items-center font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Shipping</Link>
+                  <Link href="/returns" className="inline-flex min-h-[44px] items-center font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Returns</Link>
+                  <Link href="/accessibility" className="inline-flex min-h-[44px] items-center font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Accessibility</Link>
+                  <button type="button" onClick={openDialog} className="inline-flex min-h-[44px] items-center font-sans text-sm tracking-wide text-muted-foreground transition-colors hover:text-ink">Contact</button>
                 </nav>
 
                 <a
                   href="https://instagram.com/"
                   aria-label="SHADIEZ on Instagram"
-                  className="text-muted-foreground transition-colors hover:text-ink"
+                  className="-m-2 inline-flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:text-ink"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
