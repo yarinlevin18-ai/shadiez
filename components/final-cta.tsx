@@ -70,7 +70,7 @@ export function FinalCTA() {
         <Button
           type="button"
           size="lg"
-          variant="secondary"
+          variant="glass"
           className="px-8 tracking-wide"
           onClick={openDialog}
         >

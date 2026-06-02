@@ -19,6 +19,15 @@ const buttonVariants = cva(
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
+        // Liquid glass — warm-tinted frosted material. Reads as glass only over
+        // imagery/video (it blurs + saturates what's behind it), so use on CTAs that
+        // sit over the beach footage. The inset top highlight is the specular "gloss"
+        // edge; the warm cream tint keeps it on-brand vs. cold blue-white glass.
+        glass:
+          'border border-[rgba(247,242,233,0.35)] bg-[rgba(247,242,233,0.12)] text-cream ' +
+          'backdrop-blur-md backdrop-saturate-150 ' +
+          'shadow-[inset_0_1px_1px_rgba(255,250,242,0.5),inset_0_-1px_2px_rgba(20,12,6,0.18),0_12px_34px_-12px_rgba(20,12,6,0.6)] ' +
+          'hover:bg-[rgba(247,242,233,0.2)] hover:border-[rgba(247,242,233,0.5)]',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
