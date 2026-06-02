@@ -243,9 +243,7 @@ export function HeroSection() {
         className="relative z-10 mb-12 w-full max-w-2xl lg:max-w-3xl"
         style={{ y: productY }}
       >
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+        <div
           className="relative aspect-[43/24] w-full overflow-hidden rounded-md bg-cream/60 shadow-[0_40px_80px_-30px_rgba(20,15,10,0.55)] ring-1 ring-background/40"
         >
           {/* Settled base layer. */}
@@ -288,7 +286,7 @@ export function HeroSection() {
               />
             </div>
           )}
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* Headline. */}
