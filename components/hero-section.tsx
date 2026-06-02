@@ -161,6 +161,14 @@ export function HeroSection() {
   const productY = useTransform(scrollYProgress, [0, 1], [0, -80])
   const videoY = useTransform(scrollYProgress, [0, 1], [0, 40])
 
+  // ── EXIT HANDOFF ────────────────────────────────────────────────────────────
+  // As the hero scrolls away its foreground lifts up FASTER than the scroll (a
+  // parallax exit) and the whole section fades — so "Pick Your Style" leaves while
+  // "Built for the sun" rises in underneath. heroRef (the <section>) is only faded,
+  // never translated, so the scroll measurement above stays stable (no feedback).
+  const heroExitY = useTransform(scrollYProgress, [0, 1], [0, -110])
+  const heroFade = useTransform(scrollYProgress, [0.4, 0.85], [1, 0])
+
   const selectedId = incomingId ?? baseId
   const baseCw = colorways.find((c) => c.id === baseId) ?? colorways[0]
   const incomingCw = incomingId
@@ -168,8 +176,9 @@ export function HeroSection() {
     : null
 
   return (
-    <section
+    <motion.section
       ref={heroRef}
+      style={{ opacity: heroFade }}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-12"
     >
       {/* Preload all colorway images so the wipe shows the next one with no
@@ -223,6 +232,12 @@ export function HeroSection() {
         aria-hidden
       />
 
+      {/* Foreground group — lifts as one on scroll so the hero exits with a parallax
+          handoff into the next section. */}
+      <motion.div
+        style={{ y: heroExitY }}
+        className="relative z-10 flex w-full flex-col items-center"
+      >
       {/* ── PRODUCT IMAGE (parallax + float) ────────────────────────────── */}
       <motion.div
         className="relative z-10 mb-12 w-full max-w-2xl lg:max-w-3xl"
@@ -374,6 +389,7 @@ export function HeroSection() {
           )
         })}
       </div>
+      </motion.div>
 
       {/* Scroll cue. */}
       <a
@@ -386,6 +402,6 @@ export function HeroSection() {
           strokeWidth={1}
         />
       </a>
-    </section>
+    </motion.section>
   )
 }

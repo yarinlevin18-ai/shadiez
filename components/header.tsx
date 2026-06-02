@@ -5,27 +5,37 @@ import { useEffect, useState } from "react"
 import { Logo } from "@/components/logo"
 import { useLeadDialog } from "@/components/lead-dialog"
 
-// Threshold (px) at which the header swaps from transparent (over hero) to
-// translucent-on-cream (over everything else). Roughly 60% of an average viewport
-// so it triggers before the hero is fully out of frame.
-const SCROLL_THRESHOLD = 480
+// Fraction of the first section (the full-height hero) you must scroll past before
+// the header swaps from transparent to its frosted-glass state. 0.6 = it kicks in
+// as you're leaving the hero, before it's fully out of frame.
+const SCROLL_FRACTION = 0.6
 
 export function Header() {
   const { openDialog } = useLeadDialog()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD)
+    // Tie the threshold to the actual hero height (first <section>) so it tracks
+    // "scrolled away from the first section" on any viewport, not a fixed px value.
+    const onScroll = () => {
+      const hero = document.querySelector("section")
+      const threshold = (hero?.offsetHeight ?? window.innerHeight) * SCROLL_FRACTION
+      setScrolled(window.scrollY > threshold)
+    }
     onScroll() // sync initial state in case the page loads scrolled (refresh, hash anchor).
     window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
+    window.addEventListener("resize", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
   }, [])
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ${
         scrolled
-          ? "border-b border-border/40 bg-background/85 backdrop-blur-md shadow-[0_1px_12px_-6px_rgba(60,40,20,0.18)]"
+          ? "border-b border-border/30 bg-background/55 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_12px_-6px_rgba(60,40,20,0.18)]"
           : "border-b border-transparent bg-transparent"
       }`}
     >

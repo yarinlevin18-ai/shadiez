@@ -17,66 +17,28 @@
 //     <OrbitControls />
 //   </CanvasSetup>
 
-import { useEffect, type ReactNode } from "react";
-import { Canvas, useThree, type CanvasProps } from "@react-three/fiber";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Canvas, type CanvasProps } from "@react-three/fiber";
 
 export interface CanvasSetupProps extends Partial<CanvasProps> {
   children: ReactNode;
 }
 
-// r3f derives the canvas size from a ResizeObserver (react-use-measure) on its
-// container. When the Canvas mounts inside a parent whose box resolves a tick
-// later (e.g. an aspect-ratio-sized column, or a section mounted far below the
-// fold), that first measure can come back empty and the canvas stays pinned at
-// THREE's 300×150 default — the scene renders into a tiny letterbox until a
-// window resize happens to re-run r3f's own measurement.
+// The sizing problem this guards against:
 //
-// The reliable lever is a window 'resize' (which react-use-measure listens for),
-// but a single one-shot on mount loses a race: it can fire before r3f has even
-// attached that listener, and the container never changes size again to retry.
-// So we run a short settle loop — re-dispatch each frame until the canvas box
-// actually matches its container, then stop — and keep a ResizeObserver to
-// restart it if the container is genuinely resized later.
-function ContainerResizeFix() {
-  const gl = useThree((s) => s.gl);
-
-  useEffect(() => {
-    const canvas = gl.domElement;
-    const parent = canvas.parentElement;
-    if (!parent) return;
-
-    let raf = 0;
-    const settle = (deadline: number) => {
-      const p = parent.getBoundingClientRect();
-      const c = canvas.getBoundingClientRect();
-      const matched =
-        p.width > 0 &&
-        Math.abs(c.width - p.width) < 2 &&
-        Math.abs(c.height - p.height) < 2;
-      if (matched) return;
-      if (p.width > 0) window.dispatchEvent(new Event("resize"));
-      if (performance.now() < deadline) {
-        raf = requestAnimationFrame(() => settle(deadline));
-      }
-    };
-    const run = () => {
-      cancelAnimationFrame(raf);
-      const deadline = performance.now() + 2000;
-      raf = requestAnimationFrame(() => settle(deadline));
-    };
-
-    run();
-    const ro = new ResizeObserver(run);
-    ro.observe(parent);
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [gl]);
-
-  return null;
-}
-
+// r3f sizes its canvas from a ResizeObserver (react-use-measure) on its own
+// container. In this Next 16 / React 19 / r3f setup that initial measure never
+// reaches the renderer on mount — the canvas stays pinned at THREE's 300×150
+// default and renders the scene into a tiny letterbox, even when its container
+// is already correctly sized. (Verified: canvas stuck at 300×150 inside a 523px
+// square; gating the mount until the container was measured did NOT help.) The
+// one thing that reliably forces r3f to re-measure is a window 'resize' event.
+//
+// So: (1) gate the <Canvas> mount until our own host <div> has a non-zero box,
+// then (2) once mounted, dispatch window 'resize' until the canvas actually
+// fills the host, and re-run that whenever the host is genuinely resized. Both
+// run as plain DOM-level effects (reliable on every mount, unlike an r3f
+// scene-graph child).
 export function CanvasSetup({
   children,
   dpr = [1, 2],
@@ -85,10 +47,68 @@ export function CanvasSetup({
   gl = { antialias: true, alpha: true },
   ...rest
 }: CanvasSetupProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+
+  // Gate: don't mount the Canvas until the host has a real box.
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const check = () => {
+      const { width, height } = host.getBoundingClientRect();
+      if (width > 0 && height > 0) setReady(true);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(host);
+    return () => ro.disconnect();
+  }, []);
+
+  // Nudge: after mount, push window 'resize' until the canvas fills the host.
+  // Stops as soon as it matches (typically a few frames) or after a 3s cap, and
+  // restarts on a genuine host resize so responsive layouts stay correct.
+  useEffect(() => {
+    if (!ready) return;
+    const host = hostRef.current;
+    if (!host) return;
+
+    let timer = 0;
+    const settle = () => {
+      window.clearInterval(timer);
+      const start = performance.now();
+      timer = window.setInterval(() => {
+        const canvas = host.querySelector("canvas");
+        const h = host.getBoundingClientRect();
+        const c = canvas?.getBoundingClientRect();
+        const matched =
+          !!c &&
+          h.width > 0 &&
+          Math.abs(c.width - h.width) < 2 &&
+          Math.abs(c.height - h.height) < 2;
+        if (matched || performance.now() - start > 3000) {
+          window.clearInterval(timer);
+          return;
+        }
+        window.dispatchEvent(new Event("resize"));
+      }, 50);
+    };
+
+    settle();
+    const ro = new ResizeObserver(settle);
+    ro.observe(host);
+    return () => {
+      window.clearInterval(timer);
+      ro.disconnect();
+    };
+  }, [ready]);
+
   return (
-    <Canvas dpr={dpr} frameloop={frameloop} camera={camera} gl={gl} {...rest}>
-      <ContainerResizeFix />
-      {children}
-    </Canvas>
+    <div ref={hostRef} style={{ width: "100%", height: "100%" }}>
+      {ready && (
+        <Canvas dpr={dpr} frameloop={frameloop} camera={camera} gl={gl} {...rest}>
+          {children}
+        </Canvas>
+      )}
+    </div>
   );
 }
