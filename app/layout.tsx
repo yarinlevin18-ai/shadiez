@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LeadDialogProvider } from "@/components/lead-dialog";
+import { CookieNotice } from "@/components/cookie-notice";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,6 +37,7 @@ export default function RootLayout({
         <SmoothScroll>
           <LeadDialogProvider>{children}</LeadDialogProvider>
         </SmoothScroll>
+        <CookieNotice />
       </body>
     </html>
   );
