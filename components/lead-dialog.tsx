@@ -191,11 +191,11 @@ function LeadDialog({
                     ) : (
                       <>
                         <Dialog.Title className="font-serif text-2xl font-light leading-tight tracking-wide md:text-3xl">
-                          Join the list
+                          Get in touch
                         </Dialog.Title>
                         <Dialog.Description className="mt-1.5 font-sans text-sm text-ink/65">
-                          Leave your details and we&apos;ll be in touch when
-                          the next drop is ready.
+                          Leave your details and we&apos;ll get back to you
+                          shortly.
                         </Dialog.Description>
 
                         {status === "error" && errorMsg && (
@@ -245,7 +245,7 @@ function LeadDialog({
                                 Sending…
                               </>
                             ) : (
-                              "Keep me posted"
+                              "Send message"
                             )}
                           </button>
 
@@ -338,10 +338,10 @@ function SuccessPanel() {
         <Check className="h-6 w-6" strokeWidth={1.5} />
       </div>
       <Dialog.Title className="font-serif text-2xl font-light tracking-wide">
-        You&apos;re on the list.
+        Message sent.
       </Dialog.Title>
       <Dialog.Description className="mt-2 max-w-[24ch] font-sans text-sm text-ink/65">
-        We&apos;ll be in touch as soon as the next batch is ready.
+        Thanks for reaching out — we&apos;ll be in touch shortly.
       </Dialog.Description>
     </div>
   )

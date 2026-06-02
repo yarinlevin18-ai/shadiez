@@ -29,6 +29,18 @@ const features = [
   },
 ]
 
+// Shared photo frame — "soft lift": a refined warm drop shadow + a faint light ring
+// for separation, no hard drawn border. Applied to all three showcase photos so they
+// read as one set.
+const FRAME =
+  "overflow-hidden rounded-md bg-cream/40 shadow-[0_26px_55px_-26px_rgba(60,40,20,0.5)] ring-1 ring-white/15"
+
+// Warm cinematic grade for the two lifestyle shots so they feel like crops from the
+// "Lie back" band — gentle sepia + lifted saturation/contrast, kept subtle so it warms
+// rather than tints.
+const WARM =
+  "[filter:saturate(1.12)_contrast(1.04)_brightness(1.02)_sepia(0.12)]"
+
 export function ProductShowcase() {
   // Section progress drives the parallax drift on the two lifestyle shots. "start end"
   // → "end start" means we read progress across the whole time the section is anywhere
@@ -55,15 +67,12 @@ export function ProductShowcase() {
       <div className="mx-auto max-w-6xl">
         <div className="grid items-start gap-12 md:grid-cols-[1.25fr_1fr] md:gap-16 lg:gap-20">
           {/* LEFT — editorial-overlap composition. Mobile stacks the three images
-              vertically; md+ switches into the absolute-positioned overlap. Was
-              md:aspect-[5/6] (portrait, too tall, left a void below text); now square
-              so the composition matches the text column's natural height. */}
+              vertically; md+ switches into the absolute-positioned overlap. */}
           <div className="relative md:aspect-square">
-            {/* Mobile-only stack. No HeroReveal — SectionReveal handles the section
-                entrance. Containers carry bg-cream so the empty state during image
-                load looks intentional, not broken. */}
+            {/* Mobile-only stack. The two lifestyle shots get the warm grade; all
+                three share the soft-lift FRAME. */}
             <div className="grid gap-4 md:hidden">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-cream/40 shadow-[0_30px_60px_-30px_rgba(60,40,20,0.35)]">
+              <div className={`relative aspect-[4/5] ${FRAME}`}>
                 <Image
                   src="/4.jpeg"
                   alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
@@ -73,37 +82,35 @@ export function ProductShowcase() {
                   className="object-cover"
                 />
               </div>
-              <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.30)]">
+              <div className={`relative aspect-[3/4] ${FRAME}`}>
                 <Image
                   src="/lifestyle-shade-beach.png"
                   alt="SHADIEZ sun-shade in use on the beach"
                   fill
                   sizes="100vw"
-                  className="object-cover"
+                  className={`object-cover ${WARM}`}
                 />
               </div>
-              <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_18px_40px_-24px_rgba(60,40,20,0.30)]">
+              <div className={`relative aspect-[3/4] ${FRAME}`}>
                 <Image
                   src="/lifestyle-tote-walk.png"
                   alt="SHADIEZ matching tote on the way to the beach"
                   fill
                   sizes="100vw"
-                  className="object-cover"
+                  className={`object-cover ${WARM}`}
                 />
               </div>
             </div>
 
             {/* Desktop layout (md+). Studio shot dominates the left two-thirds; the
                 two lifestyle shots form a curated pair on the right with a slight
-                horizontal offset. No HeroReveal here — the outer SectionReveal owns
-                the section's entrance animation. Adding a second rise animation per
-                image caused a visible "jump" when images finished loading. Containers
-                carry a warm bg color so empty space during load reads as a placeholder,
-                not a void. */}
+                horizontal offset. The two lifestyle shots now carry the warm grade so
+                they read as crops from the same shoot as the "Lie back" band; all
+                three share the soft-lift FRAME (no hard ring). */}
             <div className="hidden md:block">
               {/* Studio — base layer, anchored top-left, ~64% wide / 100% tall. */}
               <div className="absolute left-0 top-0 z-10 h-full w-[64%]">
-                <div className="relative h-full w-full overflow-hidden rounded-md bg-cream/40 shadow-[0_30px_60px_-30px_rgba(60,40,20,0.35)]">
+                <div className={`relative h-full w-full ${FRAME}`}>
                   <Image
                     src="/4.jpeg"
                     alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
@@ -122,7 +129,7 @@ export function ProductShowcase() {
                 className="absolute right-0 top-0 z-20 w-[40%]"
               >
                 <CardHover glow={false} lift={6} tilt={0}>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_22px_45px_-22px_rgba(60,40,20,0.42)] ring-1 ring-background/70">
+                  <div className={`relative aspect-[3/4] ${FRAME}`}>
                     <Image
                       src="/lifestyle-shade-beach.png"
                       alt="SHADIEZ sun-shade in use on the beach"
@@ -130,7 +137,7 @@ export function ProductShowcase() {
                       sizes="(min-width: 1024px) 16rem, 12rem"
                       quality={90}
                       priority
-                      className="object-cover"
+                      className={`object-cover ${WARM}`}
                     />
                   </div>
                 </CardHover>
@@ -144,7 +151,7 @@ export function ProductShowcase() {
                 className="absolute bottom-0 right-[8%] z-20 w-[32%]"
               >
                 <CardHover glow={false} lift={6} tilt={0}>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-cream/40 shadow-[0_22px_45px_-22px_rgba(60,40,20,0.5)] ring-1 ring-background/70">
+                  <div className={`relative aspect-[3/4] ${FRAME}`}>
                     <Image
                       src="/lifestyle-tote-walk.png"
                       alt="SHADIEZ matching tote on the way to the beach"
@@ -152,7 +159,7 @@ export function ProductShowcase() {
                       sizes="(min-width: 1024px) 14rem, 10rem"
                       quality={90}
                       priority
-                      className="object-cover"
+                      className={`object-cover ${WARM}`}
                     />
                   </div>
                 </CardHover>

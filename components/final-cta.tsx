@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TitleReveal } from "@/components/patterns/title-reveal"
 import { useLeadDialog } from "@/components/lead-dialog"
@@ -71,10 +72,19 @@ export function FinalCTA() {
           type="button"
           size="lg"
           variant="glass"
-          className="px-8 tracking-wide"
+          className="group relative gap-2 overflow-hidden px-8 tracking-wide"
           onClick={openDialog}
         >
-          Get on the list
+          {/* Soft light sweep on hover — premium, barely-there sheen. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-cream/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+          />
+          <span className="relative">Contact us</span>
+          <ArrowRight
+            className="relative h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+            strokeWidth={1.75}
+          />
         </Button>
       </div>
     </section>

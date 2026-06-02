@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { ChevronDown } from "lucide-react"
+import { ArrowRight, ChevronDown } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { TextEffect } from "@/components/patterns/text-effect"
 import { TitleReveal } from "@/components/patterns/title-reveal"
@@ -295,9 +295,18 @@ export function HeroSection() {
       <button
         type="button"
         onClick={openDialog}
-        className="relative z-10 mb-10 inline-flex items-center justify-center rounded-[4px] bg-navy px-8 py-3.5 font-sans text-sm tracking-wide text-primary-foreground shadow-[0_12px_24px_-8px_rgba(31,58,95,0.5)] transition-colors hover:bg-navy/90"
+        className="group relative z-10 mb-10 inline-flex items-center justify-center gap-2 overflow-hidden rounded-[4px] bg-navy px-8 py-3.5 font-sans text-sm tracking-wide text-primary-foreground shadow-[0_12px_24px_-8px_rgba(31,58,95,0.5)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-navy/90 hover:shadow-[0_18px_32px_-10px_rgba(31,58,95,0.6)] active:translate-y-0"
       >
-        Get on the list
+        {/* Soft light sweep on hover — premium, barely-there sheen. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+        />
+        <span className="relative">Contact us</span>
+        <ArrowRight
+          className="relative h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+          strokeWidth={1.75}
+        />
       </button>
 
       {/* Colorway selector. */}
