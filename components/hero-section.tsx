@@ -315,7 +315,7 @@ export function HeroSection() {
               onClick={() => handleSelectColor(cw.id, true)}
               aria-label={cw.name}
               aria-pressed={isActive}
-              className={`group relative h-7 w-7 rounded-full transition-transform duration-200 md:h-8 md:w-8 ${
+              className={`group relative h-7 w-7 rounded-full shadow-[0_3px_8px_-2px_rgba(20,12,6,0.4)] transition-transform duration-200 md:h-8 md:w-8 ${
                 isActive
                   ? "scale-110 ring-2 ring-navy ring-offset-2 ring-offset-background"
                   : "hover:scale-105"
@@ -338,6 +338,20 @@ export function HeroSection() {
                   </>
                 )}
               </span>
+
+              {/* Liquid-glass sheen — specular top-left highlight + domed inner
+                  shadow over the color, so each swatch reads as a polished glass
+                  bead rather than a flat dot. */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle at 30% 24%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.28) 16%, rgba(255,255,255,0) 46%)",
+                  boxShadow:
+                    "inset 0 -3px 6px rgba(20,12,6,0.3), inset 0 2px 3px rgba(255,255,255,0.5)",
+                }}
+              />
 
               <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-ink/90 px-2 py-1 font-sans text-[10px] uppercase tracking-wider text-cream opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100">
                 {cw.name}
