@@ -31,7 +31,7 @@ export function Footer() {
   const { openDialog } = useLeadDialog()
 
   return (
-    <footer className="border-t border-border/50 px-6 py-16 md:py-20">
+    <footer className="border-t border-border/50 px-6 py-16 pb-28 md:py-20 md:pb-20">
       <div className="mx-auto max-w-6xl">
         <ScrollStagger stagger={0.1} threshold={0.15}>
           <div className="flex flex-col items-center gap-10 md:flex-row md:items-start md:justify-between md:gap-16">

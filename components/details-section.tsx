@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import Image from "next/image"
 import { useMotionValue } from "framer-motion"
 import { Shade3D } from "@/components/three/shade-3d"
 import { Hotspot } from "@/components/patterns/hotspots"
@@ -56,8 +57,25 @@ export function DetailsSection() {
   // lerp while the user is dragging the camera and resumes on release.
   const progress = useMotionValue(0.5)
 
+  // Phones get a static product photo instead of the live WebGL canvas — the
+  // always-on render loop is a real battery + load-weight cost on mobile, and the
+  // drag-to-inspect affordance doesn't apply on touch (Shade3D already disables it).
+  // Defaults to `false` so SSR and the first paint render the static image; desktop
+  // upgrades to 3D after mount. No WebGL is ever instantiated on phones.
+  const [is3D, setIs3D] = useState(false)
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)")
+    const apply = () => setIs3D(mql.matches)
+    apply()
+    mql.addEventListener("change", apply)
+    return () => mql.removeEventListener("change", apply)
+  }, [])
+
   useEffect(() => {
     if (typeof window === "undefined") return
+    // Only the 3D model reads `progress`; skip the idle-orbit rAF entirely on the
+    // static-image (mobile) path.
+    if (!is3D) return
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     if (reduce) {
       progress.set(0.5)
@@ -73,7 +91,7 @@ export function DetailsSection() {
     }
     rafId = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(rafId)
-  }, [progress])
+  }, [progress, is3D])
 
   return (
     <section
@@ -111,25 +129,40 @@ export function DetailsSection() {
                   300×150 default until a resize fired — the model rendered into a
                   tiny letterbox and looked small/off-center. */}
               <div className="absolute inset-0">
-                <Shade3D
-                  progress={progress}
-                  fallbackSrc="/shade-hero.jpg"
-                  fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-                >
-                  {/* Feature callouts anchored to the model in its normalized,
-                      centered space (≈ ±0.55 half-extent). occlude fades each one
-                      out as the geometry rotates in front of it. Positions are a
-                      first pass — fine-tune against the live model. */}
-                  <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
-                  <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
-                  <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
-                  <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
-                </Shade3D>
+                {is3D ? (
+                  <Shade3D
+                    progress={progress}
+                    fallbackSrc="/shade-hero.jpg"
+                    fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+                  >
+                    {/* Feature callouts anchored to the model in its normalized,
+                        centered space (≈ ±0.55 half-extent). occlude fades each one
+                        out as the geometry rotates in front of it. Positions are a
+                        first pass — fine-tune against the live model. */}
+                    <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
+                    <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
+                    <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
+                    <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
+                  </Shade3D>
+                ) : (
+                  // Mobile: static product photo — no WebGL. object-contain keeps the
+                  // full frame visible over the warm wash, matching the 3D fallback.
+                  <Image
+                    src="/shade-hero.jpg"
+                    alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+                    fill
+                    sizes="(min-width: 768px) 32rem, 100vw"
+                    quality={88}
+                    className="object-contain"
+                  />
+                )}
               </div>
             </div>
-            <p className="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.20em] text-muted-foreground">
-              Drag to rotate
-            </p>
+            {is3D && (
+              <p className="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.20em] text-muted-foreground">
+                Drag to rotate
+              </p>
+            )}
           </div>
 
           {/* RIGHT — story copy. Title fades in soft; the 4 feature blocks

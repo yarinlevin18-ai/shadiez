@@ -7,6 +7,7 @@ import { CollectionsGrid } from "@/components/collections-grid";
 import { DetailsSection } from "@/components/details-section";
 import { FinalCTA } from "@/components/final-cta";
 import { Footer } from "@/components/footer";
+import { MobileCtaBar } from "@/components/mobile-cta-bar";
 import { SectionReveal } from "@/components/patterns/section-reveal";
 
 export default function Home() {
@@ -35,6 +36,8 @@ export default function Home() {
       <SectionReveal>
         <Footer />
       </SectionReveal>
+      {/* Persistent bottom CTA on phones only — slides in past the hero. */}
+      <MobileCtaBar />
     </main>
   );
 }

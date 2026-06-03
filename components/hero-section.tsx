@@ -179,7 +179,7 @@ export function HeroSection() {
     <motion.section
       ref={heroRef}
       style={{ opacity: heroFade }}
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-12"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-20 pb-12 sm:pt-24"
     >
       {/* Preload all colorway images so the wipe shows the next one with no
           network delay. */}
@@ -240,11 +240,11 @@ export function HeroSection() {
       >
       {/* ── PRODUCT IMAGE (parallax + float) ────────────────────────────── */}
       <motion.div
-        className="relative z-10 mb-12 w-full max-w-2xl lg:max-w-3xl"
+        className="relative z-10 mb-8 w-full max-w-2xl sm:mb-12 lg:max-w-3xl"
         style={{ y: productY }}
       >
         <div
-          className="relative aspect-[43/24] w-full overflow-hidden rounded-md bg-cream/60 shadow-[0_40px_80px_-30px_rgba(20,15,10,0.55)] ring-1 ring-background/40"
+          className="relative aspect-square w-full overflow-hidden rounded-md bg-cream/60 shadow-[0_40px_80px_-30px_rgba(20,15,10,0.55)] ring-1 ring-background/40 sm:aspect-[43/24]"
         >
           {/* Settled base layer. */}
           <div className="absolute inset-0">
