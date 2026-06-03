@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useMotionValue } from "framer-motion"
 import { Shade3D } from "@/components/three/shade-3d"
 import { Hotspot } from "@/components/patterns/hotspots"
 import { HeroReveal, HeroRevealItem } from "@/components/patterns/hero-reveal"
@@ -11,9 +10,15 @@ import {
   ScrollStagger,
   ScrollStaggerItem,
 } from "@/components/patterns/scroll-stagger"
+import {
+  StickySection,
+  StickyVisual,
+  StickyStep,
+  useStickyProgress,
+} from "@/components/patterns/sticky-section"
 
-// Four story-driven build details. Each lives as plain text on the right; the 3D
-// model on the left is the visual anchor (drag to inspect).
+// Four story-driven build details. On desktop they become the scroll-scrubbed steps
+// of a pinned sticky-section; on mobile they stack as a plain list.
 const features = [
   {
     label: "Notched recline",
@@ -46,53 +51,151 @@ const dimensions = [
   { label: "Recline", value: "5 notched angles" },
 ]
 
-// Auto-orbit period — full back-and-forth in seconds. Long enough to feel like
-// natural drift, not a turntable.
-const ORBIT_PERIOD_S = 24
+// The warm wash + sunlight bloom that sit behind the product, shared by both the
+// pinned 3D visual and the static mobile image.
+function VisualBackdrop() {
+  return (
+    <>
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, #FAF7F1 0%, #F5EEDC 60%, #ECDFC4 100%)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 55% 45% at 50% 38%, rgba(255, 226, 175, 0.20) 0%, rgba(255, 226, 175, 0) 70%)",
+        }}
+        aria-hidden
+      />
+    </>
+  )
+}
+
+// Pinned 3D visual whose rotation is driven by the section's scroll progress — as you
+// scroll through the four steps, the model turns through its photogenic arc. Lives
+// inside <StickyVisual> so it can read useStickyProgress().
+function StickyModel() {
+  const { progress } = useStickyProgress()
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="relative aspect-square w-full max-w-[34rem] overflow-hidden rounded-md">
+        <VisualBackdrop />
+        <div className="absolute inset-0">
+          <Shade3D
+            progress={progress}
+            fallbackSrc="/shade-hero.jpg"
+            fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+          >
+            <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
+            <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
+            <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
+            <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
+          </Shade3D>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Dimensions() {
+  return (
+    <div className="border-t border-border/40 pt-6">
+      <h3 className="mb-5 font-sans text-xs uppercase tracking-[0.22em] text-muted-foreground">
+        Dimensions
+      </h3>
+      <dl className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+        {dimensions.map((d) => (
+          <div
+            key={d.label}
+            className="flex items-baseline justify-between gap-4 border-b border-border/30 py-2.5"
+          >
+            <dt className="font-serif text-base font-light tracking-wide text-ink">
+              {d.label}
+            </dt>
+            <dd className="font-sans text-sm tabular-nums text-muted-foreground">
+              {d.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
 
 export function DetailsSection() {
-  // 0..1 progress drives the model's Y-rotation inside Shade3D (mapped to a ~54°
-  // arc on top of the base 25° pose). A gentle sine oscillation makes the model
-  // breathe back-and-forth across that arc when idle; Shade3D auto-pauses this
-  // lerp while the user is dragging the camera and resumes on release.
-  const progress = useMotionValue(0.5)
-
-  // Phones get a static product photo instead of the live WebGL canvas — the
-  // always-on render loop is a real battery + load-weight cost on mobile, and the
-  // drag-to-inspect affordance doesn't apply on touch (Shade3D already disables it).
-  // Defaults to `false` so SSR and the first paint render the static image; desktop
-  // upgrades to 3D after mount. No WebGL is ever instantiated on phones.
-  const [is3D, setIs3D] = useState(false)
+  // Desktop (non-reduced-motion) gets the pinned, scroll-scrubbed sticky-section with
+  // the live 3D model. Mobile and reduced-motion fall back to a plain stacked layout —
+  // pinning is a poor fit for small screens, and a 4-screen pin shouldn't be forced on
+  // someone who asked for less motion. Defaults to the stacked layout for SSR/first
+  // paint, then upgrades to sticky on desktop after mount (no WebGL on the fallback).
+  const [useSticky, setUseSticky] = useState(false)
   useEffect(() => {
-    const mql = window.matchMedia("(min-width: 768px)")
-    const apply = () => setIs3D(mql.matches)
+    const mqlD = window.matchMedia("(min-width: 768px)")
+    const mqlR = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const apply = () => setUseSticky(mqlD.matches && !mqlR.matches)
     apply()
-    mql.addEventListener("change", apply)
-    return () => mql.removeEventListener("change", apply)
+    mqlD.addEventListener("change", apply)
+    mqlR.addEventListener("change", apply)
+    return () => {
+      mqlD.removeEventListener("change", apply)
+      mqlR.removeEventListener("change", apply)
+    }
   }, [])
 
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    // Only the 3D model reads `progress`; skip the idle-orbit rAF entirely on the
-    // static-image (mobile) path.
-    if (!is3D) return
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (reduce) {
-      progress.set(0.5)
-      return
-    }
-    let rafId = 0
-    const start = performance.now()
-    const tick = (now: number) => {
-      const t = (now - start) / 1000
-      // 0.5 + 0.5*sin(...) maps to 0..1 with sine's soft accelerate/decel.
-      progress.set(0.5 + 0.5 * Math.sin((t * Math.PI * 2) / ORBIT_PERIOD_S))
-      rafId = requestAnimationFrame(tick)
-    }
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [progress, is3D])
+  if (useSticky) {
+    return (
+      <section id="details" className="scroll-mt-24 bg-background">
+        {/* Intro — scrolls in normally, then the steps below pin. */}
+        <div className="px-6 pt-24 pb-10 lg:pt-32">
+          <div className="mx-auto max-w-6xl text-center">
+            <h2 className="font-serif text-3xl font-light tracking-wide text-ink md:text-4xl lg:text-5xl text-balance">
+              <TitleReveal>In the details</TitleReveal>
+            </h2>
+            <p className="mx-auto mt-3 max-w-sm font-sans text-sm text-muted-foreground md:text-base">
+              A closer look at what&rsquo;s holding it together — scroll to explore.
+            </p>
+          </div>
+        </div>
 
+        {/* Pinned 3D + scroll-scrubbed steps (studio sticky-section). */}
+        <div className="mx-auto max-w-6xl px-6">
+          <StickySection textSide="right" stepHeight={1} fadeOverlap={0.3}>
+            <StickyVisual>
+              <StickyModel />
+            </StickyVisual>
+            {features.map((feature, i) => (
+              <StickyStep key={feature.label} index={i}>
+                <span className="mb-4 font-sans text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                  {String(i + 1).padStart(2, "0")} /{" "}
+                  {String(features.length).padStart(2, "0")}
+                </span>
+                <h3 className="font-serif text-3xl font-light tracking-wide text-ink md:text-4xl text-balance">
+                  {feature.label}
+                </h3>
+                <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-muted-foreground">
+                  {feature.description}
+                </p>
+              </StickyStep>
+            ))}
+          </StickySection>
+        </div>
+
+        {/* Dimensions — back in normal flow once the pin releases. */}
+        <div className="px-6 pb-24 lg:pb-32">
+          <div className="mx-auto max-w-2xl">
+            <Dimensions />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Mobile / reduced-motion: stacked, non-pinned. Static product photo, no WebGL.
   return (
     <section
       id="details"
@@ -100,73 +203,22 @@ export function DetailsSection() {
     >
       <div className="mx-auto max-w-6xl">
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16 lg:gap-20">
-          {/* LEFT — contained 3D canvas. Square aspect, sized to its column. The
-              warm wash + sunlight glow stay inside the canvas frame instead of
-              flooding the whole section. */}
           <div className="relative">
             <div className="relative aspect-square w-full overflow-hidden rounded-md">
-              {/* Warm wash backdrop — top matches page bg, bottom hints at sand. */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, #FAF7F1 0%, #F5EEDC 60%, #ECDFC4 100%)",
-                }}
-                aria-hidden
-              />
-              {/* Soft sunlight bloom above the model. */}
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(ellipse 55% 45% at 50% 38%, rgba(255, 226, 175, 0.20) 0%, rgba(255, 226, 175, 0) 70%)",
-                }}
-                aria-hidden
-              />
-              {/* absolute inset-0 gives the r3f <Canvas> an explicitly-sized box
-                  to measure at mount. Relying on the aspect-square parent's
-                  aspect-ratio sizing instead left the canvas stuck at THREE's
-                  300×150 default until a resize fired — the model rendered into a
-                  tiny letterbox and looked small/off-center. */}
+              <VisualBackdrop />
               <div className="absolute inset-0">
-                {is3D ? (
-                  <Shade3D
-                    progress={progress}
-                    fallbackSrc="/shade-hero.jpg"
-                    fallbackAlt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-                  >
-                    {/* Feature callouts anchored to the model in its normalized,
-                        centered space (≈ ±0.55 half-extent). occlude fades each one
-                        out as the geometry rotates in front of it. Positions are a
-                        first pass — fine-tune against the live model. */}
-                    <Hotspot position={[0, 0.22, 0.16]} label="Cotton canvas" />
-                    <Hotspot position={[0.42, 0.02, 0.04]} label="Notched recline" />
-                    <Hotspot position={[-0.34, -0.24, 0.06]} label="Walnut frame" />
-                    <Hotspot position={[0.24, -0.22, 0.12]} label="Brass hardware" />
-                  </Shade3D>
-                ) : (
-                  // Mobile: static product photo — no WebGL. object-contain keeps the
-                  // full frame visible over the warm wash, matching the 3D fallback.
-                  <Image
-                    src="/shade-hero.jpg"
-                    alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
-                    fill
-                    sizes="(min-width: 768px) 32rem, 100vw"
-                    quality={88}
-                    className="object-contain"
-                  />
-                )}
+                <Image
+                  src="/shade-hero.jpg"
+                  alt="SHADIEZ wooden sun-shade — walnut frame and cream canvas"
+                  fill
+                  sizes="(min-width: 768px) 32rem, 100vw"
+                  quality={88}
+                  className="object-contain"
+                />
               </div>
             </div>
-            {is3D && (
-              <p className="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.20em] text-muted-foreground">
-                Drag to rotate
-              </p>
-            )}
           </div>
 
-          {/* RIGHT — story copy. Title fades in soft; the 4 feature blocks
-              stagger in as the section enters view. */}
           <div className="flex flex-col">
             <h2 className="mb-3 font-serif text-3xl font-light tracking-wide text-ink md:text-4xl lg:text-5xl text-balance">
               <TitleReveal>In the details</TitleReveal>
@@ -179,7 +231,7 @@ export function DetailsSection() {
               </HeroRevealItem>
             </HeroReveal>
 
-            <ScrollStagger stagger={0.10}>
+            <ScrollStagger stagger={0.1}>
               <div className="space-y-7 md:space-y-8">
                 {features.map((feature) => (
                   <ScrollStaggerItem key={feature.label}>
@@ -196,27 +248,8 @@ export function DetailsSection() {
               </div>
             </ScrollStagger>
 
-            {/* Dimensions — quick spec read. ⚠️ Values are placeholders; edit the
-                `dimensions` array up top with the real measurements. */}
-            <div className="mt-10 border-t border-border/40 pt-6 md:mt-12">
-              <h3 className="mb-5 font-sans text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                Dimensions
-              </h3>
-              <dl className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
-                {dimensions.map((d) => (
-                  <div
-                    key={d.label}
-                    className="flex items-baseline justify-between gap-4 border-b border-border/30 py-2.5"
-                  >
-                    <dt className="font-serif text-base font-light tracking-wide text-ink">
-                      {d.label}
-                    </dt>
-                    <dd className="font-sans text-sm tabular-nums text-muted-foreground">
-                      {d.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+            <div className="mt-10 md:mt-12">
+              <Dimensions />
             </div>
           </div>
         </div>

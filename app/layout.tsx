@@ -3,7 +3,7 @@ import { Fraunces, Inter, Heebo, Frank_Ruhl_Libre } from "next/font/google";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LeadDialogProvider } from "@/components/lead-dialog";
 import { CookieNotice } from "@/components/cookie-notice";
-import { Preloader } from "@/components/preloader";
+import { HeroIntro } from "@/components/hero-intro";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,8 +18,6 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
-// Hebrew faces for the legal pages (RTL). Heebo mirrors Inter's clean sans;
-// Frank Ruhl Libre is a Hebrew serif that echoes Fraunces for headings.
 const heebo = Heebo({
   variable: "--font-heebo",
   subsets: ["hebrew", "latin"],
@@ -50,7 +48,7 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} ${heebo.variable} ${frankRuhl.variable} antialiased`}
     >
       <body>
-        <Preloader />
+        <HeroIntro />
         <SmoothScroll>
           <LeadDialogProvider>{children}</LeadDialogProvider>
         </SmoothScroll>
