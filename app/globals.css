@@ -10,10 +10,18 @@
   --font-hebrew-serif: var(--font-frank-ruhl);
 
   --color-wood: var(--wood);
+  --color-wood-deep: var(--wood-deep);
   --color-cream: var(--cream);
+  --color-canvas: var(--canvas);
   --color-sand: var(--sand);
   --color-ink: var(--ink);
+  --color-ink-60: var(--ink-60);
+  --color-sky: var(--sky);
+  --color-amber: var(--amber);
+  --color-accent-blue: var(--accent-blue);
   --color-navy: var(--navy);
+  --color-coral: var(--coral);
+  --color-butter: var(--butter);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -42,33 +50,41 @@
 }
 
 :root {
-  /* SHADIEZ brand tokens (DRAFT per CLAUDE.md — confirm against real assets) */
-  --wood:   #8A5A38;
-  --cream:  #F3ECE0;
-  --sand:   #E4D9C6;
-  --ink:    #2B2723;
-  --navy:   #1F3A5F;
+  /* SHADIEZ brand tokens — "Bright Coast" (sampled from real product + locked in Figma) */
+  --wood:       #8E5330; /* true product walnut */
+  --wood-deep:  #623722; /* shadow wood */
+  --cream:      #FBF7F0; /* warm paper / page bg */
+  --canvas:     #F8F6EF; /* real canvas off-white */
+  --sand:       #ECE3D4; /* secondary surface */
+  --ink:        #23201C; /* warm near-black text */
+  --ink-60:     #6B6256; /* muted body text */
+  --sky:        #C3D6DC; /* light dusty-blue accent */
+  --amber:      #E8A04A; /* primary accent / CTA */
+  --accent-blue:#768D9F; /* deep dusty-blue colorway */
+  --navy:       #1F3A5F; /* deep navy colorway */
+  --coral:      #D38773; /* coral colorway */
+  --butter:     #EBDAB0; /* butter colorway */
 
-  /* shadcn semantic tokens — warm/light, mapped to brand */
-  --background: #FAF7F1;
-  --foreground: #2B2723;
-  --card: #FAF7F1;
-  --card-foreground: #2B2723;
-  --popover: #FAF7F1;
-  --popover-foreground: #2B2723;
-  --primary: #2B2723;
-  --primary-foreground: #F3ECE0;
-  --secondary: #E4D9C6;
-  --secondary-foreground: #2B2723;
-  --muted: #E4D9C6;
-  --muted-foreground: #8A8170;
-  --accent: #1F3A5F;
-  --accent-foreground: #F3ECE0;
+  /* shadcn semantic tokens — Bright Coast, mapped to brand */
+  --background: #FBF7F0;
+  --foreground: #23201C;
+  --card: #FBF7F0;
+  --card-foreground: #23201C;
+  --popover: #FBF7F0;
+  --popover-foreground: #23201C;
+  --primary: #23201C;
+  --primary-foreground: #FBF7F0;
+  --secondary: #ECE3D4;
+  --secondary-foreground: #23201C;
+  --muted: #ECE3D4;
+  --muted-foreground: #6B6256;
+  --accent: #E8A04A;
+  --accent-foreground: #23201C;
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: #F3ECE0;
-  --border: rgba(43, 39, 35, 0.15);
-  --input: rgba(43, 39, 35, 0.15);
-  --ring: #1F3A5F;
+  --border: rgba(35, 32, 28, 0.14);
+  --input: rgba(35, 32, 28, 0.14);
+  --ring: #E8A04A;
 
   --radius: 0.25rem;
 }

@@ -1,10 +1,14 @@
 import { Header } from "@/components/header";
-import { HeroSection } from "@/components/hero-section";
+import { HeroVideo } from "@/components/hero-video";
 import { ProductShowcase } from "@/components/product-showcase";
 import { LifestyleBand } from "@/components/lifestyle-band";
 import { TaglineMarquee } from "@/components/tagline-marquee";
 import { CollectionsGrid } from "@/components/collections-grid";
-import { DetailsSection } from "@/components/details-section";
+// NOTE: DetailsSection (old sticky-scroll 3D pattern) currently throws a framer
+// "Offsets must be monotonically non-decreasing" runtime error that crashes the
+// whole page. Temporarily disabled — it's being replaced by the new Figma Details
+// design (photo card + hotspots) in an upcoming section pass.
+// import { DetailsSection } from "@/components/details-section";
 import { FinalCTA } from "@/components/final-cta";
 import { Footer } from "@/components/footer";
 import { MobileCtaBar } from "@/components/mobile-cta-bar";
@@ -15,8 +19,8 @@ export default function Home() {
   return (
     <main className="relative">
       <Header />
-      {/* Hero: drives its own scroll-linked entrance + exit (heroFade / heroExitY). */}
-      <HeroSection />
+      {/* Hero: AE-rendered loader→hero clip with live headline/CTA + nav on top. */}
+      <HeroVideo />
 
       {/* Each section now settles in on arrival and recedes on exit as it passes the
           viewport. Sections that run their own internal parallax use opacity-only
@@ -40,9 +44,9 @@ export default function Home() {
         <CollectionsGrid />
       </SectionTransition>
 
-      {/* Details pins + scroll-scrubs its own steps (studio sticky-section) — it must
-          NOT sit under a transformed/will-change wrapper, or position:sticky breaks. */}
-      <DetailsSection />
+      {/* Details — temporarily disabled (see import note). Will be rebuilt to match
+          the new Figma design: photo card + tappable hotspots, no sticky 3D. */}
+      {/* <DetailsSection /> */}
 
       <SectionTransition lift={0} scaleFrom={1}>
         <FinalCTA />

@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, Heebo, Frank_Ruhl_Libre } from "next/font/google";
+import { Schibsted_Grotesk, Hanken_Grotesk, Heebo, Frank_Ruhl_Libre } from "next/font/google";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LeadDialogProvider } from "@/components/lead-dialog";
 import { CookieNotice } from "@/components/cookie-notice";
-import { HeroIntro } from "@/components/hero-intro";
 import "./globals.css";
 
-const inter = Inter({
+// Body / UI — Hanken Grotesk (kept on the --font-inter variable so theme mapping stays wired)
+const inter = Hanken_Grotesk({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
 
-const fraunces = Fraunces({
+// Display / headings — Schibsted Grotesk (kept on the --font-fraunces variable)
+const fraunces = Schibsted_Grotesk({
   variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
@@ -48,7 +49,6 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} ${heebo.variable} ${frankRuhl.variable} antialiased`}
     >
       <body>
-        <HeroIntro />
         <SmoothScroll>
           <LeadDialogProvider>{children}</LeadDialogProvider>
         </SmoothScroll>

@@ -4,6 +4,10 @@ Premium Israeli beach **sun-shade** brand. This project is an **English / LTR
 e-commerce landing page** whose job is to drive purchases, with the shade as the
 hero product. Client work — quality bar is high.
 
+> **DESIGN WORKFLOW — read `DESIGN_WORKFLOW.md` whenever we start designing.**
+> It's our standard process (modern-not-traditional mindset, inspiration
+> sources, the 10-step motion roadmap). Apply it to all UI/animation work here.
+
 > This is a **separate project**. NOT TEEPO, NOT motion-lab.
 > Location: `D:\Yarin\Projects\shadiez`
 
@@ -42,15 +46,23 @@ do NOT bring dark tokens here.
 - Sandy beige neutrals
 - Muted dusty-blue as the single accent (from the logo)
 
-**Color tokens below are DRAFT — confirm against the real logo + assets in**
-`Downloads\shadiez-assets\` **before locking. Real wood is darker than first assumed.**
+**Color tokens are LOCKED — "Bright Coast" system (sampled from real product photos,
+chosen in Figma, and live in `app/globals.css`). Fonts: Schibsted Grotesk (display)
++ Hanken Grotesk (body/UI).**
 ```
---wood:    #8A5A38   (draft, warm reddish walnut — matches real frames)
---cream:   #F3ECE0   (draft, hero canvas)
---sand:    #E4D9C6   (draft, linen/oatmeal — catalog bg)
---ink:     #2B2723   (draft, warm near-black text)
---accent:  #1F3A5F   (draft, deep navy — nautical, from H19/H20; or let the
-                       chosen colorway provide color pops)
+--wood:        #8E5330   (true product walnut, sampled from real frames)
+--wood-deep:   #623722   (shadow wood)
+--cream:       #FBF7F0   (warm paper / page bg)
+--canvas:      #F8F6EF   (real canvas off-white)
+--sand:        #ECE3D4   (secondary surface / catalog bg)
+--ink:         #23201C   (warm near-black text)
+--ink-60:      #6B6256   (muted body text)
+--sky:         #C3D6DC   (light dusty-blue accent)
+--amber:       #E8A04A   (primary accent / CTA)
+--accent-blue: #768D9F   (deep dusty-blue colorway)
+--navy:        #1F3A5F   (deep navy colorway)
+--coral:       #D38773   (coral colorway)
+--butter:      #EBDAB0   (butter colorway)
 ```
 
 ## Stack
