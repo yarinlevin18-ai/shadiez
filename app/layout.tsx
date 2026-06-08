@@ -3,9 +3,9 @@ import { Schibsted_Grotesk, Hanken_Grotesk, Heebo, Frank_Ruhl_Libre } from "next
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LeadDialogProvider } from "@/components/lead-dialog";
 import { CookieNotice } from "@/components/cookie-notice";
-// Sunrise code-loader kept in the codebase (components/preloader.tsx) but unmounted
-// so it doesn't stack with the Lottie intro below. Re-add as a pre-roll if wanted.
-import { LottieIntro } from "@/components/lottie-intro";
+// Intro/loader components are preserved in the codebase but unmounted: the hero now
+// plays the beach scene itself (components/hero.tsx), so a separate full-screen intro
+// would play it twice. Re-add <LottieIntro /> or <Preloader /> here if wanted.
 import "./globals.css";
 
 // Body / UI — Hanken Grotesk (kept on the --font-inter variable so theme mapping stays wired)
@@ -52,7 +52,6 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} ${heebo.variable} ${frankRuhl.variable} antialiased`}
     >
       <body>
-        <LottieIntro />
         <SmoothScroll>
           <LeadDialogProvider>{children}</LeadDialogProvider>
         </SmoothScroll>
