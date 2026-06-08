@@ -66,6 +66,25 @@ export function LottieAnimation({
         return r.json()
       })
       .then((json) => {
+        // Image assets (`u` + `p`) are otherwise resolved against the document URL,
+        // not the JSON's folder — rewrite relative `u` to sit next to the .json so
+        // `/lottie/images/...` resolves correctly. Skips absolute/remote/data URIs.
+        const base = src.slice(0, src.lastIndexOf("/") + 1)
+        if (Array.isArray(json?.assets)) {
+          for (const a of json.assets) {
+            if (
+              a &&
+              typeof a.p === "string" &&
+              typeof a.u === "string" &&
+              a.u &&
+              !a.u.startsWith("/") &&
+              !/^https?:/.test(a.u) &&
+              !a.p.startsWith("data:")
+            ) {
+              a.u = base + a.u
+            }
+          }
+        }
         if (!cancelled) setAnimationData(json)
       })
       .catch((err) => console.error(err))
