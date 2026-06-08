@@ -15,15 +15,8 @@
  * soft, and drift with the cursor. prefers-reduced-motion → everything static.
  */
 
-import { useEffect, useRef, useState } from "react"
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-  type Variants,
-} from "framer-motion"
+import { useEffect, useState } from "react"
+import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { Wordmark } from "@/components/logo"
 
 const BG = "/lottie/images/img_1.jpg"
@@ -37,6 +30,8 @@ const SH_FROM_ROT = -15
 
 const SERIF = "var(--font-frank-ruhl)"
 const EASE_OUT = [0.22, 1, 0.36, 1] as const
+// Soft ease-in-out for the headline reveal (gentle in, gentle settle).
+const EASE_IN = [0.42, 0, 0.4, 1] as const
 // Dark warm gradients — read crisply on the bright golden beach, magazine-rich.
 const GRAD_LEFT = "linear-gradient(165deg, #2B1B0D 0%, #7A4424 52%, #E0922F 100%)"
 const GRAD_RIGHT = "linear-gradient(165deg, #1C1208 0%, #623722 50%, #D98A33 100%)"
@@ -63,10 +58,10 @@ const groupV: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.13, delayChildren: 0.05 } },
 }
-// Soft reveal: opacity + rise only (no filter — would break background-clip:text).
+// Soft ease-in reveal: fade + gentle rise (no filter — would break background-clip:text).
 const lineV: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 1.05, ease: EASE_OUT } },
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: EASE_IN } },
 }
 
 function gradientText(grad: string): React.CSSProperties {
@@ -83,41 +78,17 @@ function gradientText(grad: string): React.CSSProperties {
 
 export function Hero() {
   const reduce = useReducedMotion()
-  const sectionRef = useRef<HTMLElement | null>(null)
   const [started, setStarted] = useState(false)
-
-  const px = useMotionValue(0)
-  const py = useMotionValue(0)
-  const sx = useSpring(px, { stiffness: 55, damping: 18, mass: 0.6 })
-  const sy = useSpring(py, { stiffness: 55, damping: 18, mass: 0.6 })
-  const leftX = useTransform(sx, (v) => v * -26)
-  const leftY = useTransform(sy, (v) => v * -14)
-  const rightX = useTransform(sx, (v) => v * 26)
-  const rightY = useTransform(sy, (v) => v * 14)
 
   useEffect(() => {
     if (reduce) setStarted(true)
   }, [reduce])
 
-  function onMouseMove(e: React.MouseEvent) {
-    if (reduce) return
-    const el = sectionRef.current
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    px.set((e.clientX - r.left) / r.width - 0.5)
-    py.set((e.clientY - r.top) / r.height - 0.5)
-  }
-
   const titleClass =
     "text-[15vw] leading-[0.84] tracking-[-0.02em] sm:text-[12vw] md:text-[10vw] lg:text-[8.5vw]"
 
   return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      onMouseMove={onMouseMove}
-      className="relative min-h-[100svh] overflow-hidden bg-cream"
-    >
+    <section id="hero" className="relative min-h-[100svh] overflow-hidden bg-cream">
       {/* z-0 — background cover-stage */}
       <div className="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2" style={STAGE_STYLE}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -127,7 +98,7 @@ export function Hero() {
       {/* z-10 — titles, viewport-anchored so they never crop; tuck under the shade */}
       <div className="pointer-events-none absolute inset-0 z-10">
         <motion.div
-          style={reduce ? { filter: HALO } : { x: leftX, y: leftY, filter: HALO }}
+          style={{ filter: HALO }}
           variants={groupV}
           initial="hidden"
           animate={started ? "show" : "hidden"}
@@ -144,7 +115,7 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          style={reduce ? { filter: HALO } : { x: rightX, y: rightY, filter: HALO }}
+          style={{ filter: HALO }}
           variants={groupV}
           initial="hidden"
           animate={started ? "show" : "hidden"}
