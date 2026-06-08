@@ -3,7 +3,6 @@ import { Schibsted_Grotesk, Hanken_Grotesk, Heebo, Frank_Ruhl_Libre } from "next
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LeadDialogProvider } from "@/components/lead-dialog";
 import { CookieNotice } from "@/components/cookie-notice";
-import { Preloader } from "@/components/preloader";
 import "./globals.css";
 
 // Body / UI — Hanken Grotesk (kept on the --font-inter variable so theme mapping stays wired)
@@ -50,7 +49,6 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} ${heebo.variable} ${frankRuhl.variable} antialiased`}
     >
       <body>
-        <Preloader />
         <SmoothScroll>
           <LeadDialogProvider>{children}</LeadDialogProvider>
         </SmoothScroll>
