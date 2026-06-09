@@ -22,12 +22,31 @@
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
 /* ── buttons ── */
+/* transform is owned by Framer Motion (whileHover / whileTap) on these buttons,
+   so CSS only transitions colour + shadow to avoid fighting the spring. */
 .v2root .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);font-weight:600;font-size:15px;
   padding:13px 24px;border-radius:100px;border:1.5px solid transparent;cursor:pointer;
-  transition:transform .25s var(--ease),box-shadow .25s,background .25s;white-space:nowrap}
+  transition:box-shadow .25s var(--ease),background .25s;white-space:nowrap}
 .v2root .btn.lg{padding:16px 32px;font-size:16px}
 .v2root .btn-amber{background:var(--sun);color:#3a2a12;box-shadow:0 10px 30px -10px rgba(244,178,61,.8)}
-.v2root .btn-amber:hover{transform:translateY(-2px);box-shadow:0 16px 40px -10px rgba(244,178,61,.95)}
+.v2root .btn-amber:hover{box-shadow:0 16px 40px -10px rgba(244,178,61,.95)}
+
+/* ── loading screen (slow sunrise + endlessly flowing waves) ── */
+.v2root .v2load{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;
+  background:var(--paper);overflow:hidden}
+.v2root .v2load-bloom{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 46% 40% at 50% 46%,rgba(244,178,61,.34),rgba(244,178,61,0) 70%)}
+.v2root .v2load-stage{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center}
+.v2root .v2load-scene{position:relative;width:172px;height:112px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.v2root .v2load-sun{position:absolute;left:calc(50% - 30px);top:14px;width:60px;height:60px;border-radius:50%;
+  background:radial-gradient(circle at 50% 38%,#FCD686,#F4B23D 62%,#E5922F 100%);box-shadow:0 0 38px 9px rgba(244,178,61,.5)}
+.v2root .v2load-mark{position:relative;z-index:2;width:172px;height:auto;color:var(--wood)}
+.v2root .v2load-word{margin-top:12px;font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:.22em;
+  color:var(--ink);display:flex;align-items:center}
+.v2root .v2load-dot{width:.34em;height:.34em;margin-left:.5em;transform:rotate(45deg);background:var(--sun);display:inline-block}
+.v2root .v2load-tag{margin-top:7px;font-size:11px;letter-spacing:.05em;font-style:italic;color:var(--ink-60)}
+.v2root .v2load-bar{margin-top:24px;width:150px;height:2px;background:rgba(35,32,28,.12);border-radius:2px;overflow:hidden}
+.v2root .v2load-fill{height:100%;background:var(--sun)}
 
 /* ── header ── */
 .v2root header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s var(--ease),box-shadow .4s,backdrop-filter .4s}

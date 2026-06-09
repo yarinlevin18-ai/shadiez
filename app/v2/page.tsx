@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import {
+  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
@@ -56,13 +57,154 @@ function Parallax({ className, amount = 60, children }: { className?: string; am
   return <motion.div ref={ref} className={className} style={{ y }}>{children}</motion.div>;
 }
 
-const Mark = () => (
-  <svg viewBox="0 0 40 40" fill="none" aria-hidden>
-    <path d="M4 14c5-6 11 6 16 0s11 6 16 0" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M4 22c5-6 11 6 16 0s11 6 16 0" stroke="#E8A04A" strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M4 30c5-6 11 6 16 0s11 6 16 0" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-  </svg>
-);
+/* ── Brand mark — three sea-lines that flow endlessly. Each path is five
+   wavelengths wide (x −16 → 64) and translates by exactly one wavelength (16
+   user units) on a linear loop, so the drift is seamless. Lines move at different
+   speeds and the middle one counter-flows, for an organic sea. Static under
+   reduced motion. ── */
+const wavePath = (y: number) =>
+  `M-16 ${y}c5 -5 11 5 16 0s11 5 16 0s11 5 16 0s11 5 16 0s11 5 16 0`;
+
+const WAVE_LINES = [
+  { y: 14, stroke: "currentColor", dur: 5.5, from: 0, to: -16 },
+  { y: 22, stroke: "var(--sun)", dur: 7, from: -16, to: 0 },
+  { y: 30, stroke: "currentColor", dur: 6, from: 0, to: -16 },
+];
+
+function WaveMark({ className }: { className?: string }) {
+  const reduce = useReducedMotion();
+  return (
+    <svg viewBox="0 0 40 40" fill="none" aria-hidden className={className}>
+      {WAVE_LINES.map((l, i) => (
+        <motion.path
+          key={i}
+          d={wavePath(l.y)}
+          stroke={l.stroke}
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          animate={reduce ? undefined : { x: [l.from, l.to] }}
+          transition={reduce ? undefined : { duration: l.dur, ease: "linear", repeat: Infinity }}
+        />
+      ))}
+    </svg>
+  );
+}
+
+/* ── Reactive button — springy hover lift + tactile press. Honors reduced motion.
+   (CSS owns the colour/shadow; motion owns the transform.) ── */
+function Btn({
+  className,
+  onClick,
+  children,
+}: {
+  className?: string;
+  onClick?: () => void;
+  children: ReactNode;
+}) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.button
+      type="button"
+      className={className}
+      onClick={onClick}
+      whileHover={reduce ? undefined : { y: -2, scale: 1.035 }}
+      whileTap={reduce ? undefined : { scale: 0.95, y: 0 }}
+      transition={{ type: "spring", stiffness: 420, damping: 24, mass: 0.6 }}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+/* ── Loading screen — a slow, deliberate "sunrise": a warm sun rises behind the
+   flowing wave mark, the wordmark settles, a progress line fills, then the whole
+   overlay lifts to reveal the page. Dismisses on window load but never before a
+   generous minimum (so the beat reads) and never after a safety cap. Static +
+   quick under reduced motion. ── */
+const LOAD_MIN_MS = 2200;
+const LOAD_MAX_MS = 6000;
+
+function V2Loader() {
+  const reduce = useReducedMotion();
+  const [show, setShow] = useState(true);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const start = performance.now();
+    let done = false;
+    const dismiss = () => {
+      if (done) return;
+      done = true;
+      setReady(true);
+      const wait = Math.max(0, LOAD_MIN_MS - (performance.now() - start));
+      window.setTimeout(() => setShow(false), wait);
+    };
+    if (document.readyState === "complete") dismiss();
+    else window.addEventListener("load", dismiss, { once: true });
+    const cap = window.setTimeout(dismiss, LOAD_MAX_MS);
+    return () => {
+      window.removeEventListener("load", dismiss);
+      window.clearTimeout(cap);
+    };
+  }, []);
+
+  // Lock scroll + pin to top while the overlay is up.
+  useEffect(() => {
+    if (!show) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [show]);
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          className="v2load"
+          role="status"
+          aria-label="Loading SHADIEZ"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, y: reduce ? 0 : -22 }}
+          transition={{ duration: reduce ? 0.3 : 1.0, ease: EASE }}
+        >
+          <div className="v2load-bloom" aria-hidden />
+          <div className="v2load-stage">
+            <div className="v2load-scene">
+              <motion.span
+                className="v2load-sun"
+                aria-hidden
+                initial={reduce ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 48, scale: 0.7 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={reduce ? { duration: 0 } : { duration: 2.0, ease: EASE, delay: 0.2 }}
+              />
+              <WaveMark className="v2load-mark" />
+            </div>
+            <motion.div
+              className="v2load-word"
+              initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.7, ease: "easeOut", delay: 1.2 }}
+            >
+              SHADIEZ<i className="v2load-dot" aria-hidden />
+            </motion.div>
+            <span className="v2load-tag">Something new under the sun</span>
+            <div className="v2load-bar">
+              <motion.div
+                className="v2load-fill"
+                initial={{ width: reduce ? "100%" : "0%" }}
+                animate={{ width: reduce ? "100%" : ready ? "100%" : "88%" }}
+                transition={reduce ? { duration: 0 } : { duration: ready ? 0.5 : 3.4, ease: "easeOut" }}
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 /* ── Glare → Shade: scroll crossfades a hot overlay into cool shade ── */
 function GlareShade() {
@@ -93,18 +235,19 @@ export default function V2() {
 
   return (
     <div className="v2root">
+      <V2Loader />
       <div className="v2-grain" />
 
       {/* HEADER */}
       <header className={scrolled ? "scrolled" : undefined}>
         <div className="wrap bar">
-          <a className="logo" href="#top" aria-label="SHADIEZ home"><Mark />SHADIEZ</a>
+          <a className="logo" href="#top" aria-label="SHADIEZ home"><WaveMark />SHADIEZ</a>
           <nav className="links">
             <a href="#object">Shade</a>
             <a href="#colors">Colors</a>
             <a href="#detail">Craft</a>
           </nav>
-          <button type="button" className="btn btn-amber" onClick={openDialog}>Shop</button>
+          <Btn className="btn btn-amber" onClick={openDialog}>Shop</Btn>
         </div>
       </header>
 
@@ -117,7 +260,7 @@ export default function V2() {
             <Reveal as="span" load delay={0.12}>Under The Sun</Reveal>
           </h1>
           <Reveal className="hero-foot" load delay={0.3}>
-            <button type="button" className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</button>
+            <Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn>
             <span className="hero-kicker">Your shade. Anywhere.</span>
           </Reveal>
         </div>
@@ -222,7 +365,7 @@ export default function V2() {
         <div className="close-media"><Parallax className="media-track" amount={50}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade at the water's edge" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
         <div className="close-inner wrap">
           <Reveal as="h2" className="display">Find your shade.</Reveal>
-          <Reveal delay={0.1}><button type="button" className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</button></Reveal>
+          <Reveal delay={0.1}><Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
         </div>
       </section>
 
@@ -230,7 +373,7 @@ export default function V2() {
       <footer>
         <div className="wrap foot-grid">
           <div>
-            <div className="logo"><Mark /> SHADIEZ</div>
+            <div className="logo"><WaveMark /> SHADIEZ</div>
             <p className="bl">Something new under the sun.</p>
           </div>
           <div><h5>Shop</h5><ul><li><a href="#colors">Colorways</a></li><li><a href="#object">The shade</a></li><li><a href="#kit">Totes</a></li></ul></div>
@@ -241,7 +384,7 @@ export default function V2() {
       </footer>
 
       {/* MOBILE STICKY CTA */}
-      <div className="mobile-cta"><button type="button" className="btn btn-amber" onClick={openDialog}>Shop the Shade — pick your color</button></div>
+      <div className="mobile-cta"><Btn className="btn btn-amber" onClick={openDialog}>Shop the Shade — pick your color</Btn></div>
     </div>
   );
 }
