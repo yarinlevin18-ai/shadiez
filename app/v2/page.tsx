@@ -128,12 +128,6 @@ function Parallax({
   );
 }
 
-const Star = ({ s = 24 }: { s?: number }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" width={s} height={s}>
-    <path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z" />
-  </svg>
-);
-
 const Mark = () => (
   <svg viewBox="0 0 40 40" fill="none">
     <path d="M4 14c5-6 11 6 16 0s11 6 16 0" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
@@ -188,7 +182,6 @@ export default function V2() {
             <a href="#shade">The Shade</a>
             <a href="#colors">Colors</a>
             <a href="#craft">Craft</a>
-            <a href="#reviews">Reviews</a>
           </nav>
           <div className="header-cta">
             <a className="btn btn-ghost" href="#colors">Pick your color</a>
@@ -214,13 +207,10 @@ export default function V2() {
         <div className="scroll-cue"><span>Scroll</span><span className="line" /></div>
       </section>
 
-      {/* PRESS */}
-      <div className="press">
-        <div className="wrap row">
-          <span className="lbl">As seen in <span className="ph-flag">placeholder</span></span>
-          <div className="names"><span>Vogue Living</span><span>Monocle</span><span>Condé Nast Traveler</span><span>Belle</span><span>Kinfolk</span></div>
-        </div>
-      </div>
+      {/* PRESS — removed: the "As seen in" publications were fabricated placeholders.
+          TODO(real-data): reinstate only with genuine, confirmed press/retail features
+          (real logo assets + permission to use them). Layout styles for `.press`
+          remain in v2.css so this can drop back in. */}
 
       {/* STATEMENT */}
       <section className="statement pad" id="shade">
@@ -324,29 +314,12 @@ export default function V2() {
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="reviews pad" id="reviews">
-        <div className="wrap">
-          <Reveal>
-            <div className="stars">{Array.from({ length: 5 }).map((_, i) => <Star key={i} />)}</div>
-            <p className="rating-line">4.9 out of 5 <span>· from 4,200+ beach days <span className="ph-flag">placeholder</span></span></p>
-          </Reveal>
-          <div className="quotes">
-            {[
-              { t: "Set it up in literally ten seconds and didn't move from under it all afternoon. It's the most beautiful thing on the beach.", n: "Maya R.", l: "Tel Aviv", a: "M" },
-              { t: "Finally a beach shade that doesn't look like camping gear. The walnut and canvas feel like real furniture.", n: "Daniel K.", l: "Herzliya", a: "D" },
-              { t: "Packs flat in the trunk, opens in a second, and the angle adjustment actually works. Bought a second one for my partner.", n: "Noa B.", l: "Caesarea", a: "N" },
-            ].map((q, i) => (
-              <Reveal className="quote" delay={i * 0.08} key={q.n}>
-                <div className="qs">{Array.from({ length: 5 }).map((_, j) => <Star key={j} s={16} />)}</div>
-                <p>&ldquo;{q.t}&rdquo;</p>
-                <div className="who"><span className="av">{q.a}</span><div><b>{q.n}</b><small>{q.l}</small></div></div>
-              </Reveal>
-            ))}
-          </div>
-          <p className="muted" style={{ marginTop: 26, fontSize: 13 }}><span className="ph-flag">placeholder</span> Reviews are sample copy — swap for real testimonials before launch.</p>
-        </div>
-      </section>
+      {/* REVIEWS — removed: the 4.9 / "4,200+ beach days" rating and the three
+          testimonials (Maya R. / Daniel K. / Noa B.) were all fabricated.
+          TODO(real-data): rebuild from a real source — an aggregate rating from the
+          review platform + verified customer quotes used with consent. Styles for
+          `.reviews` / `.stars` / `.rating-line` / `.quote` remain in v2.css.
+          NOTE: the "#reviews" nav + footer links were removed with this section. */}
 
       {/* FINAL CTA */}
       <section className="final" id="buy">
@@ -382,7 +355,7 @@ export default function V2() {
             </div>
             <div><h5>Shop</h5><ul><li><a href="#colors">Colorways</a></li><li><a href="#buy">The Shade</a></li><li><a href="#">Matching totes</a></li><li><a href="#">Gift cards</a></li></ul></div>
             <div><h5>Help</h5><ul><li><a href="#">Shipping</a></li><li><a href="#">Returns</a></li><li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li></ul></div>
-            <div><h5>Brand</h5><ul><li><a href="#shade">Our story</a></li><li><a href="#craft">Craft</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#">Journal</a></li></ul></div>
+            <div><h5>Brand</h5><ul><li><a href="#shade">Our story</a></li><li><a href="#craft">Craft</a></li><li><a href="#">Journal</a></li></ul></div>
           </div>
           <div className="foot-bot"><span>© 2026 SHADIEZ. All rights reserved.</span><span>Privacy · Terms · Accessibility</span></div>
         </div>

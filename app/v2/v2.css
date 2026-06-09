@@ -176,9 +176,6 @@
 .v2root footer ul a:hover{opacity:1;color:var(--amber)}
 .v2root .foot-bot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:48px;padding-top:22px;border-top:1px solid rgba(251,247,240,.12);font-size:13px;opacity:.6}
 
-.v2root .ph-flag{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);
-  border:1px solid var(--amber);border-radius:4px;padding:2px 7px;margin-left:10px;vertical-align:middle;opacity:.8}
-
 @media(max-width:900px){
   .v2root nav.links,.v2root .header-cta .btn-ghost{display:none}
   .v2root .statement .grid,.v2root .cw-grid,.v2root .life .grid{grid-template-columns:1fr}
