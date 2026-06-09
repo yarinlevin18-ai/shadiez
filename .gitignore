@@ -38,3 +38,6 @@ next-env.d.ts
 !.vscode/launch.json
 !.vscode/extensions.json
 .idea
+
+# Claude scheduler transient lock
+.claude/scheduled_tasks.lock
