@@ -382,16 +382,17 @@ export default function V2() {
             </Reveal>
           </div>
           <Reveal className="object-collage" delay={0.1}>
-            {/* Overlapping detail vignettes. The studio crops are warmed to melt
-                into the sand; the beach crop already sits on sand. */}
+            {/* Three real product details, all shot on sand — they blend straight
+                into the page's sand wash. Overlapping cluster on desktop, tidy
+                grid on mobile. */}
             <figure className="ocard ocard-a">
-              <Image src="/v2/studio.jpg" alt="The SHADIEZ frame — walnut and brass-pinned joints" fill sizes="(max-width:900px) 56vw, 380px" style={{ objectFit: "cover", objectPosition: "50% 60%" }} />
+              <Image src="/v2/2.png" alt="Brass pivot pin and notched recline detail" fill sizes="(max-width:900px) 92vw, 420px" style={{ objectFit: "cover" }} />
             </figure>
             <figure className="ocard ocard-b">
-              <Image src="/v2/detail.jpg" alt="The notched recline mechanism" fill sizes="(max-width:900px) 42vw, 280px" style={{ objectFit: "cover", objectPosition: "44% 74%" }} />
+              <Image src="/v2/17.png" alt="Brass-screwed frame corner, dusted with sand" fill sizes="(max-width:900px) 46vw, 260px" style={{ objectFit: "cover" }} />
             </figure>
-            <figure className="ocard ocard-c ocard-sand">
-              <Image src="/v2/beach-recline.jpg" alt="A SHADIEZ frame detail on the sand" fill sizes="(max-width:900px) 50vw, 320px" style={{ objectFit: "cover", objectPosition: "50% 66%" }} />
+            <figure className="ocard ocard-c">
+              <Image src="/v2/10.png" alt="The folding frame joint and canvas on the sand" fill sizes="(max-width:900px) 46vw, 300px" style={{ objectFit: "cover" }} />
             </figure>
           </Reveal>
         </div>
@@ -438,50 +439,32 @@ export default function V2() {
       {/* 5 · IN THE WILD */}
       <section className="wild">
         <div className="wild-band">
-          <Parallax className="media-track" amount={50}><Image src="/v2/beach-dusk.jpg" alt="SHADIEZ on the beach at golden hour" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax>
+          <Parallax className="media-track wild-graded" amount={50}><Image src="/v2/8.png" alt="Two SHADIEZ shades on the beach at golden hour" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax>
           <Reveal as="p" className="wild-line display">Long afternoons,<br />claimed.</Reveal>
         </div>
       </section>
 
-      {/* ☀ SUN FIELD B — deep-golden, type-led counterpoint */}
-      <SunField variant="gold" motes={0.85} className="sunfield-quote">
-        <WaveLine className="sf-wave sf-wave-top" />
+      {/* ☀ SUN FIELD B — deep-golden, type-led counterpoint, now hosting the
+          matching-tote lineup: headline → wave-under-title → the colorway photos,
+          all riding above the drifting sun-mote + sun-ray animation. */}
+      <SunField variant="gold" motes={0.85} className="sunfield-quote sunfield-kit">
+        <span id="kit" className="sf-anchor" aria-hidden />
         <Reveal as="h2" className="sf-big display">Made for<br />the long way home.</Reveal>
+        <WaveLine className="sf-wave sf-wave-under" />
+        <div className="kit-row">
+          {[
+            { src: "/v2/kit-cream.jpg", k: "Cream" },
+            { src: "/v2/kit-blue.jpg", k: "Dusty Blue" },
+            { src: "/v2/kit-burgundy.jpg", k: "Burgundy" },
+          ].map((x, i) => (
+            <Reveal className="kit-card" key={x.k} delay={i * 0.08}>
+              <Image src={x.src} alt={`SHADIEZ ${x.k} shade and matching tote`} width={1024} height={1024} sizes="(max-width:900px) 90vw, 380px" />
+              <span>{x.k}</span>
+            </Reveal>
+          ))}
+        </div>
         <SunRays className="sf-sun sf-sun-corner" />
       </SunField>
-
-      {/* 6 · THE DETAIL */}
-      <section className="detail pad" id="detail">
-        <div className="wrap detail-grid">
-          <Reveal className="detail-photo"><Parallax amount={24}><Image src="/v2/detail.jpg" alt="The notched recline mechanism, brass pins, walnut frame" width={1500} height={1500} sizes="(max-width:900px) 90vw, 560px" /></Parallax></Reveal>
-          <div className="detail-words">
-            <Reveal as="p" className="eyebrow">The craft</Reveal>
-            <Reveal as="h2" className="display">The parts you&apos;ll thank us for in five summers.</Reveal>
-            <Reveal className="detail-list">
-              <span>The notch</span><span>The hinge</span><span>The weave</span>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* 7 · THE KIT */}
-      <section className="kit pad" id="kit">
-        <div className="wrap">
-          <Reveal as="h2" className="display kit-title">Every shade,<br />a matching tote.</Reveal>
-          <div className="kit-row">
-            {[
-              { src: "/v2/kit-cream.jpg", k: "Cream" },
-              { src: "/v2/kit-blue.jpg", k: "Dusty Blue" },
-              { src: "/v2/kit-burgundy.jpg", k: "Burgundy" },
-            ].map((x, i) => (
-              <Reveal className="kit-card" key={x.k} delay={i * 0.08}>
-                <Image src={x.src} alt={`SHADIEZ ${x.k} shade and matching tote`} width={1024} height={1024} sizes="(max-width:900px) 90vw, 380px" />
-                <span>{x.k}</span>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* 9 · CLOSE — amber sun-field finale, bookending the hero */}
       <SunField variant="amber" motes={1.2} className="close-field">
@@ -504,7 +487,7 @@ export default function V2() {
           </div>
           <div><h5>Shop</h5><ul><li><a href="#colors">Colorways</a></li><li><a href="#object">The shade</a></li><li><a href="#kit">Totes</a></li></ul></div>
           <div><h5>Help</h5><ul><li><a href="#">Shipping</a></li><li><a href="#">Returns</a></li><li><a href="#">Warranty</a></li></ul></div>
-          <div><h5>Brand</h5><ul><li><a href="#detail">Craft</a></li><li><a href="#">Journal</a></li><li><a href="#">Contact</a></li></ul></div>
+          <div><h5>Brand</h5><ul><li><a href="#object">Craft</a></li><li><a href="#">Journal</a></li><li><a href="#">Contact</a></li></ul></div>
         </div>
         <div className="wrap foot-bot"><span>© 2026 SHADIEZ</span><span>Privacy · Terms</span></div>
       </footer>
