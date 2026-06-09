@@ -305,7 +305,7 @@
     background:linear-gradient(180deg,rgba(251,246,236,0),rgba(251,246,236,.92) 30%)}
   .v2root .mobile-cta .btn{width:100%;justify-content:center;box-shadow:0 8px 26px -8px rgba(0,0,0,.4)}
   /* keep the close CTA clear of the sticky bar */
-  .v2root .close-field{padding-bottom:calc(clamp(96px,13vw,170px) + 84px)}
+  .v2root .close-field{padding-bottom:calc(clamp(48px,9vw,84px) + 84px)}
   .v2root footer{padding-bottom:96px}
 }
 @media(max-width:560px){
