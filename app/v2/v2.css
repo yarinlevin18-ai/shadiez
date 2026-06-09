@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');
-/* Fraunces variable — display serif for the hero headline (opsz/SOFT/WONK axes). */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,900,0,0&display=swap');
+/* Fraunces variable — display serif for ALL display type site-wide (opsz auto-sizes;
+   weight range 400–900 so headings at 700 and the hero at 900 both render). */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..900,0,0&display=swap');
 
 /* ===== SHADIEZ /v2 "Catch the Light" — scoped under .v2root ===== */
 .v2root{
-  --display:'Schibsted Grotesk',system-ui,sans-serif;
+  --display:'Fraunces',Georgia,serif;   /* unified display serif — matches the hero */
   --body:'Hanken Grotesk',system-ui,sans-serif;
   --maxw:1280px; --ease:cubic-bezier(.22,1,.36,1);
   --sun:#F4B23D;            /* brighter sun accent */
@@ -155,13 +156,6 @@
 .v2root .kit-card:hover img{transform:scale(1.05)}
 .v2root .kit-card span{position:absolute;left:16px;bottom:14px;font-family:var(--display);font-weight:600;font-size:15px;
   color:var(--ink);background:rgba(251,246,236,.82);backdrop-filter:blur(6px);padding:5px 13px;border-radius:100px}
-
-/* ── 8 · QUIET PROOF ── */
-.v2root .proof{background:transparent;text-align:center}
-.v2root .proof-quote{font-size:clamp(26px,4vw,50px);line-height:1.12;max-width:20ch;margin:0 auto;color:var(--ink)}
-.v2root .proof-by{margin-top:24px;font-size:14px;letter-spacing:.04em;color:var(--ink-60)}
-.v2root .ph-flag{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--sun);
-  border:1px solid var(--sun);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:middle}
 
 /* ── ☀ SUN FIELDS — full-viewport single-color washes (the sunny counterpoint
       to the editorial photo sections). Bold color blocks, drifting sun-motes,

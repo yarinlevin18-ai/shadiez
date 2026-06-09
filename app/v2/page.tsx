@@ -485,14 +485,6 @@ export default function V2() {
         </div>
       </section>
 
-      {/* 8 · QUIET PROOF */}
-      <section className="proof pad">
-        <div className="wrap">
-          <Reveal as="p" className="proof-quote display">&ldquo;The most beautiful thing on the beach — and I didn&apos;t move from under it all afternoon.&rdquo;</Reveal>
-          <Reveal className="proof-by">Maya R. · Tel Aviv <span className="ph-flag">placeholder</span></Reveal>
-        </div>
-      </section>
-
       {/* 9 · CLOSE — amber sun-field finale, bookending the hero */}
       <SunField variant="amber" motes={1.2} className="close-field">
         <span id="buy" className="sf-anchor" aria-hidden />
