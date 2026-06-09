@@ -290,23 +290,6 @@ function V2Loader() {
   );
 }
 
-/* ── Glare → Shade: scroll crossfades a hot overlay into cool shade ── */
-function GlareShade() {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const hot = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 0.2, 0]);
-  const cool = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.25, 0.55]);
-  return (
-    <section className="glare" ref={ref}>
-      <div className="glare-media"><Image src="/v2/beach-band.jpg" alt="SHADIEZ sun-shades on a bright beach" fill sizes="100vw" style={{ objectFit: "cover" }} /></div>
-      <motion.div className="glare-hot" style={reduce ? { opacity: 0.3 } : { opacity: hot }} />
-      <motion.div className="glare-cool" style={reduce ? { opacity: 0.4 } : { opacity: cool }} />
-      <div className="glare-copy"><Reveal as="h2" className="display">The sun is relentless.<br /><em>Your shade isn&apos;t.</em></Reveal></div>
-    </section>
-  );
-}
-
 /* ── SUN FIELD — full-viewport single-color wash; the playful counterpoint to the
    editorial photography. Hosts the drifting sun-mote particle layer (scroll-
    parallaxed via <Parallax>, time-animated by the canvas, off under reduced
@@ -414,9 +397,6 @@ export default function V2() {
           </Reveal>
         </div>
       </section>
-
-      {/* 3 · GLARE → SHADE */}
-      <GlareShade />
 
       {/* ☀ SUN FIELD A — the immersive centerpiece: cut-out + monoline sun */}
       <SunField variant="amber" motes={1.1} className="sunfield-stage">
