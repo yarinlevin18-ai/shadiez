@@ -392,8 +392,18 @@ export default function V2() {
               <span>Solid oak</span><i /><span>Canvas</span><i /><span>Folds flat</span>
             </Reveal>
           </div>
-          <Reveal className="object-stage" delay={0.1}>
-            <Parallax amount={26}><Image src="/v2/studio.jpg" alt="The SHADIEZ sun-shade — walnut frame, cream canvas" width={1500} height={1500} sizes="(max-width:900px) 90vw, 620px" /></Parallax>
+          <Reveal className="object-collage" delay={0.1}>
+            {/* Overlapping detail vignettes. The studio crops are warmed to melt
+                into the sand; the beach crop already sits on sand. */}
+            <figure className="ocard ocard-a">
+              <Image src="/v2/studio.jpg" alt="The SHADIEZ frame — walnut and brass-pinned joints" fill sizes="(max-width:900px) 56vw, 380px" style={{ objectFit: "cover", objectPosition: "50% 60%" }} />
+            </figure>
+            <figure className="ocard ocard-b">
+              <Image src="/v2/detail.jpg" alt="The notched recline mechanism" fill sizes="(max-width:900px) 42vw, 280px" style={{ objectFit: "cover", objectPosition: "44% 74%" }} />
+            </figure>
+            <figure className="ocard ocard-c ocard-sand">
+              <Image src="/v2/beach-recline.jpg" alt="A SHADIEZ frame detail on the sand" fill sizes="(max-width:900px) 50vw, 320px" style={{ objectFit: "cover", objectPosition: "50% 66%" }} />
+            </figure>
           </Reveal>
         </div>
       </section>

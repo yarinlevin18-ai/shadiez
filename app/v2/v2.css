@@ -113,6 +113,19 @@
 .v2root .spec-row i{width:5px;height:5px;border-radius:50%;background:var(--sun)}
 .v2root .object-stage{display:flex;justify-content:center}
 .v2root .object-stage img{width:100%;max-width:560px;height:auto;filter:drop-shadow(0 40px 60px rgba(35,32,28,.18))}
+/* "The Object" — overlapping editorial detail collage. Studio (cool-grey) crops
+   get a warm multiply wash so they melt into the sand; the beach crop already
+   sits on sand (.ocard-sand → no wash). */
+.v2root .object-collage{position:relative;width:100%;aspect-ratio:1/1;min-height:clamp(360px,44vw,540px)}
+.v2root .ocard{position:absolute;overflow:hidden;border-radius:14px;background:var(--sand-mid);
+  box-shadow:0 28px 56px -26px rgba(58,40,20,.42)}
+.v2root .ocard img{position:absolute;inset:0;width:100%;height:100%}
+.v2root .ocard::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:var(--sand-mid);mix-blend-mode:multiply;opacity:.16}
+.v2root .ocard-sand::after{opacity:0}
+.v2root .ocard-a{top:0;left:0;width:60%;aspect-ratio:4/5;z-index:1}
+.v2root .ocard-b{top:5%;right:0;width:43%;aspect-ratio:1/1;z-index:3}
+.v2root .ocard-c{bottom:0;left:21%;width:52%;aspect-ratio:5/4;z-index:2}
 
 /* ── 4 · THE SPECTRUM ── */
 .v2root .spectrum{background:transparent}
