@@ -41,3 +41,5 @@ next-env.d.ts
 
 # Claude scheduler transient lock
 .claude/scheduled_tasks.lock
+
+.vercel
