@@ -7,11 +7,15 @@ import {
   motion,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
   useMotionValueEvent,
+  useVelocity,
+  useMotionTemplate,
 } from "framer-motion";
 import { useLeadDialog } from "@/components/lead-dialog";
 import { SunMotes } from "./sun-motes";
+import { SandDrift } from "./sand-drift";
 import "./v2.css";
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -47,20 +51,48 @@ function Reveal({
 }: { as?: RevealTag; className?: string; delay?: number; load?: boolean; style?: React.CSSProperties; children: ReactNode; }) {
   const reduce = useReducedMotion();
   const M = motion[as] as typeof motion.div;
-  const initial = reduce ? false : { opacity: 0, y: 30 };
-  const shown = { opacity: 1, y: 0 };
+  // One reveal recipe reused everywhere: rise + settle-scale + fade on a single
+  // custom curve, so the whole page enters with the same calm rhythm.
+  const initial = reduce ? false : { opacity: 0, y: 28, scale: 0.985 };
+  const shown = { opacity: 1, y: 0, scale: 1 };
   const transition = { duration: 0.9, ease: EASE, delay };
   if (load) return <M className={className} style={style} initial={initial} animate={shown} transition={transition}>{children}</M>;
   return <M className={className} style={style} initial={initial} whileInView={shown} viewport={{ once: true, amount: 0.2 }} transition={transition}>{children}</M>;
 }
 
+// matchMedia hook — SSR-safe (false on first paint); used to soften parallax travel
+// on phones so scroll stays smooth and never forces horizontal overflow.
+function useIsMobile() {
+  const [m, setM] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px)");
+    const on = () => setM(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return m;
+}
+
 function Parallax({ className, amount = 60, children }: { className?: string; amount?: number; children: ReactNode; }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const isMobile = useIsMobile();
+  const amt = isMobile ? amount * 0.5 : amount;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [-amount, amount]);
+  const y = useTransform(scrollYProgress, [0, 1], [-amt, amt]);
   if (reduce) return <div ref={ref} className={className}>{children}</div>;
   return <motion.div ref={ref} className={className} style={{ y }}>{children}</motion.div>;
+}
+
+/* ── Top scroll-progress bar — a slim sun-colored line tracking page progress.
+   Reads the shared Lenis scroll via Framer's useScroll, spring-smoothed so it
+   glides rather than snaps. Reflects the user's own scroll, so it stays on under
+   reduced motion. ── */
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  return <motion.div className="v2-progress" style={{ scaleX }} aria-hidden />;
 }
 
 /* ── Per-word kinetic reveal for the oversized hero headline. Each word rises
@@ -156,12 +188,36 @@ const SunRays = ({ className }: { className?: string }) => {
 };
 
 // A horizon wave, monoline (two offset passes).
-const WaveLine = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 600 80" fill="none" preserveAspectRatio="none" aria-hidden>
-    <path d="M0 40c40-34 80-34 120 0s80 34 120 0 80-34 120 0 80 34 120 0 80-34 120 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.9" />
-    <path d="M0 56c40-34 80-34 120 0s80 34 120 0 80-34 120 0 80 34 120 0 80-34 120 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.4" />
-  </svg>
-);
+// A horizon wave, monoline (two offset passes) — flows endlessly. The path runs one
+// wavelength (240) wider on each side than the 600 viewBox, and each pass translates
+// by exactly one wavelength on a linear loop, so the drift is seamless. The two
+// passes run at different speeds and counter-directions for an organic sea.
+// Static under reduced motion.
+const WL_PATH =
+  "c40-34 80-34 120 0s80 34 120 0s80-34 120 0s80 34 120 0s80-34 120 0s80 34 120 0s80-34 120 0s80 34 120 0s80-34 120 0";
+const WL_LINES = [
+  { y: 40, w: 2, op: 0.9, dur: 11, from: 0, to: -240 },
+  { y: 56, w: 1.2, op: 0.4, dur: 15, from: -240, to: 0 },
+];
+const WaveLine = ({ className }: { className?: string }) => {
+  const reduce = useReducedMotion();
+  return (
+    <svg className={className} viewBox="0 0 600 80" fill="none" preserveAspectRatio="none" aria-hidden>
+      {WL_LINES.map((l, i) => (
+        <motion.path
+          key={i}
+          d={`M-240 ${l.y}${WL_PATH}`}
+          stroke="currentColor"
+          strokeWidth={l.w}
+          strokeLinecap="round"
+          opacity={l.op}
+          animate={reduce ? undefined : { x: [l.from, l.to] }}
+          transition={reduce ? undefined : { duration: l.dur, ease: "linear", repeat: Infinity }}
+        />
+      ))}
+    </svg>
+  );
+};
 
 /* ── Reactive button — springy hover lift + tactile press. Honors reduced motion.
    (CSS owns the colour/shadow; motion owns the transform.) ── */
@@ -311,8 +367,32 @@ export default function V2() {
   const { openDialog } = useLeadDialog();
   const [active, setActive] = useState(0);
   const [scrolled, setScrolled] = useState(false);
-  const { scrollY } = useScroll();
+  const reduce = useReducedMotion();
+  const { scrollY, scrollYProgress } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
+
+  // ── Living background ──────────────────────────────────────────────────────
+  // A single fixed layer behind the whole page. Its linear gradient does two
+  // things at once: (1) the colour stops are driven by scrollYProgress, so the
+  // wash warms from bright morning paper at the top into deep golden sand at the
+  // foot of the page — a continuous, linear colour journey; (2) CSS slowly drifts
+  // the gradient's position (see .v2-bg-color), so the colour is always gently
+  // fluid even at rest. Three stops are interpolated independently for depth.
+  const bgA = useTransform(scrollYProgress, [0, 0.5, 1], ["#FBF6EC", "#F3E7CD", "#ECDDBC"]);
+  const bgB = useTransform(scrollYProgress, [0, 0.5, 1], ["#F6EDD8", "#ECDCB9", "#E2D0A6"]);
+  const bgC = useTransform(scrollYProgress, [0, 0.5, 1], ["#F1E4C8", "#E6D4AC", "#D9C597"]);
+  const bgImage = useMotionTemplate`linear-gradient(165deg, ${bgA} 0%, ${bgB} 52%, ${bgC} 100%)`;
+
+  // Live scroll velocity feeds the page-wide sand grains so they react to movement.
+  const scrollVelocity = useVelocity(scrollY);
+  const sandVelocity = useSpring(scrollVelocity, { stiffness: 200, damping: 40, mass: 0.6 });
+
+  // Hero hand-off: as the hero scrolls away, its headline + CTA drift up and fade,
+  // so leaving the first screen reads as a deliberate move, not an abrupt cut.
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProg } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(heroProg, [0, 1], [0, -110]);
+  const heroFade = useTransform(heroProg, [0, 0.8], [1, 0]);
 
   // Persist the chosen colorway across visits.
   useEffect(() => {
@@ -339,7 +419,16 @@ export default function V2() {
 
   return (
     <div className="v2root">
+      {/* LIVING BACKGROUND — fixed behind every section: a scroll-warmed, slowly
+          drifting linear wash + a page-wide field of movement-reactive sand. */}
+      <div className="v2-bg" aria-hidden>
+        <motion.div className="v2-bg-color" style={reduce ? undefined : { backgroundImage: bgImage }} />
+        <div className="v2-bg-flow" />
+        <SandDrift className="v2-bg-sand" velocity={sandVelocity} animate={!reduce} />
+      </div>
+
       <V2Loader />
+      <ScrollProgress />
       <div className="v2-grain" />
 
       {/* HEADER — stripped chrome: mark left · centered wordmark · minimal menu right */}
@@ -355,10 +444,10 @@ export default function V2() {
       </header>
 
       {/* 1 · HERO — photo anchor + oversized kinetic headline */}
-      <section className="hero" id="top">
+      <section className="hero" id="top" ref={heroRef}>
         <div className="hero-media"><Parallax className="media-track" amount={70}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade on a bright beach" fill priority sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
         <SunRays className="hero-sun" />
-        <div className="hero-inner wrap">
+        <motion.div className="hero-inner wrap" style={reduce ? undefined : { y: heroY, opacity: heroFade }}>
           <h1 className="hero-h1 hero-headline">
             <KineticLine text="Something New" delay={0.15} />
             <KineticLine text="Under The Sun" delay={0.34} />
@@ -367,7 +456,7 @@ export default function V2() {
             <Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn>
             <span className="hero-kicker">Your shade. Anywhere.</span>
           </Reveal>
-        </div>
+        </motion.div>
         <a href="#object" className="scroll-cue" aria-label="Scroll"><span className="line" /></a>
       </section>
 
@@ -376,9 +465,12 @@ export default function V2() {
         <div className="wrap object-grid">
           <div className="object-words">
             <Reveal as="p" className="eyebrow">The object</Reveal>
-            <Reveal as="h2" className="display">Built like furniture.<br />Carried like a bag.</Reveal>
-            <Reveal className="spec-row">
+            <Reveal as="h2" className="display" delay={0.08}>Built like furniture.<br />Carried like a bag.</Reveal>
+            <Reveal className="spec-row" delay={0.16}>
               <span>Solid oak</span><i /><span>Canvas</span><i /><span>Folds flat</span>
+            </Reveal>
+            <Reveal className="cta-row" delay={0.24}>
+              <Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn>
             </Reveal>
           </div>
           <Reveal className="object-collage" delay={0.1}>
@@ -404,10 +496,15 @@ export default function V2() {
           <Reveal as="p" className="sf-eyebrow">Something new</Reveal>
           <Reveal as="h2" className="sf-display display">Your own<br />patch of shade.</Reveal>
           <WaveLine className="sf-wave sf-wave-under" />
+          <Reveal className="cta-row sf-cta" delay={0.18}>
+            <Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn>
+          </Reveal>
         </div>
         <Reveal className="sf-object" delay={0.1}>
           <SunRays className="sf-sun" />
-          <Image className="sf-cutout sf-cutout-colorways" src="/v2/colorways-shade.png" alt="The SHADIEZ sun-shade in three colorways — cream, coral and navy" width={2322} height={1206} sizes="(max-width:900px) 88vw, 620px" />
+          <Parallax className="sf-cutout-wrap" amount={22}>
+            <Image className="sf-cutout sf-cutout-colorways" src="/v2/colorways-shade.png" alt="The SHADIEZ sun-shade in three colorways — cream, coral and navy" width={2322} height={1206} sizes="(max-width:900px) 88vw, 620px" />
+          </Parallax>
         </Reveal>
       </SunField>
 
@@ -416,7 +513,7 @@ export default function V2() {
         <div className="wrap">
           <div className="spectrum-head">
             <Reveal as="p" className="eyebrow">The spectrum</Reveal>
-            <Reveal as="h2" className="display">Seven canvases.<br />One is yours.</Reveal>
+            <Reveal as="h2" className="display" delay={0.08}>Seven canvases.<br />One is yours.</Reveal>
           </div>
           <div className="spectrum-stage">
             <Reveal className="spectrum-photo">
@@ -432,6 +529,9 @@ export default function V2() {
                   className="swatch" style={{ background: col.dot }} onClick={() => select(i)} />
               ))}
             </div>
+            <Reveal className="cta-row cta-center" delay={0.12}>
+              <Btn className="btn btn-amber lg" onClick={openDialog}>Shop {c.key}</Btn>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -463,6 +563,9 @@ export default function V2() {
             </Reveal>
           ))}
         </div>
+        <Reveal className="cta-row sf-cta" delay={0.14}>
+          <Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn>
+        </Reveal>
         <SunRays className="sf-sun sf-sun-corner" />
       </SunField>
 
@@ -474,7 +577,9 @@ export default function V2() {
           <Reveal as="h2" className="sf-display display">Find your shade.</Reveal>
           <Reveal delay={0.1}><Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
         </div>
-        <Image className="close-shot" src="/v2/4 1.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1463} sizes="(max-width:900px) 90vw, 720px" />
+        <Parallax className="sf-cutout-wrap" amount={20}>
+          <Image className="close-shot" src="/v2/4 1.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1463} sizes="(max-width:900px) 90vw, 720px" />
+        </Parallax>
         <WaveLine className="sf-wave" />
       </SunField>
 
