@@ -125,6 +125,9 @@ function WaveMark({ className }: { className?: string }) {
 // reduced motion via the `.sun-rays-spin` rule.
 const SunRays = ({ className }: { className?: string }) => {
   const rays = Array.from({ length: 24 });
+  // Round coordinates so SSR (Node) and client (V8) emit byte-identical strings —
+  // unrounded Math.cos/sin diverge in the last FP digit and trip hydration.
+  const r2dp = (n: number) => Math.round(n * 100) / 100;
   return (
     <svg className={className} viewBox="0 0 200 200" fill="none" aria-hidden>
       <circle cx="100" cy="100" r="46" stroke="currentColor" strokeWidth="1.6" opacity="0.9" />
@@ -134,11 +137,18 @@ const SunRays = ({ className }: { className?: string }) => {
           const a = (i / rays.length) * Math.PI * 2;
           const r1 = i % 2 === 0 ? 70 : 74;
           const r2 = i % 2 === 0 ? 92 : 84;
-          const x1 = 100 + Math.cos(a) * r1;
-          const y1 = 100 + Math.sin(a) * r1;
-          const x2 = 100 + Math.cos(a) * r2;
-          const y2 = 100 + Math.sin(a) * r2;
-          return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />;
+          return (
+            <line
+              key={i}
+              x1={r2dp(100 + Math.cos(a) * r1)}
+              y1={r2dp(100 + Math.sin(a) * r1)}
+              x2={r2dp(100 + Math.cos(a) * r2)}
+              y2={r2dp(100 + Math.sin(a) * r2)}
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          );
         })}
       </g>
     </svg>
