@@ -506,7 +506,6 @@ export default function V2() {
           </Reveal>
         </div>
         <Reveal className="sf-object" delay={0.1}>
-          <SunRays className="sf-sun" />
           <Parallax className="sf-cutout-wrap" amount={22}>
             <Image className="sf-cutout sf-cutout-colorways" src="/v2/colorways-shade.png" alt="The SHADIEZ sun-shade in three colorways — cream, coral and navy" width={2322} height={1206} sizes="(max-width:900px) 88vw, 620px" />
           </Parallax>
