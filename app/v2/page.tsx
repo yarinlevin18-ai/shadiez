@@ -189,17 +189,19 @@ const SunRays = ({ className }: { className?: string }) => {
   );
 };
 
-// A horizon wave, monoline (two offset passes).
-// A horizon wave, monoline (two offset passes) — flows endlessly. The path runs one
-// wavelength (240) wider on each side than the 600 viewBox, and each pass translates
-// by exactly one wavelength on a linear loop, so the drift is seamless. The two
-// passes run at different speeds and counter-directions for an organic sea.
+// A horizon wave, monoline — a real, generously-curved sea line that flows endlessly.
+// One wavelength is 200; the path runs from x=-200 to x=900 so it always overruns the
+// 600 viewBox, and each pass translates by exactly one wavelength on a linear loop, so
+// the drift is seamless. preserveAspectRatio="none" stretches the wave to fill its box
+// (wide, calm wavelength); vector-effect keeps the stroke an even hairline despite the
+// non-uniform scale, and the tall amplitude (±33 of an 80 viewBox) keeps it clearly
+// wavy at any height. Two offset passes drift opposite ways for an organic sea.
 // Static under reduced motion.
 const WL_PATH =
-  "c40-34 80-34 120 0s80 34 120 0s80-34 120 0s80 34 120 0s80-34 120 0s80 34 120 0s80-34 120 0s80 34 120 0s80-34 120 0";
+  "q50 -44 100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0";
 const WL_LINES = [
-  { y: 40, w: 2, op: 0.9, dur: 11, from: 0, to: -240 },
-  { y: 56, w: 1.2, op: 0.4, dur: 15, from: -240, to: 0 },
+  { y: 36, w: 2.4, op: 0.85, dur: 12, from: 0, to: -200 },
+  { y: 50, w: 1.4, op: 0.42, dur: 17, from: -200, to: 0 },
 ];
 const WaveLine = ({ className }: { className?: string }) => {
   const reduce = useReducedMotion();
@@ -208,10 +210,11 @@ const WaveLine = ({ className }: { className?: string }) => {
       {WL_LINES.map((l, i) => (
         <motion.path
           key={i}
-          d={`M-240 ${l.y}${WL_PATH}`}
+          d={`M-200 ${l.y}${WL_PATH}`}
           stroke="currentColor"
           strokeWidth={l.w}
           strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
           opacity={l.op}
           animate={reduce ? undefined : { x: [l.from, l.to] }}
           transition={reduce ? undefined : { duration: l.dur, ease: "linear", repeat: Infinity }}
@@ -541,7 +544,7 @@ export default function V2() {
       {/* 5 · IN THE WILD */}
       <section className="wild">
         <div className="wild-band">
-          <Parallax className="media-track wild-graded" amount={50} zoom={1.14}><Image src="/v2/8.png" alt="Two SHADIEZ shades on the beach at golden hour" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax>
+          <Parallax className="media-track wild-graded" amount={36}><Image src="/v2/8.png" alt="Two SHADIEZ shades on the beach at golden hour" fill sizes="100vw" quality={88} style={{ objectFit: "cover" }} /></Parallax>
           <Reveal as="p" className="wild-line display">Long afternoons,<br />claimed.</Reveal>
         </div>
       </section>
