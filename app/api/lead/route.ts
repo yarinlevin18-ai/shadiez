@@ -1,30 +1,22 @@
 import { NextResponse } from "next/server"
-import { Resend } from "resend"
 
-// Run on the Node runtime — Resend's SDK uses Node APIs that aren't available
-// on Edge. (Keeps things simple; lead volume on a landing page is tiny.)
+// Run on the Node runtime. Lead volume on a landing page is tiny.
 export const runtime = "nodejs"
 
-// Same email shape the dialog sends. Mirror it carefully — the dialog form
-// validates on the client too, this is the server source of truth.
+// Same email shape the dialog sends. Server is the source of truth — the dialog
+// validates on the client too, but never trust that alone.
 type LeadBody = {
   name?: unknown
   email?: unknown
   phone?: unknown // optional
 }
 
-// Minimal email regex — good enough to reject obvious typos client/server-side.
-// We rely on Resend + a real human eyeballing the inbox for everything else.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-}
+// Customer reach-outs are forwarded here. Delivered via FormSubmit (formsubmit.co)
+// — a free, no-API-key form-to-email relay. The address lives server-side only, so
+// it never appears in the page source. Configurable via LEAD_TO_EMAIL.
+const LEAD_TO = (process.env.LEAD_TO_EMAIL || "shadiezsales@gmail.com").trim()
 
 export async function POST(req: Request) {
   // ── Parse + validate ─────────────────────────────────────────────────────
@@ -52,69 +44,48 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Phone looks too long." }, { status: 400 })
   }
 
-  // ── Env check ────────────────────────────────────────────────────────────
-  const apiKey = process.env.RESEND_API_KEY
-  const to = process.env.LEAD_TO_EMAIL
-  const from = process.env.LEAD_FROM_EMAIL ?? "SHADIEZ Leads <onboarding@resend.dev>"
-
-  if (!apiKey || !to) {
-    // Don't leak which one is missing to the client. Log clearly on the server.
-    console.error("[lead] Missing RESEND_API_KEY or LEAD_TO_EMAIL env vars")
-    return NextResponse.json(
-      { error: "Server isn't configured to receive leads yet." },
-      { status: 500 },
-    )
-  }
-
-  // ── Send ─────────────────────────────────────────────────────────────────
-  const resend = new Resend(apiKey)
-  const safeName = escapeHtml(name)
-  const safeEmail = escapeHtml(email)
-  const safePhone = phone ? escapeHtml(phone) : ""
-  const submittedAt = new Date().toISOString()
-
-  const html = `
-    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#F3ECE0;color:#2B2723;border-radius:8px;">
-      <h2 style="margin:0 0 16px;font-weight:400;font-size:20px;letter-spacing:0.02em;">New SHADIEZ lead</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <tr><td style="padding:6px 0;color:#6b6258;width:88px;">Name</td><td style="padding:6px 0;">${safeName}</td></tr>
-        <tr><td style="padding:6px 0;color:#6b6258;">Email</td><td style="padding:6px 0;"><a href="mailto:${safeEmail}" style="color:#1F3A5F;">${safeEmail}</a></td></tr>
-        ${
-          safePhone
-            ? `<tr><td style="padding:6px 0;color:#6b6258;">Phone</td><td style="padding:6px 0;">${safePhone}</td></tr>`
-            : ""
-        }
-        <tr><td style="padding:6px 0;color:#6b6258;">Submitted</td><td style="padding:6px 0;color:#6b6258;">${submittedAt}</td></tr>
-      </table>
-    </div>
-  `.trim()
-
-  const text = [
-    `New SHADIEZ lead`,
-    ``,
-    `Name:  ${name}`,
-    `Email: ${email}`,
-    phone ? `Phone: ${phone}` : null,
-    `Submitted: ${submittedAt}`,
-  ]
-    .filter(Boolean)
-    .join("\n")
-
+  // ── Forward to the inbox via FormSubmit ───────────────────────────────────
   try {
-    const { error } = await resend.emails.send({
-      from,
-      to,
-      subject: `New SHADIEZ lead — ${name}`,
-      replyTo: email, // Reply goes straight to the prospect.
-      html,
-      text,
-    })
-    if (error) {
-      console.error("[lead] Resend error", error)
+    const res = await fetch(
+      `https://formsubmit.co/ajax/${encodeURIComponent(LEAD_TO)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone: phone || "—",
+          _subject: `New SHADIEZ lead — ${name}`,
+          _replyto: email, // replies go straight to the prospect
+          _template: "table",
+          _captcha: "false",
+        }),
+      },
+    )
+
+    if (!res.ok) {
+      console.error("[lead] FormSubmit HTTP error", res.status)
       return NextResponse.json(
         { error: "Couldn't send right now. Try again in a moment." },
         { status: 502 },
       )
+    }
+
+    // FormSubmit replies { success: "true" | true, message }. On the very first
+    // submission to a new address it instead emails a one-time activation link;
+    // once the inbox owner clicks it, every later submission is forwarded.
+    const data = (await res.json().catch(() => null)) as
+      | { success?: boolean | string; message?: string }
+      | null
+    const ok =
+      data?.success === true || String(data?.success).toLowerCase() === "true"
+    if (!ok) {
+      // Most common reason: form not yet activated. Log it; still accept the
+      // submission so the visitor isn't shown an error for an owner-side step.
+      console.warn("[lead] FormSubmit not-confirmed response", data?.message)
     }
   } catch (err) {
     console.error("[lead] Unexpected error", err)
