@@ -474,7 +474,7 @@ export default function V2() {
           <Reveal as="h2" className="sf-display display">Find your shade.</Reveal>
           <Reveal delay={0.1}><Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
         </div>
-        <Image className="sf-cutout sf-cutout-close" src="/Object.png" alt="The SHADIEZ sun-shade at rest" width={596} height={614} sizes="(max-width:900px) 64vw, 400px" />
+        <Image className="close-shot" src="/v2/4 1.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1463} sizes="(max-width:900px) 90vw, 720px" />
         <WaveLine className="sf-wave" />
       </SunField>
 
