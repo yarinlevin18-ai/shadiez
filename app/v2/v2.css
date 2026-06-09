@@ -249,15 +249,28 @@
 /* corner sun drops behind the photos so the lineup reads above the animation */
 .v2root .sunfield-kit .sf-sun-corner{z-index:1;opacity:.32}
 
-/* SUN FIELD finale (CLOSE) — centered, cut-out beneath, big sun behind */
-.v2root .close-field{text-align:center}
-.v2root .close-field .sunfield-inner{display:flex;flex-direction:column;align-items:center;gap:clamp(26px,4vw,46px)}
-.v2root .close-stack{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:clamp(22px,3vw,32px)}
+/* SUN FIELD finale (CLOSE) — compact (fits one viewport) + warm directional sun:
+   light rakes from the upper-left, shade falls to the lower-right, and the card
+   casts a grounding shadow to match. */
+.v2root .close-field{text-align:center;min-height:auto;padding:clamp(52px,7vw,92px) 0}
+.v2root .close-field .sunfield-inner{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,2.6vw,30px)}
+.v2root .close-field .sf-display{font-size:clamp(34px,5.4vw,68px)}
+.v2root .close-stack{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:clamp(16px,2.2vw,22px)}
 .v2root .sf-cutout-close{position:relative;z-index:2;width:100%;max-width:min(64vw,360px);height:auto;filter:drop-shadow(0 30px 48px rgba(58,30,10,.42))}
-/* Finale lineup photo — wide catalog shot framed as a soft card (matches the kit cards). */
-.v2root .close-shot{position:relative;z-index:2;width:min(92vw,720px);height:auto;border-radius:18px;
-  box-shadow:0 40px 80px -34px rgba(58,40,20,.5)}
-.v2root .sf-sun-behind{position:absolute;z-index:0;top:clamp(36px,7vw,90px);left:50%;transform:translateX(-50%);width:min(82%,520px);height:auto;opacity:.42}
+/* The wrapper hugs the lineup image so the light/shade overlays register to the card;
+   the offset box-shadow grounds it consistently with a sun in the upper-left. */
+.v2root .close-field .sf-cutout-wrap{position:relative;display:block;width:min(80vw,440px);margin:0 auto;
+  border-radius:18px;box-shadow:24px 34px 60px -30px rgba(58,40,20,.5)}
+.v2root .close-shot{position:relative;z-index:2;display:block;width:100%;height:auto;border-radius:18px}
+/* sun ray — a soft warm beam catching the products from the upper-left */
+.v2root .close-field .sf-cutout-wrap::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(122deg,rgba(255,234,178,.6) 0%,rgba(255,234,178,.18) 22%,rgba(255,234,178,0) 46%);
+  mix-blend-mode:soft-light}
+/* shade side — a gentle shadow drawn across the lower-right of the objects */
+.v2root .close-field .sf-cutout-wrap::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(122deg,rgba(44,24,2,0) 58%,rgba(44,24,2,.2) 100%);
+  mix-blend-mode:multiply}
+.v2root .sf-sun-behind{position:absolute;z-index:0;top:clamp(20px,4vw,56px);left:50%;transform:translateX(-50%);width:min(58%,340px);height:auto;opacity:.34}
 .v2root .sf-anchor{position:absolute;top:-90px;left:0}
 
 /* ── footer ── */
