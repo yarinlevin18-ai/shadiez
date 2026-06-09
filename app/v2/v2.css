@@ -335,6 +335,22 @@
 .v2root .hero-inner{will-change:transform,opacity}
 /* scroll-drift wrapper for the sun-field cut-outs (keeps the image centered + full-width) */
 .v2root .sf-cutout-wrap{width:100%;display:flex;justify-content:center;will-change:transform}
+/* scroll cue fades out the moment you start scrolling */
+.v2root .scroll-cue{transition:opacity .45s var(--ease)}
+.v2root .scroll-cue.is-hidden{opacity:0;pointer-events:none}
+
+/* ── hover micro-interactions (pointer devices only) ── */
+@media (hover:hover){
+  /* kit cards + object-collage cards lift on hover */
+  .v2root .kit-card,.v2root .ocard{transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+  .v2root .kit-card:hover{transform:translateY(-6px);box-shadow:0 36px 60px -28px rgba(35,32,28,.45)}
+  .v2root .ocard:hover{transform:translateY(-5px) scale(1.015);z-index:5}
+  /* spectrum frame gives a touch of depth on hover */
+  .v2root .spectrum-photo{transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+  .v2root .spectrum-photo:hover{transform:translateY(-3px)}
+  /* swatches pop a little more crisply */
+  .v2root .swatch:hover{box-shadow:0 8px 18px -6px rgba(35,32,28,.4)}
+}
 
 /* ── reduced motion: freeze all continuous/ambient motion ── */
 @media (prefers-reduced-motion: reduce){

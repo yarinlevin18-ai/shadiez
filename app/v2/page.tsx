@@ -459,7 +459,7 @@ export default function V2() {
             <span className="hero-kicker">Your shade. Anywhere.</span>
           </Reveal>
         </motion.div>
-        <a href="#object" className="scroll-cue" aria-label="Scroll"><span className="line" /></a>
+        <a href="#object" className={scrolled ? "scroll-cue is-hidden" : "scroll-cue"} aria-label="Scroll"><span className="line" /></a>
       </section>
 
       {/* 2 · THE OBJECT */}
@@ -521,7 +521,7 @@ export default function V2() {
             <Reveal className="spectrum-photo">
               {COLORS.map((col, i) => (
                 <Image key={col.key} src={col.photo} alt={`SHADIEZ shade — ${col.key}`} fill sizes="(max-width:900px) 92vw, 760px"
-                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transition: "opacity .6s var(--ease)" }} priority={i === 0} />
+                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transform: i === active ? "scale(1)" : "scale(1.05)", transition: "opacity .6s var(--ease), transform .9s var(--ease)" }} priority={i === 0} />
               ))}
               <span className="spectrum-name">{c.key}</span>
             </Reveal>
