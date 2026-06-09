@@ -11,11 +11,15 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import { useLeadDialog } from "@/components/lead-dialog";
+import { SunMotes } from "./sun-motes";
 import "./v2.css";
 
 /* ───────────────────────────────────────────────────────────────────────────
    SHADIEZ — /v2 "Catch the Light"
-   Premium, photo-led, low-copy. Every product image is the REAL exact model
+   Premium, photo-led, low-copy. The editorial photo sections are the premium
+   anchor; between them, full-viewport single-color SUN FIELDS (bold amber color
+   blocks, drifting sun-motes, original monoline line-art, the product cut-out)
+   are the sunny counterpoint. Every product image is the REAL exact model
    (branded walnut frame, brass pins, notched recline) from /public/v2/.
    ─────────────────────────────────────────────────────────────────────────── */
 
@@ -31,6 +35,8 @@ const COLORS: Colorway[] = [
   { key: "Burgundy",  photo: "/v2/cw-burgundy-stripe.jpg", flood: "#8E454C", dot: "#8E4A4A" },
   { key: "Pinstripe", photo: "/v2/cw-pinstripe.jpg",       flood: "#C9C2B4", dot: "#C7BEAF" },
 ];
+
+const SPECTRUM_STORAGE_KEY = "shadiez-v2-colorway";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -55,6 +61,29 @@ function Parallax({ className, amount = 60, children }: { className?: string; am
   const y = useTransform(scrollYProgress, [0, 1], [-amount, amount]);
   if (reduce) return <div ref={ref} className={className}>{children}</div>;
   return <motion.div ref={ref} className={className} style={{ y }}>{children}</motion.div>;
+}
+
+/* ── Per-word kinetic reveal for the oversized hero headline. Each word rises
+   from a masked baseline; staggered. Static under reduced motion. ── */
+function KineticLine({ text, delay = 0 }: { text: string; delay?: number }) {
+  const reduce = useReducedMotion();
+  const words = text.split(" ");
+  return (
+    <span className="kline">
+      {words.map((word, i) => (
+        <span className="kword" key={`${word}-${i}`}>
+          <motion.span
+            className="kword-in"
+            initial={reduce ? false : { y: "115%" }}
+            animate={{ y: "0%" }}
+            transition={{ duration: 1.0, ease: EASE, delay: delay + i * 0.09 }}
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </span>
+  );
 }
 
 /* ── Brand mark — three sea-lines that flow endlessly. Each path is five
@@ -89,6 +118,51 @@ function WaveMark({ className }: { className?: string }) {
     </svg>
   );
 }
+
+/* ── Original monoline line-art for the sun fields (drawn here from scratch — not
+   reproduced from any third-party source). Cream/white stroke, decorative. ── */
+// Radiating sun: a ring + alternating ticks. Slowly rotates (CSS), paused under
+// reduced motion via the `.sun-rays-spin` rule.
+const SunRays = ({ className }: { className?: string }) => {
+  const rays = Array.from({ length: 24 });
+  return (
+    <svg className={className} viewBox="0 0 200 200" fill="none" aria-hidden>
+      <circle cx="100" cy="100" r="46" stroke="currentColor" strokeWidth="1.6" opacity="0.9" />
+      <circle cx="100" cy="100" r="58" stroke="currentColor" strokeWidth="0.9" opacity="0.45" />
+      <g className="sun-rays-spin" style={{ transformOrigin: "100px 100px" }}>
+        {rays.map((_, i) => {
+          const a = (i / rays.length) * Math.PI * 2;
+          const r1 = i % 2 === 0 ? 70 : 74;
+          const r2 = i % 2 === 0 ? 92 : 84;
+          const x1 = 100 + Math.cos(a) * r1;
+          const y1 = 100 + Math.sin(a) * r1;
+          const x2 = 100 + Math.cos(a) * r2;
+          const y2 = 100 + Math.sin(a) * r2;
+          return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />;
+        })}
+      </g>
+    </svg>
+  );
+};
+
+// A horizon wave, monoline (two offset passes).
+const WaveLine = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 600 80" fill="none" preserveAspectRatio="none" aria-hidden>
+    <path d="M0 40c40-34 80-34 120 0s80 34 120 0 80-34 120 0 80 34 120 0 80-34 120 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.9" />
+    <path d="M0 56c40-34 80-34 120 0s80 34 120 0 80-34 120 0 80 34 120 0 80-34 120 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.4" />
+  </svg>
+);
+
+// The shade's silhouette — the V-fold recline with notch ticks, monoline.
+const ShadeGlyph = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 220 200" fill="none" aria-hidden>
+    <path d="M40 150 L150 44" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M150 44 L150 150" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M30 150 L182 150" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M40 150 L96 96" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.7" />
+    <path d="M70 124 l10 -9 M88 106 l10 -9 M106 88 l10 -9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
+  </svg>
+);
 
 /* ── Reactive button — springy hover lift + tactile press. Honors reduced motion.
    (CSS owns the colour/shadow; motion owns the transform.) ── */
@@ -223,6 +297,34 @@ function GlareShade() {
   );
 }
 
+/* ── SUN FIELD — full-viewport single-color wash; the playful counterpoint to the
+   editorial photography. Hosts the drifting sun-mote particle layer (scroll-
+   parallaxed via <Parallax>, time-animated by the canvas, off under reduced
+   motion). Content (oversized type / cut-out / monoline) is passed as children. ── */
+function SunField({
+  variant = "amber",
+  motes = 1,
+  className,
+  children,
+}: {
+  variant?: "amber" | "gold";
+  motes?: number;
+  className?: string;
+  children: ReactNode;
+}) {
+  const reduce = useReducedMotion();
+  return (
+    <section className={`sunfield sunfield-${variant}${className ? ` ${className}` : ""}`}>
+      <div className="sunfield-motes" aria-hidden>
+        <Parallax className="motes-track" amount={70}>
+          <SunMotes className="motes-canvas" density={motes} animate={!reduce} />
+        </Parallax>
+      </div>
+      <div className="wrap sunfield-inner">{children}</div>
+    </section>
+  );
+}
+
 export default function V2() {
   const { openDialog } = useLeadDialog();
   const [active, setActive] = useState(0);
@@ -230,7 +332,27 @@ export default function V2() {
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
 
-  const select = (i: number) => setActive(i);
+  // Persist the chosen colorway across visits.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(SPECTRUM_STORAGE_KEY);
+      if (saved !== null) {
+        const i = COLORS.findIndex((col) => col.key === saved);
+        if (i >= 0) setActive(i);
+      }
+    } catch {
+      /* localStorage unavailable — keep the default */
+    }
+  }, []);
+
+  const select = (i: number) => {
+    setActive(i);
+    try {
+      window.localStorage.setItem(SPECTRUM_STORAGE_KEY, COLORS[i].key);
+    } catch {
+      /* ignore persistence failures */
+    }
+  };
   const c = COLORS[active];
 
   return (
@@ -238,28 +360,28 @@ export default function V2() {
       <V2Loader />
       <div className="v2-grain" />
 
-      {/* HEADER */}
+      {/* HEADER — stripped chrome: mark left · centered wordmark · minimal menu right */}
       <header className={scrolled ? "scrolled" : undefined}>
         <div className="wrap bar">
-          <a className="logo" href="#top" aria-label="SHADIEZ home"><WaveMark />SHADIEZ</a>
+          <a className="mark-link" href="#top" aria-label="SHADIEZ home"><WaveMark /></a>
+          <a className="wordmark" href="#top">SHADIEZ</a>
           <nav className="links">
-            <a href="#object">Shade</a>
             <a href="#colors">Colors</a>
-            <a href="#detail">Craft</a>
+            <Btn className="btn btn-amber sm" onClick={openDialog}>Shop</Btn>
           </nav>
-          <Btn className="btn btn-amber" onClick={openDialog}>Shop</Btn>
         </div>
       </header>
 
-      {/* 1 · HERO */}
+      {/* 1 · HERO — photo anchor + oversized kinetic headline */}
       <section className="hero" id="top">
         <div className="hero-media"><Parallax className="media-track" amount={70}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade on a bright beach" fill priority sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
+        <SunRays className="hero-sun" />
         <div className="hero-inner wrap">
           <h1 className="hero-h1 display">
-            <Reveal as="span" load>Something New</Reveal>
-            <Reveal as="span" load delay={0.12}>Under The Sun</Reveal>
+            <KineticLine text="Something New" delay={0.15} />
+            <KineticLine text="Under The Sun" delay={0.34} />
           </h1>
-          <Reveal className="hero-foot" load delay={0.3}>
+          <Reveal className="hero-foot" load delay={0.75}>
             <Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn>
             <span className="hero-kicker">Your shade. Anywhere.</span>
           </Reveal>
@@ -286,6 +408,20 @@ export default function V2() {
       {/* 3 · GLARE → SHADE */}
       <GlareShade />
 
+      {/* ☀ SUN FIELD A — the immersive centerpiece: cut-out + monoline sun */}
+      <SunField variant="amber" motes={1.1} className="sunfield-stage">
+        <ShadeGlyph className="sf-glyph sf-glyph-tl" />
+        <div className="sf-stack">
+          <Reveal as="p" className="sf-eyebrow">Something new</Reveal>
+          <Reveal as="h2" className="sf-display display">Your own<br />patch of shade.</Reveal>
+        </div>
+        <Reveal className="sf-object" delay={0.1}>
+          <SunRays className="sf-sun" />
+          <Image className="sf-cutout" src="/Object.png" alt="The SHADIEZ sun-shade — walnut frame and cream canvas" width={596} height={614} sizes="(max-width:900px) 70vw, 460px" />
+        </Reveal>
+        <WaveLine className="sf-wave" />
+      </SunField>
+
       {/* 4 · THE SPECTRUM (colorways) */}
       <section className="spectrum pad" id="colors" style={{ "--flood": c.flood } as React.CSSProperties}>
         <div className="wrap">
@@ -297,7 +433,7 @@ export default function V2() {
             <Reveal className="spectrum-photo">
               {COLORS.map((col, i) => (
                 <Image key={col.key} src={col.photo} alt={`SHADIEZ shade — ${col.key}`} fill sizes="(max-width:900px) 92vw, 760px"
-                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transition: "opacity .5s ease" }} priority={i === 0} />
+                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transition: "opacity .6s var(--ease)" }} priority={i === 0} />
               ))}
               <span className="spectrum-name">{c.key}</span>
             </Reveal>
@@ -319,6 +455,13 @@ export default function V2() {
         </div>
       </section>
 
+      {/* ☀ SUN FIELD B — deep-golden, type-led counterpoint */}
+      <SunField variant="gold" motes={0.85} className="sunfield-quote">
+        <WaveLine className="sf-wave sf-wave-top" />
+        <Reveal as="h2" className="sf-big display">Made for<br />the long way home.</Reveal>
+        <SunRays className="sf-sun sf-sun-corner" />
+      </SunField>
+
       {/* 6 · THE DETAIL */}
       <section className="detail pad" id="detail">
         <div className="wrap detail-grid">
@@ -334,7 +477,7 @@ export default function V2() {
       </section>
 
       {/* 7 · THE KIT */}
-      <section className="kit pad">
+      <section className="kit pad" id="kit">
         <div className="wrap">
           <Reveal as="h2" className="display kit-title">Every shade,<br />a matching tote.</Reveal>
           <div className="kit-row">
@@ -360,14 +503,17 @@ export default function V2() {
         </div>
       </section>
 
-      {/* 9 · CLOSE */}
-      <section className="close" id="buy">
-        <div className="close-media"><Parallax className="media-track" amount={50}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade at the water's edge" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
-        <div className="close-inner wrap">
-          <Reveal as="h2" className="display">Find your shade.</Reveal>
-          <Reveal delay={0.1}><Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
+      {/* 9 · CLOSE — amber sun-field finale, bookending the hero */}
+      <SunField variant="amber" motes={1.2} className="close-field">
+        <span id="buy" className="sf-anchor" aria-hidden />
+        <SunRays className="sf-sun sf-sun-behind" />
+        <div className="close-stack">
+          <Reveal as="h2" className="sf-display display">Find your shade.</Reveal>
+          <Reveal delay={0.1}><Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
         </div>
-      </section>
+        <Image className="sf-cutout sf-cutout-close" src="/Object.png" alt="The SHADIEZ sun-shade at rest" width={596} height={614} sizes="(max-width:900px) 64vw, 400px" />
+        <WaveLine className="sf-wave" />
+      </SunField>
 
       {/* FOOTER */}
       <footer>
