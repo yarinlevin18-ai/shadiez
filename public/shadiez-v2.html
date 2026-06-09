@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SHADIEZ — Something New Under The Sun</title>
+<meta name="description" content="A premium walnut-and-canvas personal beach sun-shade. Folds flat, sets up in seconds, gives you your own patch of shade anywhere." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ SHADIEZ "Bright Coast" tokens (locked) ============ */
+:root{
+  --wood:#8E5330; --wood-deep:#623722; --cream:#FBF7F0; --canvas:#F8F6EF;
+  --sand:#ECE3D4; --ink:#23201C; --ink-60:#6B6256; --sky:#C3D6DC;
+  --amber:#E8A04A; --accent-blue:#768D9F; --navy:#1F3A5F; --coral:#D38773; --butter:#EBDAB0;
+  --teal:#3E7B73; --burgundy:#7C3B41;
+  --display:'Schibsted Grotesk',system-ui,sans-serif;
+  --body:'Hanken Grotesk',system-ui,sans-serif;
+  --maxw:1240px;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--cream);
+  line-height:1.55; overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.display{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.02}
+.eyebrow{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--wood)}
+.muted{color:var(--ink-60)}
+
+/* film grain */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.04;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ============ header ============ */
+header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s var(--ease),box-shadow .4s,backdrop-filter .4s;}
+header .bar{display:flex;align-items:center;justify-content:space-between;height:74px}
+header.scrolled{background:rgba(251,247,240,.82);backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(35,32,28,.08)}
+.logo{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.04em;color:var(--ink);display:flex;align-items:center;gap:9px}
+.logo svg{width:26px;height:26px}
+nav.links{display:flex;gap:34px;font-weight:500;font-size:15px}
+nav.links a{position:relative;color:var(--ink);opacity:.82;transition:opacity .2s}
+nav.links a:hover{opacity:1}
+nav.links a::after{content:"";position:absolute;left:0;bottom:-5px;height:1.5px;width:0;background:var(--amber);transition:width .3s var(--ease)}
+nav.links a:hover::after{width:100%}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);font-weight:600;font-size:15px;
+  padding:13px 24px;border-radius:100px;border:1.5px solid transparent;cursor:pointer;transition:transform .25s var(--ease),background .25s,color .25s,box-shadow .25s;white-space:nowrap}
+.btn-amber{background:var(--amber);color:var(--ink);box-shadow:0 8px 24px -8px rgba(232,160,74,.7)}
+.btn-amber:hover{transform:translateY(-2px);box-shadow:0 14px 34px -8px rgba(232,160,74,.85)}
+.btn-ghost{background:transparent;border-color:rgba(35,32,28,.25);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+.btn-dark{background:var(--ink);color:var(--cream)}
+.btn-dark:hover{transform:translateY(-2px);background:var(--wood-deep)}
+.header-cta{display:flex;align-items:center;gap:18px}
+.menu-btn{display:none;background:none;border:0;cursor:pointer}
+
+/* ============ hero ============ */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
+.hero-media{position:absolute;inset:0;z-index:0}
+.hero-media img{width:100%;height:120%;object-fit:cover;will-change:transform}
+.hero-media::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(35,32,28,.32) 0%,rgba(35,32,28,0) 30%,rgba(35,32,28,.05) 55%,rgba(35,32,28,.72) 100%)}
+.hero-inner{position:relative;z-index:2;width:100%;padding-bottom:62px;color:var(--cream)}
+.hero .eyebrow{color:rgba(251,247,240,.85)}
+.hero h1{font-size:clamp(44px,8.2vw,108px);color:var(--cream);margin:18px 0 22px;max-width:14ch;text-shadow:0 2px 30px rgba(35,32,28,.35)}
+.hero p.sub{max-width:50ch;font-size:clamp(16px,1.5vw,20px);color:rgba(251,247,240,.92);font-weight:400}
+.hero-actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.scroll-cue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;color:rgba(251,247,240,.85);
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-cue .line{width:1px;height:38px;background:linear-gradient(var(--cream),transparent);animation:cue 2s var(--ease) infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ============ marquee / press ============ */
+.press{border-top:1px solid rgba(35,32,28,.1);border-bottom:1px solid rgba(35,32,28,.1);background:var(--canvas);padding:22px 0}
+.press .row{display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.press .lbl{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-60);white-space:nowrap}
+.press .names{display:flex;gap:34px;flex-wrap:wrap;font-family:var(--display);font-weight:600;font-size:clamp(15px,1.6vw,20px);color:var(--ink);opacity:.55}
+
+/* ============ trust badges ============ */
+.badges{padding:30px 0}
+.badges .row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.badge{display:flex;align-items:center;gap:9px;font-weight:500;font-size:14px;color:var(--ink);
+  background:var(--canvas);border:1px solid rgba(35,32,28,.09);padding:11px 18px;border-radius:100px}
+.badge svg{width:17px;height:17px;color:var(--amber)}
+
+/* ============ section scaffolding ============ */
+section{position:relative}
+.pad{padding:clamp(70px,10vw,128px) 0}
+.sec-head{max-width:64ch}
+.sec-head h2{font-size:clamp(30px,4.6vw,58px);margin:14px 0 0}
+.sec-head p.lead{font-size:clamp(16px,1.5vw,19px);color:var(--ink-60);margin-top:18px;max-width:52ch}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+
+/* ============ statement ============ */
+.statement{background:var(--sand)}
+.statement .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(34px,5vw,80px);align-items:center}
+.statement h2{font-size:clamp(30px,4.4vw,56px);line-height:1.04}
+.statement h2 em{font-style:normal;color:var(--wood)}
+.statement .figure{border-radius:6px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 30px 60px -30px rgba(35,32,28,.4)}
+.statement .figure img{width:100%;height:100%;object-fit:cover}
+
+/* ============ value props ============ */
+.props{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:56px}
+.prop{background:var(--canvas);border:1px solid rgba(35,32,28,.08);border-radius:8px;padding:30px;transition:transform .35s var(--ease),box-shadow .35s}
+.prop:hover{transform:translateY(-5px);box-shadow:0 24px 44px -26px rgba(35,32,28,.45)}
+.prop .ic{width:46px;height:46px;border-radius:12px;background:var(--cream);display:flex;align-items:center;justify-content:center;margin-bottom:18px;border:1px solid rgba(35,32,28,.08)}
+.prop .ic svg{width:24px;height:24px;color:var(--wood)}
+.prop h3{font-family:var(--display);font-weight:600;font-size:21px;margin-bottom:8px}
+.prop p{color:var(--ink-60);font-size:15px}
+
+/* ============ colorways ============ */
+.colorways{background:var(--ink);color:var(--cream)}
+.colorways .eyebrow{color:var(--amber)}
+.colorways h2{color:var(--cream)}
+.colorways .lead{color:rgba(251,247,240,.7)}
+.cw-grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,4vw,64px);align-items:center;margin-top:54px}
+.cw-stage{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:5/4;background:var(--wood-deep)}
+.cw-stage img{width:100%;height:100%;object-fit:cover}
+.cw-wash{position:absolute;inset:0;mix-blend-mode:multiply;opacity:0;transition:opacity .6s var(--ease),background .6s var(--ease)}
+.cw-tag{position:absolute;left:18px;bottom:18px;z-index:3;background:rgba(35,32,28,.55);backdrop-filter:blur(8px);
+  padding:9px 16px;border-radius:100px;font-weight:600;font-size:14px;display:flex;align-items:center;gap:9px}
+.cw-tag .dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(251,247,240,.7)}
+.cw-panel h3{font-family:var(--display);font-weight:700;font-size:clamp(26px,3vw,38px);margin-bottom:6px}
+.cw-panel .desc{color:rgba(251,247,240,.72);min-height:48px;margin-bottom:26px}
+.swatches{display:flex;gap:14px;flex-wrap:wrap}
+.swatch{width:52px;height:52px;border-radius:50%;cursor:pointer;border:2px solid rgba(251,247,240,.25);
+  position:relative;transition:transform .25s var(--ease),border-color .25s}
+.swatch:hover{transform:scale(1.08)}
+.swatch[aria-selected="true"]{border-color:var(--amber);transform:scale(1.08)}
+.swatch[aria-selected="true"]::after{content:"";position:absolute;inset:-7px;border:1.5px solid var(--amber);border-radius:50%}
+.cw-note{margin-top:26px;font-size:13px;color:rgba(251,247,240,.5)}
+.cw-tote{margin-top:22px;display:flex;align-items:center;gap:14px;font-size:14px;color:rgba(251,247,240,.8)}
+.cw-tote img{width:64px;height:64px;border-radius:10px;object-fit:cover}
+
+/* ============ lifestyle ============ */
+.life .grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(30px,5vw,72px);align-items:center}
+.life .figure{border-radius:8px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 36px 70px -34px rgba(35,32,28,.45)}
+.life .figure img{width:100%;height:100%;object-fit:cover}
+.life h2{font-size:clamp(30px,4.4vw,56px)}
+.life .steps{margin-top:30px;display:flex;flex-direction:column;gap:2px}
+.step{display:flex;gap:18px;padding:20px 0;border-top:1px solid rgba(35,32,28,.12)}
+.step:last-child{border-bottom:1px solid rgba(35,32,28,.12)}
+.step .n{font-family:var(--display);font-weight:700;font-size:18px;color:var(--amber);min-width:34px}
+.step h4{font-family:var(--display);font-weight:600;font-size:19px;margin-bottom:3px}
+.step p{color:var(--ink-60);font-size:15px}
+
+/* ============ cinematic band ============ */
+.band{position:relative;height:min(78vh,680px);overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
+.band img{position:absolute;inset:0;width:100%;height:118%;object-fit:cover;will-change:transform}
+.band::after{content:"";position:absolute;inset:0;background:rgba(35,32,28,.42)}
+.band .q{position:relative;z-index:2;color:var(--cream);max-width:20ch;font-family:var(--display);font-weight:700;
+  font-size:clamp(28px,4.6vw,56px);line-height:1.08;text-shadow:0 2px 30px rgba(35,32,28,.4)}
+
+/* ============ craft details ============ */
+.craft{background:var(--canvas)}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:54px}
+.detail{border-radius:10px;overflow:hidden;background:var(--cream);border:1px solid rgba(35,32,28,.08)}
+.detail .ph{aspect-ratio:1/1;overflow:hidden}
+.detail .ph img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.detail:hover .ph img{transform:scale(1.06)}
+.detail .cap{padding:22px 24px 26px}
+.detail .cap .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);font-weight:600}
+.detail .cap h3{font-family:var(--display);font-weight:600;font-size:21px;margin:8px 0 6px}
+.detail .cap p{color:var(--ink-60);font-size:14.5px}
+
+/* ============ reviews ============ */
+.reviews{text-align:center}
+.stars{display:flex;justify-content:center;gap:5px;color:var(--amber);margin-bottom:14px}
+.stars svg{width:24px;height:24px}
+.rating-line{font-family:var(--display);font-weight:600;font-size:20px}
+.rating-line span{color:var(--ink-60);font-family:var(--body);font-weight:400;font-size:16px}
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:50px;text-align:left}
+.quote{background:var(--canvas);border:1px solid rgba(35,32,28,.08);border-radius:10px;padding:28px}
+.quote .qs{display:flex;gap:3px;color:var(--amber);margin-bottom:14px}
+.quote .qs svg{width:16px;height:16px}
+.quote p{font-size:15.5px;margin-bottom:18px}
+.quote .who{display:flex;align-items:center;gap:11px}
+.quote .av{width:38px;height:38px;border-radius:50%;background:var(--sand);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--display);color:var(--wood)}
+.quote .who b{font-weight:600;font-size:14px}
+.quote .who small{display:block;color:var(--ink-60);font-size:12.5px}
+
+/* ============ final CTA ============ */
+.final{position:relative;overflow:hidden;text-align:center;color:var(--cream)}
+.final img{position:absolute;inset:0;width:100%;height:118%;object-fit:cover;will-change:transform}
+.final::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,32,28,.5),rgba(35,32,28,.72))}
+.final .inner{position:relative;z-index:2;padding:clamp(90px,15vw,180px) 0}
+.final h2{color:var(--cream);font-size:clamp(34px,6vw,80px);margin-bottom:20px}
+.final p{color:rgba(251,247,240,.9);max-width:46ch;margin:0 auto 32px;font-size:18px}
+
+/* ============ footer ============ */
+footer{background:var(--ink);color:rgba(251,247,240,.7);padding:64px 0 30px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:34px}
+footer .logo{color:var(--cream);margin-bottom:14px}
+footer p.bl{max-width:34ch;font-size:14px}
+footer h5{color:var(--cream);font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.04em;margin-bottom:16px;text-transform:uppercase}
+footer ul{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px}
+footer ul a{opacity:.75;transition:opacity .2s}
+footer ul a:hover{opacity:1;color:var(--amber)}
+.foot-bot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:48px;padding-top:22px;border-top:1px solid rgba(251,247,240,.12);font-size:13px;opacity:.6}
+
+/* placeholder flag */
+.ph-flag{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);
+  border:1px solid var(--amber);border-radius:4px;padding:2px 7px;margin-left:10px;vertical-align:middle;opacity:.8}
+
+/* ============ responsive ============ */
+@media(max-width:900px){
+  nav.links,.header-cta .btn-ghost{display:none}
+  .statement .grid,.cw-grid,.life .grid{grid-template-columns:1fr}
+  .props,.detail-grid,.quotes{grid-template-columns:1fr}
+  .statement .figure,.life .figure{aspect-ratio:16/11}
+  .cw-grid{gap:34px}
+}
+@media(max-width:560px){
+  .wrap{padding:0 20px}
+  .hero-actions .btn{flex:1;justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- HEADER -->
+<header id="hdr">
+  <div class="wrap bar">
+    <a class="logo" href="#top">
+      <svg viewBox="0 0 40 40" fill="none"><path d="M4 14c5-6 11 6 16 0s11 6 16 0" stroke="#23201C" stroke-width="2.4" stroke-linecap="round"/><path d="M4 22c5-6 11 6 16 0s11 6 16 0" stroke="#E8A04A" stroke-width="2.4" stroke-linecap="round"/><path d="M4 30c5-6 11 6 16 0s11 6 16 0" stroke="#23201C" stroke-width="2.4" stroke-linecap="round"/></svg>
+      SHADIEZ
+    </a>
+    <nav class="links">
+      <a href="#shade">The Shade</a>
+      <a href="#colors">Colors</a>
+      <a href="#craft">Craft</a>
+      <a href="#reviews">Reviews</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-ghost" href="#colors">Pick your color</a>
+      <a class="btn btn-amber" href="#buy">Shop the Shade</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-media"><img id="heroImg" src="./Higgsfield/opt/1.jpg" alt="SHADIEZ personal beach sun-shade on warm sand"/></div>
+  <div class="hero-inner">
+    <div class="wrap">
+      <p class="eyebrow reveal in">The personal beach sun-shade</p>
+      <h1 class="display reveal in d1">Something New<br>Under The Sun</h1>
+      <p class="sub reveal in d2">A premium walnut-and-canvas shade that folds flat, sets up in seconds, and hands you your own patch of shade — anywhere the sun finds you.</p>
+      <div class="hero-actions reveal in d3">
+        <a class="btn btn-amber" href="#buy">Shop the Shade</a>
+        <a class="btn btn-ghost" style="border-color:rgba(251,247,240,.5);color:var(--cream)" href="#shade">See how it works</a>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
+</section>
+
+<!-- PRESS -->
+<div class="press">
+  <div class="wrap row">
+    <span class="lbl">As seen in <span class="ph-flag">placeholder</span></span>
+    <div class="names"><span>Vogue Living</span><span>Monocle</span><span>Condé Nast Traveler</span><span>Belle</span><span>Kinfolk</span></div>
+  </div>
+</div>
+
+<!-- STATEMENT -->
+<section class="statement pad" id="shade">
+  <div class="wrap grid">
+    <div class="reveal">
+      <p class="eyebrow">Why SHADIEZ</p>
+      <h2 class="display">They said there's nothing new under the sun.<br><em>So we made shade you can carry.</em></h2>
+      <p class="lead" style="color:var(--ink-60)">SHADIEZ isn't a chair — it's your own pocket of shade. A foldable oak frame and cream canvas prop up at the angle you choose, shading your head and shoulders while you lie back on the sand. No poles to bury, no tent to wrestle. Open it, recline it, disappear into the cool.</p>
+    </div>
+    <div class="figure reveal d1"><img src="./Higgsfield/opt/12.jpg" alt="SHADIEZ shade casting cool shadow on rippled sand"/></div>
+  </div>
+  <div class="wrap">
+    <div class="props">
+      <div class="prop reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke-linecap="round"/></svg></div>
+        <h3>Blocks the sun</h3>
+        <p>Dense marine-grade canvas throws real, deep shade over your head and upper body — not a thin patch of dappled light.</p>
+      </div>
+      <div class="prop reveal d1">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18L14 6M14 6l-1 5M14 6l-5 1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20h16" stroke-linecap="round"/></svg></div>
+        <h3>Adjustable angle</h3>
+        <p>Notched recline positions let you dial the shade exactly where the sun is — and move it as the afternoon does.</p>
+      </div>
+      <div class="prop reveal d2">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-4 9 4-9 4-9-4z" stroke-linejoin="round"/><path d="M3 7v6l9 4 9-4V7" stroke-linejoin="round"/></svg></div>
+        <h3>Folds flat, sets up in seconds</h3>
+        <p>Collapses to a slim board that drops in the matching tote. From bag to shade in one easy motion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLORWAYS -->
+<section class="colorways pad" id="colors">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Pick your color</p>
+      <h2 class="display">One shade, six ways to catch the light.</h2>
+      <p class="lead">Every canvas comes with its own matching tote. Tap a color to preview it.</p>
+    </div>
+    <div class="cw-grid">
+      <div class="cw-stage reveal">
+        <img id="cwImg" src="./Higgsfield/opt/13.jpg" alt="SHADIEZ shade — cream colorway"/>
+        <div class="cw-wash" id="cwWash"></div>
+        <div class="cw-tag"><span class="dot" id="cwDot" style="background:#F8F6EF"></span><span id="cwTagName">Cream</span></div>
+      </div>
+      <div class="cw-panel reveal d1">
+        <h3 id="cwName">Cream</h3>
+        <p class="desc" id="cwDesc">The original. Warm off-white canvas on natural walnut — the hero colorway, quiet and timeless.</p>
+        <div class="swatches" id="swatches" role="listbox" aria-label="Colorways"></div>
+        <div class="cw-tote"><img src="./Higgsfield/opt/totes.jpg" alt="Matching SHADIEZ totes"/><span>Ships with a matching canvas tote in every color.</span></div>
+        <p class="cw-note">Live colorway preview is a styling approximation. Final swatches sampled from real canvas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIFESTYLE -->
+<section class="life pad">
+  <div class="wrap grid">
+    <div class="figure reveal"><img src="./Higgsfield/opt/7.jpg" alt="Person carrying the folded SHADIEZ shade and tote down the beach"/></div>
+    <div class="reveal d1">
+      <p class="eyebrow">Pack it. Carry it. Claim your spot.</p>
+      <h2 class="display">Your shade goes where you go.</h2>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><div><h4>Sling it over your shoulder</h4><p>Folded flat in its tote, SHADIEZ carries like a portfolio — down the boardwalk, onto the sand, into the car.</p></div></div>
+        <div class="step"><span class="n">02</span><div><h4>Unfold in seconds</h4><p>The frame springs open and locks. No stakes, no instructions, no sandy struggle.</p></div></div>
+        <div class="step"><span class="n">03</span><div><h4>Set your angle and lie back</h4><p>Choose a recline notch, tilt the canvas to the sun, and settle into your own cool corner of the beach.</p></div></div>
+      </div>
+      <a class="btn btn-dark" href="#buy" style="margin-top:28px">Shop the Shade</a>
+    </div>
+  </div>
+</section>
+
+<!-- CINEMATIC BAND -->
+<section class="band"><img id="bandImg" src="./Higgsfield/opt/9.jpg" alt="SHADIEZ shades on a wide sunset beach"/><p class="q">Made for long afternoons and the people who don't want them to end.</p></section>
+
+<!-- CRAFT -->
+<section class="craft pad" id="craft">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Built like furniture</p>
+      <h2 class="display">The details you'll only notice after years of use.</h2>
+      <p class="lead">Every SHADIEZ is made from materials chosen to take salt, sun and sand — and still look good doing it.</p>
+    </div>
+    <div class="detail-grid">
+      <div class="detail reveal"><div class="ph"><img src="./Higgsfield/opt/19.jpg" alt="Solid walnut folding frame"/></div><div class="cap"><span class="k">The frame</span><h3>Solid oak, walnut finish</h3><p>A V-fold hardwood frame, sanded smooth and sealed — strong enough to lean on, light enough to carry.</p></div></div>
+      <div class="detail reveal d1"><div class="ph"><img src="./Higgsfield/opt/2.jpg" alt="Notched recline mechanism"/></div><div class="cap"><span class="k">The mechanism</span><h3>Notched recline</h3><p>Brass-pinned notches hold your chosen angle without slipping — adjust it with one hand.</p></div></div>
+      <div class="detail reveal d2"><div class="ph"><img src="./Higgsfield/opt/18.jpg" alt="Marine-grade canvas weave"/></div><div class="cap"><span class="k">The canvas</span><h3>Marine-grade weave</h3><p>Tight, UV-resistant canvas that blocks the glare and shrugs off spray, dries fast, fades slow.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews pad" id="reviews">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="stars">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg>
+      </div>
+      <p class="rating-line">4.9 out of 5 <span>· from 4,200+ beach days <span class="ph-flag">placeholder</span></span></p>
+    </div>
+    <div class="quotes">
+      <div class="quote reveal"><div class="qs"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg></div><p>"Set it up in literally ten seconds and didn't move from under it all afternoon. It's the most beautiful thing on the beach."</p><div class="who"><span class="av">M</span><div><b>Maya R.</b><small>Tel Aviv</small></div></div></div>
+      <div class="quote reveal d1"><div class="qs"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg></div><p>"Finally a beach shade that doesn't look like camping gear. The walnut and canvas feel like real furniture."</p><div class="who"><span class="av">D</span><div><b>Daniel K.</b><small>Herzliya</small></div></div></div>
+      <div class="quote reveal d2"><div class="qs"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 6.9L12 17.8 5.2 21l1.5-6.9L1.5 9.3l7-.8z"/></svg></div><p>"Packs flat in the trunk, opens in a second, and the angle adjustment actually works. Bought a second one for my partner."</p><div class="who"><span class="av">N</span><div><b>Noa B.</b><small>Caesarea</small></div></div></div>
+    </div>
+    <p class="muted" style="margin-top:26px;font-size:13px"><span class="ph-flag">placeholder</span> Reviews are sample copy — swap for real testimonials before launch.</p>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final" id="buy">
+  <img id="finalImg" src="./Higgsfield/opt/8.jpg" alt="SHADIEZ shades on the beach at golden hour"/>
+  <div class="inner wrap">
+    <p class="eyebrow reveal" style="color:var(--amber)">Your patch of shade is waiting</p>
+    <h2 class="display reveal d1">Claim your shade.</h2>
+    <p class="reveal d2">Premium oak-and-canvas sun-shade. Free shipping &amp; returns, limited lifetime warranty, and your color of choice — ready before your next beach day.</p>
+    <div class="reveal d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-amber" href="#">Shop the Shade</a>
+      <a class="btn btn-ghost" style="border-color:rgba(251,247,240,.5);color:var(--cream)" href="#colors">Explore colors</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BADGES -->
+<div class="badges">
+  <div class="wrap row">
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg> Free shipping &amp; returns</span>
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z" stroke-linejoin="round"/></svg> Limited lifetime warranty</span>
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg> Sets up in seconds</span>
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg> Folds flat to carry</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo"><svg viewBox="0 0 40 40" fill="none" style="width:24px;height:24px"><path d="M4 14c5-6 11 6 16 0s11 6 16 0" stroke="#FBF7F0" stroke-width="2.4" stroke-linecap="round"/><path d="M4 22c5-6 11 6 16 0s11 6 16 0" stroke="#E8A04A" stroke-width="2.4" stroke-linecap="round"/><path d="M4 30c5-6 11 6 16 0s11 6 16 0" stroke="#FBF7F0" stroke-width="2.4" stroke-linecap="round"/></svg> SHADIEZ</div>
+        <p class="bl">Something new under the sun. Premium personal beach sun-shades, made for long afternoons.</p>
+      </div>
+      <div><h5>Shop</h5><ul><li><a href="#colors">Colorways</a></li><li><a href="#buy">The Shade</a></li><li><a href="#">Matching totes</a></li><li><a href="#">Gift cards</a></li></ul></div>
+      <div><h5>Help</h5><ul><li><a href="#">Shipping</a></li><li><a href="#">Returns</a></li><li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div><h5>Brand</h5><ul><li><a href="#shade">Our story</a></li><li><a href="#craft">Craft</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#">Journal</a></li></ul></div>
+    </div>
+    <div class="foot-bot"><span>© 2026 SHADIEZ. All rights reserved.</span><span>Privacy · Terms · Accessibility</span></div>
+  </div>
+</footer>
+
+<script>
+/* sticky header */
+const hdr=document.getElementById('hdr');
+const onScroll=()=>{hdr.classList.toggle('scrolled',window.scrollY>40);
+  document.querySelectorAll('[data-parallax]').forEach(el=>{
+    const r=el.getBoundingClientRect();const off=(r.top+r.height/2-window.innerHeight/2);
+    el.style.transform='translateY('+(off*-0.06)+'px)';});
+};
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* mark parallax targets */
+['heroImg','bandImg','finalImg','cwImg'].forEach(id=>{const e=document.getElementById(id);if(e)e.setAttribute('data-parallax','');});
+
+/* reveal on scroll */
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.14});
+document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
+
+/* colorways */
+const COLORS=[
+  {key:'Cream',hex:'#F8F6EF',wash:'transparent',washOp:0,desc:'The original. Warm off-white canvas on natural walnut — the hero colorway, quiet and timeless.'},
+  {key:'Coral',hex:'#D38773',wash:'#D38773',washOp:.55,desc:'Sun-faded terracotta. Warm, retro and unmistakably coastal.'},
+  {key:'Navy',hex:'#1F3A5F',wash:'#1F3A5F',washOp:.6,desc:'Deep marine navy — crisp against the sand, classic against the wood.'},
+  {key:'Burgundy',hex:'#7C3B41',wash:'#7C3B41',washOp:.55,desc:'Rich oxblood stripe energy. The grown-up red of the lineup.'},
+  {key:'Teal',hex:'#3E7B73',wash:'#3E7B73',washOp:.5,desc:'Solid sea-glass teal — cool, calm, a little bit Riviera.'},
+  {key:'Butter',hex:'#EBDAB0',wash:'#EBDAB0',washOp:.4,desc:'Soft butter yellow. The warmest light of the day, in canvas form.'},
+];
+const sw=document.getElementById('swatches');
+const cwName=document.getElementById('cwName'),cwDesc=document.getElementById('cwDesc'),
+      cwWash=document.getElementById('cwWash'),cwDot=document.getElementById('cwDot'),cwTagName=document.getElementById('cwTagName');
+COLORS.forEach((c,i)=>{
+  const b=document.createElement('button');
+  b.className='swatch';b.style.background=c.hex;b.setAttribute('role','option');
+  b.setAttribute('aria-label',c.key);b.setAttribute('aria-selected',i===0?'true':'false');
+  b.addEventListener('click',()=>select(i));
+  sw.appendChild(b);
+});
+function select(i){
+  const c=COLORS[i];
+  cwName.textContent=c.key;cwDesc.textContent=c.desc;cwTagName.textContent=c.key;cwDot.style.background=c.hex;
+  cwWash.style.background=c.wash;cwWash.style.opacity=c.washOp;
+  [...sw.children].forEach((b,bi)=>b.setAttribute('aria-selected',bi===i?'true':'false'));
+}
+</script>
+</body>
+</html>
