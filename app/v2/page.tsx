@@ -163,17 +163,6 @@ const WaveLine = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// The shade's silhouette — the V-fold recline with notch ticks, monoline.
-const ShadeGlyph = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 220 200" fill="none" aria-hidden>
-    <path d="M40 150 L150 44" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M150 44 L150 150" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M30 150 L182 150" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M40 150 L96 96" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.7" />
-    <path d="M70 124 l10 -9 M88 106 l10 -9 M106 88 l10 -9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
-  </svg>
-);
-
 /* ── Reactive button — springy hover lift + tactile press. Honors reduced motion.
    (CSS owns the colour/shadow; motion owns the transform.) ── */
 function Btn({
@@ -408,18 +397,17 @@ export default function V2() {
         </div>
       </section>
 
-      {/* ☀ SUN FIELD A — the immersive centerpiece: cut-out + monoline sun */}
+      {/* ☀ SUN FIELD A — the immersive centerpiece: colorway lineup + monoline sun */}
       <SunField variant="amber" motes={1.1} className="sunfield-stage">
-        <ShadeGlyph className="sf-glyph sf-glyph-tl" />
         <div className="sf-stack">
           <Reveal as="p" className="sf-eyebrow">Something new</Reveal>
           <Reveal as="h2" className="sf-display display">Your own<br />patch of shade.</Reveal>
+          <WaveLine className="sf-wave sf-wave-under" />
         </div>
         <Reveal className="sf-object" delay={0.1}>
           <SunRays className="sf-sun" />
-          <Image className="sf-cutout" src="/Object.png" alt="The SHADIEZ sun-shade — walnut frame and cream canvas" width={596} height={614} sizes="(max-width:900px) 70vw, 460px" />
+          <Image className="sf-cutout sf-cutout-colorways" src="/v2/colorways-shade.png" alt="The SHADIEZ sun-shade in three colorways — cream, coral and navy" width={2322} height={1206} sizes="(max-width:900px) 88vw, 620px" />
         </Reveal>
-        <WaveLine className="sf-wave" />
       </SunField>
 
       {/* 4 · THE SPECTRUM (colorways) */}
