@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import {
   motion,
@@ -12,14 +12,37 @@ import {
 import { useLeadDialog } from "@/components/lead-dialog";
 import "./v2.css";
 
-const COLORS = [
-  { key: "Cream", hex: "#F8F6EF", wash: "transparent", washOp: 0, desc: "The original. Warm off-white canvas on natural walnut — the hero colorway, quiet and timeless." },
+// The hero/cream product shot. The only colorway with a real, dedicated photo;
+// every other swatch tints this image to approximate its canvas color until a
+// real per-color shot exists (set `photo` and the tint + "approx" flag drop away).
+const HERO_SHOT = "/Higgsfield/opt/13.jpg";
+
+type Colorway = {
+  key: string;
+  hex: string;
+  wash: string;
+  washOp: number;
+  desc: string;
+  /** Dedicated product photo. When absent, the stage shows HERO_SHOT tinted and
+   *  flags the preview as an approximation. */
+  photo?: string;
+};
+
+// TODO(real-data): confirm the final SKU list + palette codes with the client
+// before locking these. Per the brand asset map the real lineup is 8 colorways
+// (cream · olive/khaki · butter · dusty blue · coral + navy / burgundy / black-
+// pinstripe stripes); this ships 6, and only Cream has a real photo. Add `photo`
+// per colorway as real per-color shots come in.
+const COLORS: Colorway[] = [
+  { key: "Cream", hex: "#F8F6EF", wash: "transparent", washOp: 0, photo: HERO_SHOT, desc: "The original. Warm off-white canvas on natural walnut — the hero colorway, quiet and timeless." },
   { key: "Coral", hex: "#D38773", wash: "#D38773", washOp: 0.55, desc: "Sun-faded terracotta. Warm, retro and unmistakably coastal." },
   { key: "Navy", hex: "#1F3A5F", wash: "#1F3A5F", washOp: 0.6, desc: "Deep marine navy — crisp against the sand, classic against the wood." },
   { key: "Burgundy", hex: "#7C3B41", wash: "#7C3B41", washOp: 0.55, desc: "Rich oxblood stripe energy. The grown-up red of the lineup." },
   { key: "Teal", hex: "#3E7B73", wash: "#3E7B73", washOp: 0.5, desc: "Solid sea-glass teal — cool, calm, a little bit Riviera." },
   { key: "Butter", hex: "#EBDAB0", wash: "#EBDAB0", washOp: 0.4, desc: "Soft butter yellow. The warmest light of the day, in canvas form." },
 ];
+
+const COLORWAY_STORAGE_KEY = "shadiez-v2-colorway";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -121,6 +144,25 @@ const Mark = () => (
 
 export default function V2() {
   const [active, setActive] = useState(0);
+
+  // Persist the colorway choice so a returning shopper sees the canvas they were
+  // considering. Restored after mount (client-only) to keep SSR markup stable.
+  useEffect(() => {
+    const saved = window.localStorage.getItem(COLORWAY_STORAGE_KEY);
+    if (!saved) return;
+    const i = COLORS.findIndex((x) => x.key === saved);
+    if (i >= 0) setActive(i);
+  }, []);
+
+  const selectColor = (i: number) => {
+    setActive(i);
+    try {
+      window.localStorage.setItem(COLORWAY_STORAGE_KEY, COLORS[i].key);
+    } catch {
+      /* storage may be unavailable (private mode) — selection still works in-session */
+    }
+  };
+
   // Shared lead-capture dialog (provider lives in app/layout). Every "Shop the
   // Shade" CTA opens it — that's this page's conversion action.
   const { openDialog } = useLeadDialog();
@@ -132,6 +174,7 @@ export default function V2() {
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
 
   const c = COLORS[active];
+  const approx = !c.photo; // tinted preview rather than a real photo of this canvas
 
   return (
     <div className="v2root">
@@ -220,8 +263,9 @@ export default function V2() {
           </Reveal>
           <div className="cw-grid">
             <Reveal className="cw-stage">
-              <Parallax className="media-track" amount={22}><Image src="/Higgsfield/opt/13.jpg" alt={`SHADIEZ shade — ${c.key} colorway`} fill sizes="(max-width:900px) 100vw, 46vw" style={{ objectFit: "cover" }} /></Parallax>
-              <div className="cw-wash" style={{ background: c.wash, opacity: c.washOp }} />
+              <Parallax className="media-track" amount={22}><Image src={c.photo ?? HERO_SHOT} alt={approx ? `SHADIEZ shade in cream canvas, shown as an approximate ${c.key} colour preview` : `SHADIEZ shade — ${c.key} colorway`} fill sizes="(max-width:900px) 100vw, 46vw" style={{ objectFit: "cover" }} /></Parallax>
+              {approx && <div className="cw-wash" style={{ background: c.wash, opacity: c.washOp }} />}
+              {approx && <div className="cw-approx" title="Color preview is approximate — the photo is the cream canvas, tinted.">Approx. color</div>}
               <div className="cw-tag"><span className="dot" style={{ background: c.hex }} /><span>{c.key}</span></div>
             </Reveal>
             <Reveal className="cw-panel" delay={0.08}>
@@ -230,11 +274,15 @@ export default function V2() {
               <div className="swatches" role="listbox" aria-label="Colorways">
                 {COLORS.map((col, i) => (
                   <button key={col.key} className="swatch" style={{ background: col.hex }} role="option"
-                    aria-label={col.key} aria-selected={i === active} onClick={() => setActive(i)} />
+                    aria-label={col.key} aria-selected={i === active} onClick={() => selectColor(i)} />
                 ))}
               </div>
               <div className="cw-tote"><Image src="/Higgsfield/opt/totes.jpg" alt="Matching SHADIEZ totes" width={64} height={64} sizes="64px" /><span>Ships with a matching canvas tote in every color.</span></div>
-              <p className="cw-note">Live colorway preview is a styling approximation. Final swatches sampled from real canvas.</p>
+              <p className="cw-note">
+                {approx
+                  ? `Preview is a styling approximation — the ${c.key} canvas is shown by tinting the cream shot. Final colour is sampled from the real ${c.key} weave.`
+                  : "Shown in the real cream canvas — the hero colorway."}
+              </p>
             </Reveal>
           </div>
         </div>
