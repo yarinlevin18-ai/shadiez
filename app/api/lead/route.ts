@@ -45,6 +45,18 @@ export async function POST(req: Request) {
   }
 
   // ── Forward to the inbox via FormSubmit ───────────────────────────────────
+  // FormSubmit refuses requests that look like a local HTML file — it needs an
+  // Origin/Referer from a real site. A server-side fetch sends neither, so we add
+  // them from the incoming request (falling back to the production domain).
+  const site =
+    req.headers.get("origin") ||
+    (() => {
+      try {
+        return new URL(req.url).origin
+      } catch {
+        return "https://www.shadiez.com"
+      }
+    })()
   try {
     const res = await fetch(
       `https://formsubmit.co/ajax/${encodeURIComponent(LEAD_TO)}`,
@@ -53,6 +65,8 @@ export async function POST(req: Request) {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          Origin: site,
+          Referer: `${site}/`,
         },
         body: JSON.stringify({
           name,
