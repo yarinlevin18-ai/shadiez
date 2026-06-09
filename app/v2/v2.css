@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');
+/* Fraunces variable — display serif for the hero headline (opsz/SOFT/WONK axes). */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,900,0,0&display=swap');
 
 /* ===== SHADIEZ /v2 "Catch the Light" — scoped under .v2root ===== */
 .v2root{
@@ -57,17 +59,21 @@
 
 /* ── header ── */
 .v2root header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s var(--ease),box-shadow .4s,backdrop-filter .4s}
-.v2root header .bar{display:flex;align-items:center;justify-content:space-between;height:78px}
+/* stripped chrome — mark left · centered wordmark · minimal menu right */
+.v2root header .bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:78px}
 .v2root header.scrolled{background:rgba(251,246,236,.8);backdrop-filter:blur(16px);box-shadow:0 1px 0 rgba(35,32,28,.07)}
+.v2root .mark-link{justify-self:start;display:inline-flex;color:var(--ink)}
+.v2root .mark-link svg{width:30px;height:30px}
+.v2root .wordmark{justify-self:center;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.2em;color:var(--ink);padding-left:.2em}
 .v2root .logo{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:.05em;color:var(--ink);display:flex;align-items:center;gap:9px}
 .v2root .logo svg{width:25px;height:25px}
-.v2root nav.links{display:flex;gap:36px;font-weight:500;font-size:14.5px}
+.v2root nav.links{justify-self:end;display:flex;align-items:center;gap:24px;font-weight:500;font-size:14.5px}
 .v2root nav.links a{position:relative;opacity:.8;transition:opacity .2s}
 .v2root nav.links a:hover{opacity:1}
 .v2root nav.links a::after{content:"";position:absolute;left:0;bottom:-5px;height:1.5px;width:0;background:var(--sun);transition:width .3s var(--ease)}
 .v2root nav.links a:hover::after{width:100%}
 /* header sits over the dark hero until scrolled */
-.v2root header:not(.scrolled) .logo,.v2root header:not(.scrolled) nav.links a{color:var(--cream)}
+.v2root header:not(.scrolled) .mark-link,.v2root header:not(.scrolled) .wordmark,.v2root header:not(.scrolled) nav.links a{color:var(--cream)}
 
 /* ── 1 · HERO ── */
 .v2root .hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
@@ -76,8 +82,17 @@
 .v2root .hero-media::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(35,32,28,.34) 0%,rgba(35,32,28,0) 26%,rgba(35,32,28,.08) 52%,rgba(35,32,28,.74) 100%)}
 .v2root .hero-inner{position:relative;z-index:2;width:100%;padding-bottom:clamp(40px,7vw,84px);color:var(--cream)}
-.v2root .hero-h1{font-size:clamp(48px,9vw,128px);line-height:.96;text-shadow:0 2px 40px rgba(35,32,28,.4)}
-.v2root .hero-h1 span{display:block}
+.v2root .hero-h1{font-size:clamp(52px,10vw,148px);line-height:.92;letter-spacing:-.035em;text-shadow:0 2px 40px rgba(35,32,28,.4)}
+/* Hero headline — Fraunces display treatment (overrides .hero-h1 sizing). */
+.v2root .hero-headline{font-family:'Fraunces',serif;font-weight:900;font-variation-settings:'opsz' 144,'SOFT' 0,'WONK' 0;
+  font-size:clamp(3rem,8vw,7rem);line-height:.9;letter-spacing:-.025em}
+/* per-word kinetic reveal: each word slides up out of a clipped line */
+.v2root .hero-h1 .kline{display:block}
+.v2root .kword{display:inline-block;overflow:hidden;vertical-align:top;margin-right:.22em;padding:.04em 0}
+.v2root .kword-in{display:inline-block;will-change:transform}
+/* faint monoline sun behind the hero headline */
+.v2root .hero-sun{position:absolute;z-index:1;top:clamp(40px,11vw,140px);right:clamp(-40px,2vw,80px);
+  width:clamp(220px,34vw,520px);height:auto;color:var(--cream);opacity:.16;pointer-events:none}
 .v2root .hero-foot{display:flex;align-items:center;gap:22px;margin-top:clamp(22px,3vw,38px);flex-wrap:wrap}
 .v2root .hero-kicker{font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:rgba(251,247,240,.82)}
 .v2root .scroll-cue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:3;display:block}
@@ -154,12 +169,47 @@
 .v2root .ph-flag{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--sun);
   border:1px solid var(--sun);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:middle}
 
-/* ── 9 · CLOSE ── */
-.v2root .close{position:relative;overflow:hidden;text-align:center;color:var(--cream)}
-.v2root .close-media{position:absolute;inset:0}
-.v2root .close::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,32,28,.42),rgba(35,32,28,.7))}
-.v2root .close-inner{position:relative;z-index:2;padding:clamp(100px,17vw,210px) 0}
-.v2root .close-inner h2{font-size:clamp(40px,8vw,110px);margin-bottom:30px}
+/* ── ☀ SUN FIELDS — full-viewport single-color washes (the sunny counterpoint
+      to the editorial photo sections). Bold color blocks, drifting sun-motes,
+      original monoline line-art, the product cut-out. ── */
+.v2root .sunfield{position:relative;overflow:hidden;display:flex;align-items:center;
+  min-height:clamp(560px,92vh,880px);padding:clamp(96px,13vw,170px) 0;color:#3a2614}
+.v2root .sunfield-amber{background:linear-gradient(158deg,#F9C25A 0%,var(--sun) 46%,#EC9F36 100%)}
+.v2root .sunfield-gold{background:linear-gradient(158deg,#E89A38 0%,#D97E22 58%,#C25F12 100%);color:var(--cream)}
+/* particle layer — behind content, above the flat color */
+.v2root .sunfield-motes{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.v2root .motes-track{position:absolute;inset:-16% 0;height:132%;will-change:transform}
+.v2root .motes-canvas{width:100%;height:100%;display:block}
+.v2root .sunfield-inner{position:relative;z-index:2;width:100%}
+/* monoline accents read as soft light line-art over the color */
+.v2root .sunfield .sf-sun,.v2root .sunfield .sf-glyph,.v2root .sunfield .sf-wave{color:var(--cream);pointer-events:none}
+.v2root .sf-eyebrow{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.26em;text-transform:uppercase;opacity:.72;margin-bottom:14px}
+.v2root .sf-display{font-size:clamp(46px,8vw,116px);line-height:.9;letter-spacing:-.035em}
+.v2root .sf-big{font-size:clamp(42px,8.4vw,124px);line-height:.93;letter-spacing:-.035em;color:var(--cream)}
+
+/* SUN FIELD A — type left, cut-out + radiating sun right */
+.v2root .sunfield-stage .sunfield-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(30px,5vw,72px);align-items:center}
+.v2root .sf-object{position:relative;display:flex;align-items:center;justify-content:center}
+.v2root .sf-cutout{position:relative;z-index:2;width:100%;max-width:460px;height:auto;
+  filter:drop-shadow(0 34px 52px rgba(58,30,10,.4))}
+.v2root .sf-sun{position:absolute;z-index:1;top:50%;left:50%;width:min(132%,580px);height:auto;
+  opacity:.6;transform:translate(-50%,-54%)}
+.v2root .sf-glyph{position:absolute;width:clamp(120px,16vw,210px);height:auto;opacity:.5}
+.v2root .sf-glyph-tl{top:clamp(24px,6vw,70px);left:0;opacity:.4}
+.v2root .sf-wave{position:absolute;left:0;right:0;bottom:clamp(20px,4vw,46px);width:100%;height:clamp(40px,6vw,70px);opacity:.55}
+
+/* SUN FIELD B — centered type-led counterpoint */
+.v2root .sunfield-quote .sunfield-inner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.v2root .sf-wave-top{position:relative;bottom:auto;width:min(420px,70%);height:46px;margin:0 auto 26px;opacity:.6}
+.v2root .sf-sun-corner{position:absolute;right:clamp(-30px,3vw,60px);bottom:clamp(-30px,2vw,40px);width:clamp(150px,20vw,260px);height:auto;opacity:.4}
+
+/* SUN FIELD finale (CLOSE) — centered, cut-out beneath, big sun behind */
+.v2root .close-field{text-align:center}
+.v2root .close-field .sunfield-inner{display:flex;flex-direction:column;align-items:center;gap:clamp(26px,4vw,46px)}
+.v2root .close-stack{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:clamp(22px,3vw,32px)}
+.v2root .sf-cutout-close{position:relative;z-index:2;width:100%;max-width:min(64vw,360px);height:auto;filter:drop-shadow(0 30px 48px rgba(58,30,10,.42))}
+.v2root .sf-sun-behind{position:absolute;z-index:0;top:clamp(36px,7vw,90px);left:50%;transform:translateX(-50%);width:min(82%,520px);height:auto;opacity:.42}
+.v2root .sf-anchor{position:absolute;top:-90px;left:0}
 
 /* ── footer ── */
 .v2root footer{background:var(--ink);color:rgba(251,247,240,.66);padding:66px 0 30px}
@@ -176,17 +226,38 @@
 
 /* ── responsive ── */
 @media(max-width:900px){
-  .v2root nav.links{display:none}
+  .v2root nav.links{display:flex;gap:16px}
   .v2root .object-grid,.v2root .detail-grid{grid-template-columns:1fr;gap:36px}
   .v2root .object-stage{order:-1}
   .v2root .kit-row{grid-template-columns:1fr;max-width:440px;margin:0 auto}
+  /* sun fields stack: type above the cut-out */
+  .v2root .sunfield{min-height:auto;text-align:center}
+  .v2root .sunfield-stage .sunfield-inner{grid-template-columns:1fr;gap:clamp(28px,7vw,48px);justify-items:center}
+  .v2root .sf-stack{order:-1}
+  .v2root .sf-cutout{max-width:min(72vw,360px)}
+  .v2root .sf-glyph-tl{display:none}
+  .v2root .sf-sun-corner{right:50%;transform:translateX(50%)}
   .v2root .mobile-cta{display:block;position:fixed;left:0;right:0;bottom:0;z-index:200;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
     background:linear-gradient(180deg,rgba(251,246,236,0),rgba(251,246,236,.92) 30%)}
   .v2root .mobile-cta .btn{width:100%;justify-content:center;box-shadow:0 8px 26px -8px rgba(0,0,0,.4)}
+  /* keep the close CTA clear of the sticky bar */
+  .v2root .close-field{padding-bottom:calc(clamp(96px,13vw,170px) + 84px)}
   .v2root footer{padding-bottom:96px}
 }
 @media(max-width:560px){
   .v2root .wrap{padding:0 22px}
   .v2root .hero-foot{gap:16px}
   .v2root .spec-row{gap:12px}
+  .v2root .wordmark{font-size:19px;letter-spacing:.16em}
+  .v2root nav.links a{display:none}
+}
+
+/* ── slow rotating sun-ray ticks (the ring + glyph stay still) ── */
+.v2root .sun-rays-spin{animation:v2spin 64s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes v2spin{to{transform:rotate(360deg)}}
+
+/* ── reduced motion: freeze all continuous/ambient motion ── */
+@media (prefers-reduced-motion: reduce){
+  .v2root .sun-rays-spin{animation:none}
+  .v2root .scroll-cue .line{animation:none;transform:scaleY(1)}
 }

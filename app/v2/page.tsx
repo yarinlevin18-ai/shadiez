@@ -129,7 +129,7 @@ const SunRays = ({ className }: { className?: string }) => {
     <svg className={className} viewBox="0 0 200 200" fill="none" aria-hidden>
       <circle cx="100" cy="100" r="46" stroke="currentColor" strokeWidth="1.6" opacity="0.9" />
       <circle cx="100" cy="100" r="58" stroke="currentColor" strokeWidth="0.9" opacity="0.45" />
-      <g className="sun-rays-spin" style={{ transformOrigin: "100px 100px" }}>
+      <g className="sun-rays-spin">
         {rays.map((_, i) => {
           const a = (i / rays.length) * Math.PI * 2;
           const r1 = i % 2 === 0 ? 70 : 74;
@@ -377,7 +377,7 @@ export default function V2() {
         <div className="hero-media"><Parallax className="media-track" amount={70}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade on a bright beach" fill priority sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
         <SunRays className="hero-sun" />
         <div className="hero-inner wrap">
-          <h1 className="hero-h1 display">
+          <h1 className="hero-h1 hero-headline">
             <KineticLine text="Something New" delay={0.15} />
             <KineticLine text="Under The Sun" delay={0.34} />
           </h1>
