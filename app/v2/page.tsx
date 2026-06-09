@@ -74,15 +74,17 @@ function useIsMobile() {
   return m;
 }
 
-function Parallax({ className, amount = 60, children }: { className?: string; amount?: number; children: ReactNode; }) {
+function Parallax({ className, amount = 60, zoom, children }: { className?: string; amount?: number; zoom?: number; children: ReactNode; }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const isMobile = useIsMobile();
   const amt = isMobile ? amount * 0.5 : amount;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [-amt, amt]);
+  // Optional scroll-linked ken-burns: the media gently scales as it travels past.
+  const scale = useTransform(scrollYProgress, [0, 1], [1, zoom ?? 1]);
   if (reduce) return <div ref={ref} className={className}>{children}</div>;
-  return <motion.div ref={ref} className={className} style={{ y }}>{children}</motion.div>;
+  return <motion.div ref={ref} className={className} style={zoom ? { y, scale } : { y }}>{children}</motion.div>;
 }
 
 /* ── Top scroll-progress bar — a slim sun-colored line tracking page progress.
@@ -445,7 +447,7 @@ export default function V2() {
 
       {/* 1 · HERO — photo anchor + oversized kinetic headline */}
       <section className="hero" id="top" ref={heroRef}>
-        <div className="hero-media"><Parallax className="media-track" amount={70}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade on a bright beach" fill priority sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
+        <div className="hero-media"><Parallax className="media-track" amount={70} zoom={1.08}><Image src="/v2/beach-recline.jpg" alt="A SHADIEZ sun-shade on a bright beach" fill priority sizes="100vw" style={{ objectFit: "cover" }} /></Parallax></div>
         <SunRays className="hero-sun" />
         <motion.div className="hero-inner wrap" style={reduce ? undefined : { y: heroY, opacity: heroFade }}>
           <h1 className="hero-h1 hero-headline">
@@ -539,7 +541,7 @@ export default function V2() {
       {/* 5 · IN THE WILD */}
       <section className="wild">
         <div className="wild-band">
-          <Parallax className="media-track wild-graded" amount={50}><Image src="/v2/8.png" alt="Two SHADIEZ shades on the beach at golden hour" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax>
+          <Parallax className="media-track wild-graded" amount={50} zoom={1.14}><Image src="/v2/8.png" alt="Two SHADIEZ shades on the beach at golden hour" fill sizes="100vw" style={{ objectFit: "cover" }} /></Parallax>
           <Reveal as="p" className="wild-line display">Long afternoons,<br />claimed.</Reveal>
         </div>
       </section>
