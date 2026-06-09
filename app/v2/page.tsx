@@ -9,6 +9,7 @@ import {
   useTransform,
   useMotionValueEvent,
 } from "framer-motion";
+import { useLeadDialog } from "@/components/lead-dialog";
 import "./v2.css";
 
 const COLORS = [
@@ -120,6 +121,9 @@ const Mark = () => (
 
 export default function V2() {
   const [active, setActive] = useState(0);
+  // Shared lead-capture dialog (provider lives in app/layout). Every "Shop the
+  // Shade" CTA opens it — that's this page's conversion action.
+  const { openDialog } = useLeadDialog();
 
   // Header background toggle — driven off the same scroll position as everything
   // else (Framer's useScroll), no standalone scroll listener.
@@ -145,7 +149,7 @@ export default function V2() {
           </nav>
           <div className="header-cta">
             <a className="btn btn-ghost" href="#colors">Pick your color</a>
-            <a className="btn btn-amber" href="#buy">Shop the Shade</a>
+            <button type="button" className="btn btn-amber" onClick={openDialog}>Shop the Shade</button>
           </div>
         </div>
       </header>
@@ -159,7 +163,7 @@ export default function V2() {
             <Reveal as="h1" className="display" load delay={0.1}>Something New<br />Under The Sun</Reveal>
             <Reveal as="p" className="sub" load delay={0.2}>A premium walnut-and-canvas shade that folds flat, sets up in seconds, and hands you your own patch of shade — anywhere the sun finds you.</Reveal>
             <Reveal className="hero-actions" load delay={0.3}>
-              <a className="btn btn-amber" href="#buy">Shop the Shade</a>
+              <button type="button" className="btn btn-amber" onClick={openDialog}>Shop the Shade</button>
               <a className="btn btn-ghost" style={{ borderColor: "rgba(251,247,240,.5)", color: "var(--cream)" }} href="#shade">See how it works</a>
             </Reveal>
           </div>
@@ -248,7 +252,7 @@ export default function V2() {
               <div className="step"><span className="n">02</span><div><h4>Unfold in seconds</h4><p>The frame springs open and locks. No stakes, no instructions, no sandy struggle.</p></div></div>
               <div className="step"><span className="n">03</span><div><h4>Set your angle and lie back</h4><p>Choose a recline notch, tilt the canvas to the sun, and settle into your own cool corner of the beach.</p></div></div>
             </div>
-            <a className="btn btn-dark" href="#buy" style={{ marginTop: 28 }}>Shop the Shade</a>
+            <button type="button" className="btn btn-dark" style={{ marginTop: 28 }} onClick={openDialog}>Shop the Shade</button>
           </Reveal>
         </div>
       </section>
@@ -304,7 +308,7 @@ export default function V2() {
           <Reveal as="h2" className="display" delay={0.08}>Claim your shade.</Reveal>
           <Reveal as="p" delay={0.16}>Premium oak-and-canvas sun-shade. Free shipping &amp; returns, limited lifetime warranty, and your color of choice — ready before your next beach day.</Reveal>
           <Reveal delay={0.24} style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-            <a className="btn btn-amber" href="#">Shop the Shade</a>
+            <button type="button" className="btn btn-amber" onClick={openDialog}>Shop the Shade</button>
             <a className="btn btn-ghost" style={{ borderColor: "rgba(251,247,240,.5)", color: "var(--cream)" }} href="#colors">Explore colors</a>
           </Reveal>
         </div>
