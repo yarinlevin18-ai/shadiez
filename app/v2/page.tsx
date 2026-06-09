@@ -585,7 +585,7 @@ export default function V2() {
         <Parallax className="sf-cutout-wrap" amount={20}>
           <Image className="close-shot" src="/v2/4 1.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1463} sizes="(max-width:900px) 90vw, 720px" />
         </Parallax>
-        <WaveLine className="sf-wave" />
+        <WaveLine className="sf-wave sf-wave-under close-wave" />
       </SunField>
 
       {/* FOOTER */}

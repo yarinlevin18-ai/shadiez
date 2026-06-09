@@ -256,6 +256,8 @@
 .v2root .close-field .sf-cutout-wrap{position:relative;z-index:2;display:block;width:min(92vw,720px);margin:0 auto}
 .v2root .close-shot{position:relative;z-index:2;display:block;width:100%;height:auto;
   filter:drop-shadow(0 28px 40px rgba(58,40,20,.34))}
+/* close wave — wide ground line that sits BELOW the floating lineup (in-flow) */
+.v2root .close-wave{width:min(88vw,640px);height:clamp(44px,5.5vw,68px);margin-top:clamp(2px,1vw,12px);opacity:.55}
 .v2root .sf-sun-behind{position:absolute;z-index:0;top:clamp(8px,2vw,30px);left:50%;transform:translateX(-50%);width:min(60%,440px);height:auto;opacity:.3}
 .v2root .sf-anchor{position:absolute;top:-90px;left:0}
 
