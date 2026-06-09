@@ -307,6 +307,13 @@
 .v2root .sun-rays-spin{animation:v2spin 64s linear infinite;transform-box:fill-box;transform-origin:center}
 @keyframes v2spin{to{transform:rotate(360deg)}}
 
+/* ── section CTAs — repeated "Shop the Shade" buttons down the page ── */
+.v2root .cta-row{margin-top:clamp(28px,4vw,42px)}
+.v2root .cta-center{display:flex;justify-content:center}
+/* CTAs that sit inside a sun field must clear the mote/sun animation layer */
+.v2root .sunfield .sf-cta{position:relative;z-index:2}
+.v2root .sunfield-quote .sf-cta{margin-top:clamp(34px,5vw,52px)}
+
 /* ── scroll-motion polish ── */
 /* top progress line — scaleX driven by page scroll (spring-smoothed in JS) */
 .v2root .v2-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9998;transform-origin:0 50%;
@@ -320,4 +327,5 @@
 @media (prefers-reduced-motion: reduce){
   .v2root .sun-rays-spin{animation:none}
   .v2root .scroll-cue .line{animation:none;transform:scaleY(1)}
+  .v2root .v2-bg-color,.v2root .v2-bg-flow{animation:none}
 }
