@@ -120,14 +120,33 @@ function LeadDialog({
     setErrorMsg("")
 
     try {
-      const res = await fetch("/api/lead", {
+      // Submit straight to FormSubmit from the browser (no API key). The real
+      // Origin/Referer + visitor IP are what FormSubmit requires — it rejects
+      // server-side calls from datacenter IPs. Delivered to shadiezsales@gmail.com.
+      // (To hide the address from page source, swap in FormSubmit's hashed alias
+      // once the form is activated.)
+      const res = await fetch("https://formsubmit.co/ajax/shadiezsales@gmail.com", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone }),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone: phone || "—",
+          _subject: `New SHADIEZ lead — ${name}`,
+          _replyto: email,
+          _template: "table",
+          _captcha: "false",
+        }),
       })
-      if (!res.ok) {
-        const data = (await res.json().catch(() => null)) as { error?: string } | null
-        throw new Error(data?.error ?? "Something went wrong.")
+      const data = (await res.json().catch(() => null)) as
+        | { success?: boolean | string }
+        | null
+      const ok =
+        res.ok &&
+        (data?.success === true ||
+          String(data?.success).toLowerCase() === "true")
+      if (!ok) {
+        throw new Error("Couldn't send right now. Please try again in a moment.")
       }
       setStatus("success")
       // Auto-close after the success panel has been read.
