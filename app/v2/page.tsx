@@ -47,16 +47,21 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /* ── motion primitives (kept from the studio idiom; honor reduced-motion) ── */
 type RevealTag = "div" | "p" | "h1" | "h2" | "span";
 function Reveal({
-  as = "div", className, delay = 0, load = false, style, children,
-}: { as?: RevealTag; className?: string; delay?: number; load?: boolean; style?: React.CSSProperties; children: ReactNode; }) {
+  as = "div", className, delay = 0, load = false, play, style, children,
+}: { as?: RevealTag; className?: string; delay?: number; load?: boolean; play?: boolean; style?: React.CSSProperties; children: ReactNode; }) {
   const reduce = useReducedMotion();
   const M = motion[as] as typeof motion.div;
   // One reveal recipe reused everywhere: rise + settle-scale + fade on a single
-  // custom curve, so the whole page enters with the same calm rhythm.
-  const initial = reduce ? false : { opacity: 0, y: 28, scale: 0.985 };
+  // custom curve, slow enough to be felt, so the whole page enters with the same calm rhythm.
+  const initial = reduce ? false : { opacity: 0, y: 30, scale: 0.98 };
   const shown = { opacity: 1, y: 0, scale: 1 };
-  const transition = { duration: 0.9, ease: EASE, delay };
-  if (load) return <M className={className} style={style} initial={initial} animate={shown} transition={transition}>{children}</M>;
+  const transition = { duration: 1.25, ease: EASE, delay };
+  // load mode: animate on mount, but if `play` is given, hold at the initial state
+  // until it flips true (used to wait out the loading screen before entering).
+  if (load) {
+    const go = play === undefined ? true : play;
+    return <M className={className} style={style} initial={initial} animate={go || reduce ? shown : initial} transition={transition}>{children}</M>;
+  }
   return <M className={className} style={style} initial={initial} whileInView={shown} viewport={{ once: true, amount: 0.2 }} transition={transition}>{children}</M>;
 }
 
@@ -99,7 +104,7 @@ function ScrollProgress() {
 
 /* ── Per-word kinetic reveal for the oversized hero headline. Each word rises
    from a masked baseline; staggered. Static under reduced motion. ── */
-function KineticLine({ text, delay = 0 }: { text: string; delay?: number }) {
+function KineticLine({ text, delay = 0, play = true }: { text: string; delay?: number; play?: boolean }) {
   const reduce = useReducedMotion();
   const words = text.split(" ");
   return (
@@ -108,9 +113,9 @@ function KineticLine({ text, delay = 0 }: { text: string; delay?: number }) {
         <span className="kword" key={`${word}-${i}`}>
           <motion.span
             className="kword-in"
-            initial={reduce ? false : { y: "115%" }}
-            animate={{ y: "0%" }}
-            transition={{ duration: 1.0, ease: EASE, delay: delay + i * 0.09 }}
+            initial={reduce ? false : { y: "118%" }}
+            animate={play || reduce ? { y: "0%" } : { y: "118%" }}
+            transition={{ duration: 1.5, ease: EASE, delay: delay + i * 0.13 }}
           >
             {word}
           </motion.span>
@@ -241,9 +246,9 @@ function Btn({
       type="button"
       className={className}
       onClick={onClick}
-      whileHover={reduce ? undefined : { y: -2, scale: 1.035 }}
+      whileHover={reduce ? undefined : { y: -3, scale: 1.04 }}
       whileTap={reduce ? undefined : { scale: 0.95, y: 0 }}
-      transition={{ type: "spring", stiffness: 420, damping: 24, mass: 0.6 }}
+      transition={{ type: "spring", stiffness: 280, damping: 22, mass: 0.8 }}
     >
       {children}
     </motion.button>
@@ -258,7 +263,7 @@ function Btn({
 const LOAD_MIN_MS = 2200;
 const LOAD_MAX_MS = 6000;
 
-function V2Loader() {
+function V2Loader({ onDone }: { onDone?: () => void }) {
   const reduce = useReducedMotion();
   const [show, setShow] = useState(true);
   const [ready, setReady] = useState(false);
@@ -271,7 +276,11 @@ function V2Loader() {
       done = true;
       setReady(true);
       const wait = Math.max(0, LOAD_MIN_MS - (performance.now() - start));
-      window.setTimeout(() => setShow(false), wait);
+      window.setTimeout(() => {
+        setShow(false);
+        // signal the page to start its entrance as the overlay lifts
+        onDone?.();
+      }, wait);
     };
     if (document.readyState === "complete") dismiss();
     else window.addEventListener("load", dismiss, { once: true });
@@ -372,6 +381,9 @@ export default function V2() {
   const { openDialog } = useLeadDialog();
   const [active, setActive] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  // Flips true the moment the loading screen lifts, so the hero titles + CTA hold
+  // hidden under the loader and then make their entrance as it clears.
+  const [entered, setEntered] = useState(false);
   const reduce = useReducedMotion();
   const { scrollY, scrollYProgress } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
@@ -432,7 +444,7 @@ export default function V2() {
         <SandDrift className="v2-bg-sand" velocity={sandVelocity} animate={!reduce} />
       </div>
 
-      <V2Loader />
+      <V2Loader onDone={() => setEntered(true)} />
       <ScrollProgress />
       <div className="v2-grain" />
 
@@ -454,10 +466,10 @@ export default function V2() {
         <SunRays className="hero-sun" />
         <motion.div className="hero-inner wrap" style={reduce ? undefined : { y: heroY, opacity: heroFade }}>
           <h1 className="hero-h1 hero-headline">
-            <KineticLine text="Something New" delay={0.15} />
-            <KineticLine text="Under The Sun" delay={0.34} />
+            <KineticLine text="Something New" delay={0.2} play={entered} />
+            <KineticLine text="Under The Sun" delay={0.45} play={entered} />
           </h1>
-          <Reveal className="hero-foot" load delay={0.75}>
+          <Reveal className="hero-foot" load play={entered} delay={0.95}>
             <Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn>
             <span className="hero-kicker">Your shade. Anywhere.</span>
           </Reveal>
@@ -523,7 +535,7 @@ export default function V2() {
             <Reveal className="spectrum-photo">
               {COLORS.map((col, i) => (
                 <Image key={col.key} src={col.photo} alt={`SHADIEZ shade — ${col.key}`} fill sizes="(max-width:900px) 92vw, 760px"
-                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transform: i === active ? "scale(1)" : "scale(1.05)", transition: "opacity .6s var(--ease), transform .9s var(--ease)" }} priority={i === 0} />
+                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transform: i === active ? "scale(1)" : "scale(1.06)", transition: "opacity .85s var(--ease), transform 1.2s var(--ease)" }} priority={i === 0} />
               ))}
               <span className="spectrum-name">{c.key}</span>
             </Reveal>
