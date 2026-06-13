@@ -1,0 +1,56 @@
+/* ============================================================================
+   SHADIEZ — Spacing, radius, shadow & motion tokens
+   ============================================================================ */
+
+:root {
+  /* ── Spacing scale (4px base) ───────────────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* Section rhythm — generous, editorial */
+  --section-pad: clamp(80px, 12vw, 160px);
+  --gutter:      32px;
+  --maxw:        1280px;
+  --maxw-prose:  68ch;
+
+  /* ── Radii ──────────────────────────────────────────────────────────────── */
+  /* The brand is deliberately square: 4px is the house corner. Pills are the   */
+  /* one exception — the warm CTA over imagery.                                 */
+  --radius-xs:   2px;
+  --radius-sm:   4px;   /* default — cards, inputs, navy buttons, dialogs */
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-pill: 100px; /* amber CTA / chips over photography */
+
+  /* ── Borders ────────────────────────────────────────────────────────────── */
+  --border-w:        1px;   /* @kind spacing */
+  --border-w-strong: 1.5px; /* @kind spacing */
+
+  /* ── Shadows — warm-tinted, never neutral grey ──────────────────────────── */
+  --shadow-xs:    0 1px 2px rgba(35, 32, 28, 0.06);
+  --shadow-sm:    0 1px 12px -6px rgba(60, 40, 20, 0.18);          /* frosted header */
+  --shadow-card:  0 18px 40px -24px rgba(60, 40, 20, 0.35);        /* lifted card    */
+  --shadow-lg:    0 40px 80px -20px rgba(20, 12, 6, 0.55);         /* dialog / modal */
+  --shadow-cta:   0 10px 22px -8px rgba(31, 58, 95, 0.5);          /* navy CTA       */
+  --shadow-warm:  0 10px 30px -10px rgba(244, 178, 61, 0.8);       /* amber pill     */
+  --shadow-warm-hover: 0 16px 40px -10px rgba(244, 178, 61, 0.95);
+
+  /* Top wood-tone bar used as a small brand cue on dialogs/cards */
+  --wood-bar: linear-gradient(90deg, #8A5A38 0%, #A87248 50%, #8A5A38 100%); /* @kind other */
+
+  /* ── Motion ─────────────────────────────────────────────────────────────── */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.42, 0, 0.4, 1); /* @kind other */
+  --dur-fast:    200ms; /* @kind other */
+  --dur-base:    300ms; /* @kind other */
+  --dur-slow:    600ms; /* @kind other */
+  --dur-reveal:  1250ms; /* @kind other */
+}
