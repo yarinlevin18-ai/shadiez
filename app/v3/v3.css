@@ -154,7 +154,7 @@
 .v3root .htrack.is-static .htrack-cap,.v3root .htrack.is-static .htrack-hint{display:none}
 
 /* ── 5 · FINALE ── */
-.v3root .finale{position:relative;background:var(--amber);overflow:hidden;padding:clamp(90px,13vw,170px) 0}
+.v3root .finale{position:relative;background:var(--amber);overflow:hidden;padding:clamp(84px,12vw,150px) 0 clamp(24px,4vw,44px)}
 .v3root .finale-bloom{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 30%,rgba(255,233,180,.55),transparent 70%)}
 .v3root .finale-inner{position:relative;z-index:2;text-align:center}
 .v3root .finale-h2{font-family:var(--display);font-weight:700;font-size:clamp(44px,8vw,108px);line-height:.92;letter-spacing:-.035em;color:var(--ink);margin:0}
@@ -163,7 +163,7 @@
 .v3root .finale-shot img{filter:drop-shadow(0 30px 50px rgba(60,40,20,.28))}
 
 /* ── footer ── */
-.v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:64px 0 40px}
+.v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:44px 0 40px}
 .v3root .v3foot .logo{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.05em;color:var(--cream);display:flex;align-items:center;gap:9px}
 .v3root .v3foot .logo svg{width:24px;height:24px}
 .v3root .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
