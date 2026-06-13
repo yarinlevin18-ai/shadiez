@@ -186,21 +186,7 @@ function ScrollProgress() {
   return <motion.div className="v3-progress" style={{ scaleX }} aria-hidden />;
 }
 
-/* ── sideways passage (matching totes): scroll down → row slides left, with a
-      dwell on each panel. (`x` supports %, not vw.) ── */
-function trackKeys(n: number) {
-  const pos = (i: number) => `-${((i / n) * 100).toFixed(4)}%`;
-  const t = 0.12, hold = n > 1 ? (1 - (n - 1) * t) / n : 1;
-  const input: number[] = [], output: string[] = [];
-  let c = 0;
-  for (let i = 0; i < n; i++) {
-    input.push(+c.toFixed(4)); output.push(pos(i));
-    c += hold;
-    input.push(+Math.min(c, 1).toFixed(4)); output.push(pos(i));
-    if (i < n - 1) c += t;
-  }
-  return { input, output };
-}
+/* ── sideways passage (matching totes): scroll down → the row slides left. ── */
 function TotePanel({ item }: { item: HItem }) {
   return (
     <div className="hpanel">
@@ -218,11 +204,16 @@ function ToteTrack({ items }: { items: HItem[] }) {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const prog = useSpring(scrollYProgress, { stiffness: 90, damping: 30, mass: 0.4 });
-  const keys = trackKeys(items.length);
-  const x = useTransform(prog, keys.input, keys.output);
+  // Light, responsive smoothing (low mass, firm) so the row tracks the scroll
+  // tightly instead of lagging/rubber-banding.
+  const prog = useSpring(scrollYProgress, { stiffness: 150, damping: 36, mass: 0.22 });
+  // Continuous slide (NO dwell plateaus → no "stuck" feel). The small 0.06/0.94
+  // margins hold the first/last panel steady while the section pins/unpins, so
+  // the vertical→horizontal handoff is smooth rather than abrupt.
+  const end = `-${(((items.length - 1) / items.length) * 100).toFixed(4)}%`;
+  const x = useTransform(prog, [0.06, 0.94], ["0%", end]);
   return (
-    <section className={reduce ? "htrack is-static" : "htrack"} ref={ref} style={reduce ? undefined : { height: `${items.length * 115}svh` }} aria-label="Matching totes">
+    <section className={reduce ? "htrack is-static" : "htrack"} ref={ref} style={reduce ? undefined : { height: `${items.length * 108}svh` }} aria-label="Matching totes">
       <div className="htrack-pin">
         <motion.div className="htrack-row" style={reduce ? undefined : { x }}>
           {items.map((it, i) => <TotePanel key={i} item={it} />)}
