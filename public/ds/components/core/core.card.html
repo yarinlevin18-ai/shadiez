@@ -1,0 +1,79 @@
+<!-- @dsCard group="Components" viewport="700x440" name="Core — Buttons, Logo, Badge" subtitle="The two CTA systems, wave-mark lockup, badges, icon buttons" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: var(--cream); padding: 28px; }
+  .grid { display: flex; flex-direction: column; gap: 22px; }
+  .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .label { font-family: var(--font-body); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-60); width: 100%; margin-bottom: 2px; }
+  .panel-dark { background: var(--ink); border-radius: var(--radius-sm); padding: 16px 18px; }
+  .panel-amber { background: var(--amber); border-radius: var(--radius-sm); padding: 16px 18px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, Logo, WaveMark, Badge, IconButton } = window.SHADIEZDesignSystem_4d9f8a;
+
+function XIcon() {
+  return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>;
+}
+function ArrowIcon() {
+  return <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>;
+}
+
+function Demo() {
+  return (
+    <div className="grid">
+      <div className="row">
+        <span className="label">Logo lockup &amp; wave-mark</span>
+        <Logo size={22} />
+        <Logo size={22} color="var(--wood)" />
+        <WaveMark size={26} color="var(--amber)" />
+        <span style={{ width: 1, height: 26, background: "var(--border)" }} />
+        <Badge tone="wood" uppercase>The spectrum</Badge>
+        <Badge tone="amber" pill>New</Badge>
+        <Badge tone="outline">Folds flat</Badge>
+        <Badge tone="navy">In stock</Badge>
+      </div>
+
+      <div className="row">
+        <span className="label">Primary &amp; secondary (on light)</span>
+        <Button variant="primary">Contact us</Button>
+        <Button variant="primary" size="sm">Small</Button>
+        <Button variant="secondary">Learn more</Button>
+        <Button variant="ghost" iconRight={<ArrowIcon/>}>Details</Button>
+        <Button variant="primary" disabled>Disabled</Button>
+        <IconButton label="Close"><XIcon/></IconButton>
+      </div>
+
+      <div className="row">
+        <span className="label">Warm / amber pill (over imagery &amp; sun-fields)</span>
+        <div className="panel-amber row" style={{ width: "100%" }}>
+          <Button variant="ink" size="lg">Shop the Shade</Button>
+          <Button variant="ink">Shop Cream</Button>
+        </div>
+      </div>
+
+      <div className="row">
+        <span className="label">Warm pill &amp; glass (over photography)</span>
+        <div className="panel-dark row" style={{ width: "100%", backgroundImage: "linear-gradient(135deg,#8E5330,#623722)" }}>
+          <Button variant="warm" size="lg">Shop the Shade</Button>
+          <Button variant="glass">Watch the film</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>
