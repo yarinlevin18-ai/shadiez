@@ -359,7 +359,7 @@ export default function V3() {
           <Reveal as="h2" className="finale-h2">Find your shade.</Reveal>
           <Reveal delay={0.1} className="finale-cta"><Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
           <Reveal delay={0.16} className="finale-shot">
-            <Image src="/landing/product/lineup.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1200} sizes="(max-width:900px) 90vw, 760px" style={{ width: "min(760px,90%)", height: "auto" }} />
+            <Image src="/landing/product/lineup.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1200} sizes="(max-width:900px) 78vw, 560px" />
           </Reveal>
         </div>
       </section>
