@@ -357,14 +357,18 @@ export default function V3() {
       </section>
       <ToteTrack items={TOTES} />
 
-      {/* 5 · FINAL CTA — amber finale that bookends the hero */}
+      {/* 5 · FINAL CTA — text + CTA on the amber, then the lineup sits on a bed
+            of sand whose grains cascade down into the dark footer */}
       <section className="finale">
         <div className="finale-bloom" aria-hidden />
         <div className="wrap finale-inner">
           <Reveal as="h2" className="finale-h2">Find your shade.</Reveal>
           <Reveal delay={0.1} className="finale-cta"><Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn></Reveal>
+        </div>
+        <div className="finale-ground">
+          <div className="finale-sand" aria-hidden />
           <Reveal delay={0.16} className="finale-shot">
-            <Image src="/landing/product/lineup.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1200} sizes="(max-width:900px) 78vw, 560px" />
+            <Image src="/landing/product/lineup.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1200} sizes="(max-width:900px) 86vw, 620px" />
           </Reveal>
         </div>
       </section>

@@ -157,21 +157,29 @@
 .v3root .htrack.is-static .hpanel{width:100%;flex:none}
 .v3root .htrack.is-static .htrack-cap,.v3root .htrack.is-static .htrack-hint{display:none}
 
-/* ── 5 · FINALE ── */
-/* finale: the amber is blended with the page's cream (softer, in-palette) and
-   fades into the footer's ink at the bottom — one continuous close, not a block.
-   Compact padding keeps the section small. */
-.v3root .finale{position:relative;overflow:hidden;padding:clamp(48px,7vw,84px) 0 clamp(16px,3vw,32px);
-  background:linear-gradient(180deg,
-    color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%,
-    color-mix(in srgb, var(--amber) 70%, var(--cream)) 58%,
-    var(--ink) 100%)}
-.v3root .finale-bloom{position:absolute;inset:0;background:radial-gradient(58% 46% at 50% 26%,rgba(255,233,180,.45),transparent 70%)}
+/* ── 5 · FINALE ──
+   Amber-cream holds the text + CTA; below it the lineup sits on a bed of sand
+   whose grains cascade down and dissolve into the footer's ink. */
+.v3root .finale{position:relative;overflow:hidden;padding-top:clamp(48px,7vw,84px);
+  background:color-mix(in srgb, var(--amber) 70%, var(--cream))}
+.v3root .finale-bloom{position:absolute;top:0;left:0;right:0;height:60%;background:radial-gradient(58% 70% at 50% 18%,rgba(255,233,180,.5),transparent 70%)}
 .v3root .finale-inner{position:relative;z-index:2;text-align:center}
 .v3root .finale-h2{font-family:var(--display);font-weight:700;font-size:clamp(38px,6vw,82px);line-height:.94;letter-spacing:-.035em;color:var(--ink);margin:0}
 .v3root .finale-cta{margin-top:22px}
-.v3root .finale-shot{margin-top:30px;display:flex;justify-content:center}
-.v3root .finale-shot img{width:min(560px,78%);height:auto;filter:drop-shadow(0 26px 44px rgba(60,40,20,.3))}
+/* sand bed: the lineup sits in normal flow (clearly BELOW the text/CTA) on a
+   sand background whose top dissolves into the amber and whose falling grains
+   dissolve into the footer ink in the space below the objects. */
+.v3root .finale-ground{position:relative;z-index:1;margin-top:clamp(16px,2.5vw,32px);
+  padding:clamp(16px,3vw,40px) 0 clamp(130px,20vw,250px)}
+.v3root .finale-sand{position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 60%, var(--ink) 100%),
+    url('/landing/sand-fall.png');
+  background-size:cover, cover;
+  background-position:center, center top;
+  background-repeat:no-repeat,no-repeat}
+.v3root .finale-shot{position:relative;z-index:2;display:flex;justify-content:center}
+.v3root .finale-shot img{width:min(540px,80%);height:auto;filter:drop-shadow(0 16px 20px rgba(20,12,6,.6))}
 
 /* ── footer ── */
 .v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:34px 0 28px}
