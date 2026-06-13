@@ -143,6 +143,10 @@
 .v3root .hpanel-meta{font-family:var(--body);font-size:14px;letter-spacing:.04em;color:rgba(251,247,240,.85)}
 .v3root .htrack-cap{position:absolute;left:0;right:0;top:90px;z-index:3;text-align:center;pointer-events:none}
 .v3root .htrack-cap span{font-family:var(--body);font-weight:600;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(251,247,240,.85)}
+/* warm seam that dissolves the last tote photo into the finale (same tone as
+   the finale's top) — opacity is scroll-driven so it only blooms at the end */
+.v3root .htrack-seam{position:absolute;left:0;right:0;bottom:0;height:42vh;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,color-mix(in srgb, var(--amber) 70%, var(--cream)) 88%)}
 .v3root .htrack-hint{position:absolute;left:0;right:0;bottom:34px;z-index:3;display:flex;justify-content:center;pointer-events:none}
 .v3root .htrack-hint span{display:block;width:54px;height:2px;background:rgba(251,247,240,.5);position:relative;overflow:hidden}
 .v3root .htrack-hint span::after{content:"";position:absolute;inset:0;width:40%;background:var(--sun);animation:htHint 2.4s var(--ease) infinite}

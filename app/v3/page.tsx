@@ -212,6 +212,10 @@ function ToteTrack({ items }: { items: HItem[] }) {
   // the vertical→horizontal handoff is smooth rather than abrupt.
   const end = `-${(((items.length - 1) / items.length) * 100).toFixed(4)}%`;
   const x = useTransform(prog, [0.06, 0.94], ["0%", end]);
+  // As the passage reaches its end, bloom a warm wash up from the bottom in the
+  // SAME tone the finale starts with — so the last tote photo dissolves into
+  // "Find your shade." instead of a hard seam between the two sections.
+  const seam = useTransform(scrollYProgress, [0.78, 1], [0, 1]);
   return (
     <section className={reduce ? "htrack is-static" : "htrack"} ref={ref} style={reduce ? undefined : { height: `${items.length * 108}svh` }} aria-label="Matching totes">
       <div className="htrack-pin">
@@ -220,6 +224,7 @@ function ToteTrack({ items }: { items: HItem[] }) {
         </motion.div>
         <div className="htrack-cap"><span>Made for the long way home</span></div>
         <div className="htrack-hint" aria-hidden><span /></div>
+        <motion.div className="htrack-seam" style={reduce ? { opacity: 1 } : { opacity: seam }} aria-hidden />
       </div>
     </section>
   );
