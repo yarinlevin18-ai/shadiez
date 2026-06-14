@@ -1,0 +1,11 @@
+/* ============================================================================
+   SHADIEZ Design System — global entry point
+   Consuming projects link THIS one file. It is an @import manifest only:
+   fonts first, then tokens. Add no rules here directly.
+   ============================================================================ */
+
+@import "./tokens/fonts.css";
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/base.css";

@@ -1,0 +1,46 @@
+<!-- @dsCard group="Components" viewport="700x430" name="Product — Colorway picker, cards, specs" subtitle="The signature shop controls" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style> body { margin: 0; background: var(--cream); padding: 28px; } .row { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; } .stack { display: flex; flex-direction: column; gap: 22px; } </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { ColorwayPicker, ProductCard, SpecRow, Button, Badge } = window.SHADIEZDesignSystem_4d9f8a;
+const PHOTOS = ["../../assets/kits/kit-cream.jpg","../../assets/colorways/cw-coral.jpg","../../assets/colorways/cw-butter.jpg","../../assets/colorways/cw-dusty-blue.jpg","../../assets/colorways/cw-navy-stripe.jpg","../../assets/colorways/cw-burgundy-stripe.jpg","../../assets/colorways/cw-pinstripe.jpg"];
+const NAMES = ["Cream","Coral","Butter","Dusty Blue","Navy","Burgundy","Pinstripe"];
+function Demo() {
+  const [i, setI] = React.useState(1);
+  return (
+    <div className="row">
+      <ProductCard
+        image={PHOTOS[i]}
+        eyebrow="The spectrum"
+        name={"SHADIEZ — " + NAMES[i]}
+        meta="Walnut frame · canvas · matching tote"
+        ratio="4 / 3"
+        footer={<Button variant="warm" size="sm">Shop {NAMES[i]}</Button>}
+      />
+      <div className="stack">
+        <div>
+          <Badge tone="wood" uppercase>The spectrum</Badge>
+          <h2 style={{ fontFamily: "var(--font-serif)", fontWeight: 700, fontSize: 30, letterSpacing: "-.02em", margin: "10px 0 16px" }}>Seven canvases.<br/>One is yours.</h2>
+          <ColorwayPicker value={i} onChange={(idx) => setI(idx)} />
+        </div>
+        <SpecRow items={["Blocks the sun", "Adjustable angle", "Folds flat", "Up in seconds"]} />
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>
