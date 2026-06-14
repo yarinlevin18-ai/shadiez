@@ -166,20 +166,23 @@
 .v3root .finale-inner{position:relative;z-index:2;text-align:center}
 .v3root .finale-h2{font-family:var(--display);font-weight:700;font-size:clamp(38px,6vw,82px);line-height:.94;letter-spacing:-.035em;color:var(--ink);margin:0}
 .v3root .finale-cta{margin-top:22px}
-/* sand bed: the lineup sits in normal flow (clearly BELOW the text/CTA) on a
-   sand background whose top dissolves into the amber and whose falling grains
-   dissolve into the footer ink in the space below the objects. */
-.v3root .finale-ground{position:relative;z-index:1;margin-top:clamp(16px,2.5vw,32px);
-  padding:clamp(16px,3vw,40px) 0 clamp(130px,20vw,250px)}
+/* sand bed: a crisp sand surface (controlled height — no stretch) whose top
+   dissolves into the amber and whose elegant pour dissolves into the footer ink.
+   The lineup sits ON the surface with a soft contact shadow grounding it. */
+.v3root .finale-ground{position:relative;z-index:1;height:clamp(420px,48vw,600px);margin-top:clamp(44px,7vw,92px)}
 .v3root .finale-sand{position:absolute;inset:0;z-index:0;
   background-image:
-    linear-gradient(180deg, color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 60%, var(--ink) 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 58%, var(--ink) 99%),
     url('/landing/sand-fall.png');
   background-size:cover, cover;
-  background-position:center, center top;
+  background-position:center, center 42%;
   background-repeat:no-repeat,no-repeat}
-.v3root .finale-shot{position:relative;z-index:2;display:flex;justify-content:center}
-.v3root .finale-shot img{width:min(540px,80%);height:auto;filter:drop-shadow(0 16px 20px rgba(20,12,6,.6))}
+/* soft contact shadow that plants the lineup in the sand */
+.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:43%;transform:translateX(-50%);
+  width:min(560px,80%);height:40px;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(38,22,8,.5), transparent 72%);filter:blur(7px)}
+.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:46%;display:flex;justify-content:center}
+.v3root .finale-shot img{width:min(540px,80%);height:auto;filter:drop-shadow(0 12px 12px rgba(38,22,8,.5))}
 
 /* ── footer ── */
 .v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:34px 0 28px}

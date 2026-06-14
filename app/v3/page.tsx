@@ -367,8 +367,9 @@ export default function V3() {
         </div>
         <div className="finale-ground">
           <div className="finale-sand" aria-hidden />
+          <div className="finale-shadow" aria-hidden />
           <Reveal delay={0.16} className="finale-shot">
-            <Image src="/landing/product/lineup.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1200} sizes="(max-width:900px) 86vw, 620px" />
+            <Image src="/landing/product/lineup.png" alt="The full SHADIEZ lineup — every colorway with its matching tote" width={1600} height={1200} sizes="(max-width:900px) 84vw, 600px" />
           </Reveal>
         </div>
       </section>
