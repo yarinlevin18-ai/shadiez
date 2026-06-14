@@ -215,7 +215,7 @@ function ToteTrack({ items }: { items: HItem[] }) {
   // As the passage reaches its end, bloom a warm wash up from the bottom in the
   // SAME tone the finale starts with — so the last tote photo dissolves into
   // "Find your shade." instead of a hard seam between the two sections.
-  const seam = useTransform(scrollYProgress, [0.78, 1], [0, 1]);
+  const seam = useTransform(scrollYProgress, [0.72, 0.96], [0, 1]);
   return (
     <section className={reduce ? "htrack is-static" : "htrack"} ref={ref} style={reduce ? undefined : { height: `${items.length * 108}svh` }} aria-label="Matching totes">
       <div className="htrack-pin">

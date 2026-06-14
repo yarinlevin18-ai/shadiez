@@ -134,8 +134,7 @@
 .v3root .hpanel-media{position:absolute;inset:0;z-index:0;overflow:hidden}
 .v3root .hpanel-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.04)}
 .v3root .hpanel-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(95deg,rgba(28,24,20,.8) 0%,rgba(28,24,20,.45) 40%,rgba(28,24,20,.05) 75%,transparent 100%),
-             linear-gradient(0deg,rgba(28,24,20,.5),transparent 42%)}
+  background:linear-gradient(95deg,rgba(28,24,20,.78) 0%,rgba(28,24,20,.42) 38%,rgba(28,24,20,.04) 72%,transparent 100%)}
 .v3root .hpanel-copy{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 clamp(24px,5vw,72px);
   display:flex;flex-direction:column;align-items:flex-start;gap:18px}
 .v3root .panel-eyebrow{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--sun)}
@@ -145,8 +144,8 @@
 .v3root .htrack-cap span{font-family:var(--body);font-weight:600;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(251,247,240,.85)}
 /* warm seam that dissolves the last tote photo into the finale (same tone as
    the finale's top) — opacity is scroll-driven so it only blooms at the end */
-.v3root .htrack-seam{position:absolute;left:0;right:0;bottom:0;height:42vh;z-index:2;pointer-events:none;
-  background:linear-gradient(180deg,transparent 0%,color-mix(in srgb, var(--amber) 70%, var(--cream)) 88%)}
+.v3root .htrack-seam{position:absolute;left:0;right:0;bottom:0;height:56vh;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,color-mix(in srgb, var(--amber) 70%, var(--cream)) 60%,color-mix(in srgb, var(--amber) 70%, var(--cream)) 100%)}
 .v3root .htrack-hint{position:absolute;left:0;right:0;bottom:34px;z-index:3;display:flex;justify-content:center;pointer-events:none}
 .v3root .htrack-hint span{display:block;width:54px;height:2px;background:rgba(251,247,240,.5);position:relative;overflow:hidden}
 .v3root .htrack-hint span::after{content:"";position:absolute;inset:0;width:40%;background:var(--sun);animation:htHint 2.4s var(--ease) infinite}
@@ -160,29 +159,29 @@
 /* ── 5 · FINALE ──
    Amber-cream holds the text + CTA; below it the lineup sits on a bed of sand
    whose grains cascade down and dissolve into the footer's ink. */
-.v3root .finale{position:relative;overflow:hidden;padding-top:clamp(48px,7vw,84px);
+.v3root .finale{position:relative;overflow:hidden;padding-top:clamp(56px,8vw,96px);
   background:color-mix(in srgb, var(--amber) 70%, var(--cream))}
-.v3root .finale-bloom{position:absolute;top:0;left:0;right:0;height:60%;background:radial-gradient(58% 70% at 50% 18%,rgba(255,233,180,.5),transparent 70%)}
+.v3root .finale-bloom{position:absolute;top:0;left:0;right:0;height:62%;background:radial-gradient(64% 74% at 50% 6%,rgba(255,233,180,.55),transparent 72%)}
 .v3root .finale-inner{position:relative;z-index:2;text-align:center}
 .v3root .finale-h2{font-family:var(--display);font-weight:700;font-size:clamp(38px,6vw,82px);line-height:.94;letter-spacing:-.035em;color:var(--ink);margin:0}
 .v3root .finale-cta{margin-top:22px}
 /* sand bed: a crisp sand surface (controlled height — no stretch) whose top
    dissolves into the amber and whose elegant pour dissolves into the footer ink.
    The lineup sits ON the surface with a soft contact shadow grounding it. */
-.v3root .finale-ground{position:relative;z-index:1;height:clamp(420px,48vw,600px);margin-top:clamp(44px,7vw,92px)}
+.v3root .finale-ground{position:relative;z-index:1;height:clamp(560px,60vw,760px);margin-top:clamp(72px,10vw,140px)}
 .v3root .finale-sand{position:absolute;inset:0;z-index:0;
   background-image:
-    linear-gradient(180deg, color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 58%, var(--ink) 99%),
+    linear-gradient(180deg, color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 64%, var(--ink) 100%),
     url('/landing/sand-fall.png');
   background-size:cover, cover;
-  background-position:center, center 42%;
+  background-position:center, center 38%;
   background-repeat:no-repeat,no-repeat}
 /* soft contact shadow that plants the lineup in the sand */
-.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:43%;transform:translateX(-50%);
-  width:min(560px,80%);height:40px;pointer-events:none;
-  background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(38,22,8,.5), transparent 72%);filter:blur(7px)}
-.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:46%;display:flex;justify-content:center}
-.v3root .finale-shot img{width:min(540px,80%);height:auto;filter:drop-shadow(0 12px 12px rgba(38,22,8,.5))}
+.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:27%;transform:translateX(-50%);
+  width:min(440px,66%);height:34px;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(38,22,8,.45), transparent 74%);filter:blur(9px)}
+.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:30%;display:flex;justify-content:center}
+.v3root .finale-shot img{width:min(460px,72%);height:auto;filter:drop-shadow(0 10px 16px rgba(38,22,8,.45))}
 
 /* ── footer ── */
 .v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:34px 0 28px}
