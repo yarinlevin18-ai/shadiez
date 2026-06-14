@@ -177,11 +177,11 @@
   background-position:center, center 38%;
   background-repeat:no-repeat,no-repeat}
 /* soft contact shadow that plants the lineup in the sand */
-.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:31%;transform:translateX(-50%);
-  width:min(440px,66%);height:34px;pointer-events:none;
+.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:36%;transform:translateX(-50%);
+  width:min(420px,64%);height:32px;pointer-events:none;
   background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(38,22,8,.45), transparent 74%);filter:blur(9px)}
-.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:34%;display:flex;justify-content:center}
-.v3root .finale-shot img{width:min(460px,72%);height:auto;filter:drop-shadow(0 10px 16px rgba(38,22,8,.45))}
+.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:39%;display:flex;justify-content:center}
+.v3root .finale-shot img{width:min(440px,68%);height:auto;filter:drop-shadow(0 10px 16px rgba(38,22,8,.45))}
 
 /* ── footer ── */
 .v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:34px 0 28px}
