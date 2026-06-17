@@ -110,11 +110,13 @@
 .v3root .spectrum-head{text-align:center;margin-bottom:clamp(34px,5vw,48px)}
 .v3root .spectrum-h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,62px);line-height:1;letter-spacing:-.025em;margin:16px 0 0}
 .v3root .spectrum-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:center}
-.v3root .spectrum-photo{position:relative;aspect-ratio:16/11;border-radius:4px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-card)}
-.v3root .spectrum-name{position:absolute;left:16px;bottom:14px;z-index:4;color:var(--cream);font-family:var(--display);font-weight:600;font-size:22px;text-shadow:0 2px 14px rgba(0,0,0,.4)}
-.v3root .spectrum-side{display:flex;flex-direction:column;align-items:flex-start;gap:28px}
+.v3root .spectrum-stage{position:relative;aspect-ratio:5/4}
+.v3root .spectrum-stage::after{content:"";position:absolute;left:50%;bottom:9%;transform:translateX(-50%);width:52%;height:6%;z-index:0;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(35,28,18,.30),transparent 72%);filter:blur(11px)}
+.v3root .spectrum-stage img{z-index:1;filter:drop-shadow(0 18px 26px rgba(38,26,12,.22))}
+.v3root .spectrum-active-name{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,46px);line-height:1;letter-spacing:-.02em;transition:color .6s var(--ease)}
+.v3root .spectrum-side{display:flex;flex-direction:column;align-items:flex-start;gap:24px}
 .v3root .swatches{display:flex;gap:14px;flex-wrap:wrap}
-.v3root .swatch{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid rgba(35,32,28,.18);position:relative;transition:transform .4s var(--ease),border-color .4s}
+.v3root .swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;border:2px solid rgba(35,32,28,.18);position:relative;transition:transform .4s var(--ease),border-color .4s}
 .v3root .swatch:hover{transform:scale(1.12)}
 .v3root .swatch.is-active{border-color:var(--ink);transform:scale(1.12)}
 .v3root .swatch.is-active::after{content:"";position:absolute;inset:-6px;border:1.5px solid var(--ink);border-radius:50%}
@@ -159,29 +161,28 @@
 /* ── 5 · FINALE ──
    Amber-cream holds the text + CTA; below it the lineup sits on a bed of sand
    whose grains cascade down and dissolve into the footer's ink. */
-.v3root .finale{position:relative;overflow:hidden;padding-top:clamp(56px,8vw,96px);
-  background:color-mix(in srgb, var(--amber) 70%, var(--cream))}
-.v3root .finale-bloom{position:absolute;top:0;left:0;right:0;height:62%;background:radial-gradient(64% 74% at 50% 6%,rgba(255,233,180,.55),transparent 72%)}
-.v3root .finale-inner{position:relative;z-index:2;text-align:center}
+.v3root .finale{position:relative;overflow:hidden;padding-top:clamp(64px,8vw,100px);
+  background:color-mix(in srgb, var(--amber) 72%, var(--cream))}
+.v3root .finale-bloom{position:absolute;top:0;left:0;right:0;height:48%;pointer-events:none;background:radial-gradient(58% 68% at 50% 2%,rgba(255,236,188,.6),transparent 72%)}
+.v3root .finale-inner{position:relative;z-index:3;text-align:center}
 .v3root .finale-h2{font-family:var(--display);font-weight:700;font-size:clamp(38px,6vw,82px);line-height:.94;letter-spacing:-.035em;color:var(--ink);margin:0}
-.v3root .finale-cta{margin-top:22px}
-/* sand bed: a crisp sand surface (controlled height — no stretch) whose top
-   dissolves into the amber and whose elegant pour dissolves into the footer ink.
-   The lineup sits ON the surface with a soft contact shadow grounding it. */
-.v3root .finale-ground{position:relative;z-index:1;height:clamp(560px,60vw,760px);margin-top:clamp(72px,10vw,140px)}
-.v3root .finale-sand{position:absolute;inset:0;z-index:0;
-  background-image:
-    linear-gradient(180deg, color-mix(in srgb, var(--amber) 70%, var(--cream)) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 64%, var(--ink) 100%),
-    url('/landing/sand-fall.png');
-  background-size:cover, cover;
-  background-position:center, center 38%;
-  background-repeat:no-repeat,no-repeat}
-/* soft contact shadow that plants the lineup in the sand */
-.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:36%;transform:translateX(-50%);
-  width:min(420px,64%);height:32px;pointer-events:none;
-  background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(38,22,8,.45), transparent 74%);filter:blur(9px)}
-.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:39%;display:flex;justify-content:center}
-.v3root .finale-shot img{width:min(440px,68%);height:auto;filter:drop-shadow(0 10px 16px rgba(38,22,8,.45))}
+.v3root .finale-cta{margin-top:24px}
+/* clean warm-sand → ink gradient (no grainy cascade). The lineup sits near the
+   top of the ground with a soft contact shadow, then the sand dissolves into the
+   footer ink. Tight rhythm — no dead space. */
+.v3root .finale-ground{position:relative;z-index:1;margin-top:clamp(24px,4vw,52px);height:clamp(420px,46vw,620px)}
+.v3root .finale-sand{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,
+  color-mix(in srgb, var(--amber) 72%, var(--cream)) 0%,
+  #EAC98A 20%,
+  #D2A968 44%,
+  #93703F 70%,
+  #3C2D1A 90%,
+  var(--ink) 100%)}
+.v3root .finale-shadow{position:absolute;z-index:1;left:50%;bottom:34%;transform:translateX(-50%);
+  width:min(560px,80%);height:30px;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(30,18,6,.42), transparent 72%);filter:blur(11px)}
+.v3root .finale-shot{position:absolute;z-index:2;left:0;right:0;bottom:36%;display:flex;justify-content:center}
+.v3root .finale-shot img{width:min(600px,86%);height:auto;filter:drop-shadow(0 12px 20px rgba(30,18,6,.42))}
 
 /* ── footer ── */
 .v3root .v3foot{background:var(--ink);color:rgba(251,247,240,.66);padding:34px 0 28px}
@@ -199,16 +200,18 @@
 /* ── top progress + mobile CTA ── */
 .v3root .v3-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9998;transform-origin:0 50%;background:linear-gradient(90deg,var(--sun),#E5922F);box-shadow:0 0 12px rgba(244,178,61,.55);pointer-events:none}
 .v3root .mobile-cta{display:none}
+.v3root .only-mobile{display:none}
 
 @media (hover:hover){
-  .v3root .ocard,.v3root .spectrum-photo{transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+  .v3root .ocard{transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
   .v3root .ocard:hover{transform:translateY(-4px)}
-  .v3root .spectrum-photo:hover{transform:translateY(-3px)}
   .v3root .swatch:hover{box-shadow:0 8px 18px -6px rgba(35,32,28,.4)}
 }
 
 /* ── responsive ── */
 @media(max-width:900px){
+  .v3root .only-desktop{display:none}
+  .v3root .only-mobile{display:block}
   .v3root .object-grid,.v3root .spectrum-grid{grid-template-columns:1fr;gap:36px}
   .v3root .spectrum-side{align-items:center;text-align:center}
   .v3root .swatches{justify-content:center}

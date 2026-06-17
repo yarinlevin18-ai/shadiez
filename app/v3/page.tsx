@@ -31,13 +31,13 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /* Colorways — real studio photo per canvas + the exact flood hue. */
 type Colorway = { key: string; photo: string; flood: string; dot: string };
 const COLORS: Colorway[] = [
-  { key: "Cream",      photo: "/landing/colorways/cw-cream.jpg",           flood: "#F3E9D2", dot: "#F1E6CB" },
-  { key: "Coral",      photo: "/landing/colorways/cw-coral.jpg",           flood: "#E68A6B", dot: "#E08A6E" },
-  { key: "Butter",     photo: "/landing/colorways/cw-butter.jpg",          flood: "#ECC74F", dot: "#EAC85C" },
-  { key: "Dusty Blue", photo: "/landing/colorways/cw-dusty-blue.jpg",      flood: "#9DBAD0", dot: "#9FB9CE" },
-  { key: "Navy",       photo: "/landing/colorways/cw-navy-stripe.jpg",     flood: "#2F517A", dot: "#284A74" },
-  { key: "Burgundy",   photo: "/landing/colorways/cw-burgundy-stripe.jpg", flood: "#8E454C", dot: "#8E4A4A" },
-  { key: "Pinstripe",  photo: "/landing/colorways/cw-pinstripe.jpg",       flood: "#C9C2B4", dot: "#C7BEAF" },
+  { key: "Cream",      photo: "/landing/product/cuts/cream.png",     flood: "#F3E9D2", dot: "#F1E6CB" },
+  { key: "Coral",      photo: "/landing/product/cuts/coral.png",     flood: "#E68A6B", dot: "#E08A6E" },
+  { key: "Butter",     photo: "/landing/product/cuts/butter.png",    flood: "#ECC74F", dot: "#EAC85C" },
+  { key: "Dusty Blue", photo: "/landing/product/cuts/dustyblue.png", flood: "#9DBAD0", dot: "#9FB9CE" },
+  { key: "Navy",       photo: "/landing/product/cuts/navy.png",      flood: "#2F517A", dot: "#284A74" },
+  { key: "Burgundy",   photo: "/landing/product/cuts/burgundy.png",  flood: "#8E454C", dot: "#8E4A4A" },
+  { key: "Pinstripe",  photo: "/landing/product/cuts/pinstripe.png", flood: "#C9C2B4", dot: "#C7BEAF" },
 ];
 const STORAGE_KEY = "shadiez-v3-colorway";
 
@@ -70,7 +70,7 @@ function Reveal({
 }
 
 /* full-bleed media with scroll-linked ken-burns / pan */
-function Bleed({ src, alt, priority, media = "kenburns" }: { src: string; alt: string; priority?: boolean; media?: "kenburns" | "pan" }) {
+function Bleed({ src, alt, priority, media = "kenburns", className }: { src: string; alt: string; priority?: boolean; media?: "kenburns" | "pan"; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
@@ -79,7 +79,7 @@ function Bleed({ src, alt, priority, media = "kenburns" }: { src: string; alt: s
   const xpan = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
   const style = reduce ? undefined : media === "pan" ? { x: xpan, scale: 1.1 } : { scale, y: yk };
   return (
-    <div className="bleed" ref={ref} aria-hidden>
+    <div className={className ? `bleed ${className}` : "bleed"} ref={ref} aria-hidden>
       <motion.div className="bleed-track" style={style}>
         <Image src={src} alt={alt} fill priority={priority} sizes="100vw" quality={88} style={{ objectFit: "cover" }} />
       </motion.div>
@@ -306,14 +306,14 @@ export default function V3() {
             <h2 className="spectrum-h2">Seven canvases.<br />One is yours.</h2>
           </Reveal>
           <div className="spectrum-grid">
-            <Reveal from="left" className="spectrum-photo">
+            <Reveal from="left" className="spectrum-stage">
               {COLORS.map((col, i) => (
-                <Image key={col.key} src={col.photo} alt={`SHADIEZ shade — ${col.key}`} fill sizes="(max-width:900px) 92vw, 720px"
-                  style={{ objectFit: "cover", opacity: i === active ? 1 : 0, transform: i === active ? "scale(1)" : "scale(1.05)", transition: "opacity .8s var(--ease), transform 1.1s var(--ease)" }} priority={i === 0} />
+                <Image key={col.key} src={col.photo} alt={`SHADIEZ shade — ${col.key}`} fill sizes="(max-width:900px) 88vw, 660px"
+                  style={{ objectFit: "contain", opacity: i === active ? 1 : 0, transform: i === active ? "scale(1)" : "scale(0.94)", transition: "opacity .7s var(--ease), transform 1s var(--ease)" }} priority={i === 0} />
               ))}
-              <span className="spectrum-name">{c.key}</span>
             </Reveal>
             <Reveal from="right" delay={0.08} className="spectrum-side">
+              <span className="spectrum-active-name" style={{ color: `color-mix(in srgb, ${c.dot} 55%, var(--ink))` }}>{c.key}</span>
               <div className="swatches" role="listbox" aria-label="Colorways">
                 {COLORS.map((col, i) => (
                   <button key={col.key} type="button" role="option" aria-selected={i === active} aria-label={col.key}
@@ -329,7 +329,8 @@ export default function V3() {
 
       {/* 4 · LIFESTYLE — golden-hour band, then the sideways tote passage */}
       <section className="band" id="details">
-        <Bleed src="/landing/lifestyle/golden-hour.png" alt="Two SHADIEZ shades on the beach at golden hour" media="pan" />
+        <Bleed src="/landing/lifestyle/golden-hour.png" alt="Two SHADIEZ shades on the beach at golden hour" media="pan" className="only-desktop" />
+        <Bleed src="/landing/lifestyle/band-portrait-web.jpg" alt="A person relaxing in the shade of a SHADIEZ sun-shade at golden hour" media="kenburns" className="only-mobile" />
         <div className="band-scrim" aria-hidden />
         <div className="wrap band-copy">
           <h2 className="band-h2"><MaskLines lines={["Long afternoons,", "claimed."]} /></h2>
