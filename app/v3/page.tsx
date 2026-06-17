@@ -23,6 +23,7 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import { useLeadDialog } from "@/components/lead-dialog";
+import { V3Hero } from "@/components/v3-hero";
 import "./v3.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -232,19 +233,12 @@ function ToteTrack({ items }: { items: HItem[] }) {
 
 export default function V3() {
   const { openDialog } = useLeadDialog();
-  const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [entered, setEntered] = useState(false);
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 80));
-
-  // hero hand-off as you scroll past it
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: heroProg } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(heroProg, [0, 1], [0, -80]);
-  const heroFade = useTransform(heroProg, [0, 0.75], [1, 0]);
 
   useEffect(() => {
     try { const s = window.localStorage.getItem(STORAGE_KEY); const n = COLORS.findIndex((c) => c.key === s); if (n >= 0) setActive(n); } catch { /* default */ }
@@ -276,22 +270,8 @@ export default function V3() {
         </div>
       </header>
 
-      {/* 1 · HERO — full-bleed lifestyle photo, product in use */}
-      <section className="hero" id="top" ref={heroRef}>
-        <Bleed src="/landing/lifestyle/beach-recline.jpg" alt="A SHADIEZ sun-shade on a bright beach, shading a sunbather" priority />
-        <div className="hero-scrim" aria-hidden />
-        <motion.div className="hero-copy wrap" style={reduce ? undefined : { y: heroY, opacity: heroFade }}>
-          <h1 className="hero-h1"><MaskLines lines={["Something New", "Under The Sun"]} italicLast play={entered} delay={0.15} /></h1>
-          <motion.div className="hero-foot"
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            animate={entered || reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 0.95 }}>
-            <Btn className="btn btn-amber lg" onClick={openDialog}>Shop the Shade</Btn>
-            <span className="hero-aside">Your shade. Anywhere.</span>
-          </motion.div>
-        </motion.div>
-        <a href="#shade" className={scrolled ? "scroll-cue is-hidden" : "scroll-cue"} aria-label="Scroll"><span className="line" /></a>
-      </section>
+      {/* 1 · HERO — product-forward: the real shade floats over the warm beach */}
+      <V3Hero play={entered} onCta={openDialog} />
 
       {/* 2 · THE OBJECT — editorial split: words slide in left, collage right */}
       <section className="object pad" id="shade">
