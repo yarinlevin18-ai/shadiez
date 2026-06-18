@@ -106,21 +106,31 @@
 .v3root .ocard-a{grid-row:1 / 3}
 .v3root .ocard img{object-fit:cover}
 
-/* ── 3 · THE SPECTRUM ── */
-.v3root .spectrum-head{text-align:center;margin-bottom:clamp(34px,5vw,48px)}
-.v3root .spectrum-h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,62px);line-height:1;letter-spacing:-.025em;margin:16px 0 0}
-.v3root .spectrum-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:center}
-.v3root .spectrum-stage{position:relative;aspect-ratio:5/4}
-.v3root .spectrum-stage::after{content:"";position:absolute;left:50%;bottom:9%;transform:translateX(-50%);width:52%;height:6%;z-index:0;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(35,28,18,.30),transparent 72%);filter:blur(11px)}
-.v3root .spectrum-stage img{z-index:1;filter:drop-shadow(0 18px 26px rgba(38,26,12,.22))}
-.v3root .spectrum-active-name{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,46px);line-height:1;letter-spacing:-.02em;transition:color .6s var(--ease)}
-.v3root .spectrum-side{display:flex;flex-direction:column;align-items:flex-start;gap:24px}
-.v3root .swatches{display:flex;gap:14px;flex-wrap:wrap}
-.v3root .swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;border:2px solid rgba(35,32,28,.18);position:relative;transition:transform .4s var(--ease),border-color .4s}
-.v3root .swatch:hover{transform:scale(1.12)}
-.v3root .swatch.is-active{border-color:var(--ink);transform:scale(1.12)}
-.v3root .swatch.is-active::after{content:"";position:absolute;inset:-6px;border:1.5px solid var(--ink);border-radius:50%}
-.v3root .spectrum-note{font-size:16px;line-height:1.55;color:var(--ink-60);max-width:34ch;margin:0}
+/* ── 3 · THE CATALOG ── */
+.v3root .catalog{background:linear-gradient(180deg,var(--cream) 0%,var(--sand) 100%)}
+.v3root .catalog-head{text-align:center;max-width:680px;margin:0 auto clamp(40px,6vw,64px)}
+.v3root .catalog-h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,62px);line-height:1;letter-spacing:-.025em;margin:16px 0 0}
+.v3root .catalog-sub{font-size:17px;line-height:1.55;color:var(--ink-60);max-width:52ch;margin:18px auto 0}
+.v3root .catalog-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,1.8vw,26px)}
+.v3root .cw-card{margin:0}
+.v3root .cw-card-btn{display:flex;flex-direction:column;width:100%;text-align:left;cursor:pointer;background:var(--canvas);border:1px solid var(--border);border-radius:16px;overflow:hidden;padding:0;color:var(--ink);transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .5s var(--ease);box-shadow:0 1px 2px rgba(35,32,28,.04)}
+.v3root .cw-card-btn:hover{transform:translateY(-7px);box-shadow:0 26px 46px -22px rgba(35,28,18,.42);border-color:rgba(35,32,28,.22)}
+.v3root .cw-card-btn:focus-visible{outline:2.5px solid var(--ink);outline-offset:3px}
+.v3root .cw-media{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:var(--sand)}
+.v3root .cw-media img{transition:transform .8s var(--ease)}
+.v3root .cw-card-btn:hover .cw-media img{transform:scale(1.05)}
+.v3root .cw-tote{position:absolute;top:12px;right:12px;z-index:2;font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:rgba(251,247,240,.86);backdrop-filter:blur(6px);padding:5px 9px;border-radius:999px}
+.v3root .cw-info{display:flex;flex-direction:column;gap:9px;padding:16px 16px 18px}
+.v3root .cw-name-row{display:flex;align-items:center;gap:9px}
+.v3root .cw-dot{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(35,32,28,.14)}
+.v3root .cw-name{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1}
+.v3root .cw-sku{margin-left:auto;font-family:var(--ui);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--ink-60)}
+.v3root .cw-meta{font-family:var(--body);font-size:13px;color:var(--ink-60)}
+.v3root .cw-cta{display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-weight:600;font-size:14px;color:var(--wood);margin-top:2px}
+.v3root .cw-cta i{font-style:normal;transition:transform .4s var(--ease)}
+.v3root .cw-card-btn:hover .cw-cta i{transform:translateX(4px)}
+.v3root .catalog-foot{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;margin-top:clamp(40px,5vw,56px)}
+.v3root .catalog-note{font-size:16px;line-height:1.5;color:var(--ink-60);margin:0}
 
 /* ── 4 · LIFESTYLE BAND ── */
 .v3root .band{position:relative;height:min(80vh,720px);min-height:420px;display:flex;align-items:flex-end;overflow:hidden}
@@ -205,17 +215,19 @@
 @media (hover:hover){
   .v3root .ocard{transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
   .v3root .ocard:hover{transform:translateY(-4px)}
-  .v3root .swatch:hover{box-shadow:0 8px 18px -6px rgba(35,32,28,.4)}
 }
 
 /* ── responsive ── */
+@media(max-width:1100px){
+  .v3root .catalog-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:760px){
+  .v3root .catalog-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:900px){
   .v3root .only-desktop{display:none}
   .v3root .only-mobile{display:block}
-  .v3root .object-grid,.v3root .spectrum-grid{grid-template-columns:1fr;gap:36px}
-  .v3root .spectrum-side{align-items:center;text-align:center}
-  .v3root .swatches{justify-content:center}
-  .v3root .spectrum-note{max-width:none}
+  .v3root .object-grid{grid-template-columns:1fr;gap:36px}
   .v3root nav.links a{display:none}
   .v3root .panel-words{font-size:clamp(2.8rem,12vw,5rem)}
   .v3root .mobile-cta{display:block;position:fixed;left:0;right:0;bottom:0;z-index:200;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(251,247,240,.92) 30%)}
@@ -224,6 +236,7 @@
   .v3root .foot-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:560px){
+  .v3root .catalog-grid{gap:14px}
   .v3root .wrap{padding:0 22px}
   .v3root .wordmark-inline{font-size:17px;letter-spacing:.14em}
 }
@@ -232,4 +245,5 @@
 @media (prefers-reduced-motion: reduce){
   .v3root .scroll-cue .line{animation:none;transform:scaleY(1)}
   .v3root .v3-bg-flow{animation:none}
+  .v3root .cw-card-btn{transition:none}
 }

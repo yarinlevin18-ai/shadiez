@@ -3,11 +3,11 @@
 /* ───────────────────────────────────────────────────────────────────────────
    SHADIEZ — /v3  ·  "Something New Under The Sun"
    The Claude-design landing (lifestyle-photo hero, the object split, the
-   colorway spectrum, the golden-hour lifestyle band + matching totes, the amber
+   colorway catalog, the golden-hour lifestyle band + matching totes, the amber
    finale) — rebuilt natively and wrapped in the motion system we built:
    Lenis smooth scroll, the sunrise loader, mask-line headline reveals,
    directional section entrances, parallax / ken-burns media, the colorway
-   flood, and a sideways (horizontal) passage for the matching totes.
+   catalog grid, and a sideways (horizontal) passage for the matching totes.
    Lead-form conversion, no pricing. Palette = locked "Bright Coast".
    ─────────────────────────────────────────────────────────────────────────── */
 
@@ -28,18 +28,21 @@ import "./v3.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/* Colorways — real studio photo per canvas + the exact flood hue. */
-type Colorway = { key: string; photo: string; flood: string; dot: string };
+/* Colorways — the catalog line. Each entry carries a framed studio card photo,
+   the transparent cut-out, the dot/flood hue, and its SKU.
+   ⚠ SKU NOTE (confirm with Yarin): only burgundy-stripe (H10), navy-stripe (H19)
+   and pinstripe (H37) come from CLAUDE.md. Cream/Coral/Butter/Dusty Blue codes
+   below are PLACEHOLDERS — swap them for the real catalog codes before launch. */
+type Colorway = { key: string; sku: string; card: string; photo: string; flood: string; dot: string };
 const COLORS: Colorway[] = [
-  { key: "Cream",      photo: "/landing/product/cuts/cream.png",     flood: "#F3E9D2", dot: "#F1E6CB" },
-  { key: "Coral",      photo: "/landing/product/cuts/coral.png",     flood: "#E68A6B", dot: "#E08A6E" },
-  { key: "Butter",     photo: "/landing/product/cuts/butter.png",    flood: "#ECC74F", dot: "#EAC85C" },
-  { key: "Dusty Blue", photo: "/landing/product/cuts/dustyblue.png", flood: "#9DBAD0", dot: "#9FB9CE" },
-  { key: "Navy",       photo: "/landing/product/cuts/navy.png",      flood: "#2F517A", dot: "#284A74" },
-  { key: "Burgundy",   photo: "/landing/product/cuts/burgundy.png",  flood: "#8E454C", dot: "#8E4A4A" },
-  { key: "Pinstripe",  photo: "/landing/product/cuts/pinstripe.png", flood: "#C9C2B4", dot: "#C7BEAF" },
+  { key: "Cream",      sku: "H01", card: "/landing/colorways/cw-cream.jpg",           photo: "/landing/product/cuts/cream.png",     flood: "#F3E9D2", dot: "#F1E6CB" },
+  { key: "Coral",      sku: "H44", card: "/landing/colorways/cw-coral.jpg",           photo: "/landing/product/cuts/coral.png",     flood: "#E68A6B", dot: "#E08A6E" },
+  { key: "Butter",     sku: "H22", card: "/landing/colorways/cw-butter.jpg",          photo: "/landing/product/cuts/butter.png",    flood: "#ECC74F", dot: "#EAC85C" },
+  { key: "Dusty Blue", sku: "H48", card: "/landing/colorways/cw-dusty-blue.jpg",      photo: "/landing/product/cuts/dustyblue.png", flood: "#9DBAD0", dot: "#9FB9CE" },
+  { key: "Navy",       sku: "H19", card: "/landing/colorways/cw-navy-stripe.jpg",     photo: "/landing/product/cuts/navy.png",      flood: "#2F517A", dot: "#284A74" },
+  { key: "Burgundy",   sku: "H10", card: "/landing/colorways/cw-burgundy-stripe.jpg", photo: "/landing/product/cuts/burgundy.png",  flood: "#8E454C", dot: "#8E4A4A" },
+  { key: "Pinstripe",  sku: "H37", card: "/landing/colorways/cw-pinstripe.jpg",       photo: "/landing/product/cuts/pinstripe.png", flood: "#C9C2B4", dot: "#C7BEAF" },
 ];
-const STORAGE_KEY = "shadiez-v3-colorway";
 
 /* matching-tote panels for the sideways passage */
 type HItem = { src: string; alt: string; eyebrow: string; lines: string[] };
@@ -233,18 +236,11 @@ function ToteTrack({ items }: { items: HItem[] }) {
 
 export default function V3() {
   const { openDialog } = useLeadDialog();
-  const [active, setActive] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [entered, setEntered] = useState(false);
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 80));
-
-  useEffect(() => {
-    try { const s = window.localStorage.getItem(STORAGE_KEY); const n = COLORS.findIndex((c) => c.key === s); if (n >= 0) setActive(n); } catch { /* default */ }
-  }, []);
-  const select = (i: number) => { setActive(i); try { window.localStorage.setItem(STORAGE_KEY, COLORS[i].key); } catch { /* ignore */ } };
-  const c = COLORS[active];
 
   return (
     <div className="v3root">
@@ -297,33 +293,44 @@ export default function V3() {
         </div>
       </section>
 
-      {/* 3 · THE SPECTRUM — colorway selector floods the section */}
-      <section className="spectrum pad" id="colorways"
-        style={{ background: `color-mix(in srgb, ${c.flood} 26%, var(--cream))`, transition: "background .7s var(--ease)" }}>
+      {/* 3 · THE CATALOG — the whole line, browsable at a glance */}
+      <section className="catalog pad" id="colorways">
         <div className="wrap">
-          <Reveal className="spectrum-head">
-            <span className="eyebrow">The spectrum</span>
-            <h2 className="spectrum-h2">Seven canvases.<br />One is yours.</h2>
+          <Reveal className="catalog-head">
+            <span className="eyebrow">The line</span>
+            <h2 className="catalog-h2">Seven canvases.<br />One is yours.</h2>
+            <p className="catalog-sub">Every shade is solid walnut and cream-edged canvas — the colour is yours to choose. Each ships with its own matching tote.</p>
           </Reveal>
-          <div className="spectrum-grid">
-            <Reveal from="left" className="spectrum-stage">
-              {COLORS.map((col, i) => (
-                <Image key={col.key} src={col.photo} alt={`SHADIEZ shade — ${col.key}`} fill sizes="(max-width:900px) 88vw, 660px"
-                  style={{ objectFit: "contain", opacity: i === active ? 1 : 0, transform: i === active ? "scale(1)" : "scale(0.94)", transition: "opacity .7s var(--ease), transform 1s var(--ease)" }} priority={i === 0} />
-              ))}
-            </Reveal>
-            <Reveal from="right" delay={0.08} className="spectrum-side">
-              <span className="spectrum-active-name" style={{ color: `color-mix(in srgb, ${c.dot} 55%, var(--ink))` }}>{c.key}</span>
-              <div className="swatches" role="listbox" aria-label="Colorways">
-                {COLORS.map((col, i) => (
-                  <button key={col.key} type="button" role="option" aria-selected={i === active} aria-label={col.key}
-                    className={i === active ? "swatch is-active" : "swatch"} style={{ background: col.dot }} onClick={() => select(i)} />
-                ))}
-              </div>
-              <p className="spectrum-note">Each canvas ships with its own matching tote — pick the one that’s yours.</p>
-              <Btn className="btn btn-ink lg" onClick={openDialog}>Shop {c.key}</Btn>
-            </Reveal>
-          </div>
+
+          <ul className="catalog-grid" aria-label="SHADIEZ colorways">
+            {COLORS.map((col, i) => (
+              <Reveal as="li" from="up" delay={Math.min(i, 3) * 0.06} className="cw-card" key={col.key}>
+                <button type="button" className="cw-card-btn" onClick={openDialog}
+                  aria-label={`Shop the ${col.key} shade, ${col.sku}`}>
+                  <span className="cw-media">
+                    <Image src={col.card} alt={`SHADIEZ ${col.key} shade and matching tote`} fill
+                      sizes="(max-width:560px) 92vw, (max-width:900px) 46vw, 300px"
+                      quality={86} style={{ objectFit: "cover" }} priority={i < 2} />
+                    <span className="cw-tote" aria-hidden>＋ tote</span>
+                  </span>
+                  <span className="cw-info">
+                    <span className="cw-name-row">
+                      <span className="cw-dot" style={{ background: col.dot }} aria-hidden />
+                      <span className="cw-name">{col.key}</span>
+                      <span className="cw-sku">{col.sku}</span>
+                    </span>
+                    <span className="cw-meta">Matching tote included</span>
+                    <span className="cw-cta">Shop {col.key} <i aria-hidden>→</i></span>
+                  </span>
+                </button>
+              </Reveal>
+            ))}
+          </ul>
+
+          <Reveal from="up" delay={0.1} className="catalog-foot">
+            <p className="catalog-note">Not sure which is yours? We’ll help you pick.</p>
+            <Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn>
+          </Reveal>
         </div>
       </section>
 
