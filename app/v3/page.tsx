@@ -24,6 +24,7 @@ import {
 } from "framer-motion";
 import { useLeadDialog } from "@/components/lead-dialog";
 import { V3Hero } from "@/components/v3-hero";
+import { LogoLockup, LogoMark, LogoWord } from "./BrandLogo";
 import "./v3.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -33,15 +34,15 @@ const EASE = [0.22, 1, 0.36, 1] as const;
    ⚠ SKU NOTE (confirm with Yarin): only burgundy-stripe (H10), navy-stripe (H19)
    and pinstripe (H37) come from CLAUDE.md. Cream/Coral/Butter/Dusty Blue codes
    below are PLACEHOLDERS — swap them for the real catalog codes before launch. */
-type Colorway = { key: string; sku: string; card: string; photo: string; flood: string; dot: string };
+type Colorway = { key: string; sku: string; card: string; clip: string; photo: string; flood: string; dot: string };
 const COLORS: Colorway[] = [
-  { key: "Cream",      sku: "H01", card: "/landing/colorways/cw-cream.jpg",           photo: "/landing/product/cuts/cream.png",     flood: "#F3E9D2", dot: "#F1E6CB" },
-  { key: "Coral",      sku: "H44", card: "/landing/colorways/cw-coral.jpg",           photo: "/landing/product/cuts/coral.png",     flood: "#E68A6B", dot: "#E08A6E" },
-  { key: "Butter",     sku: "H22", card: "/landing/colorways/cw-butter.jpg",          photo: "/landing/product/cuts/butter.png",    flood: "#ECC74F", dot: "#EAC85C" },
-  { key: "Dusty Blue", sku: "H48", card: "/landing/colorways/cw-dusty-blue.jpg",      photo: "/landing/product/cuts/dustyblue.png", flood: "#9DBAD0", dot: "#9FB9CE" },
-  { key: "Navy",       sku: "H19", card: "/landing/colorways/cw-navy-stripe.jpg",     photo: "/landing/product/cuts/navy.png",      flood: "#2F517A", dot: "#284A74" },
-  { key: "Burgundy",   sku: "H10", card: "/landing/colorways/cw-burgundy-stripe.jpg", photo: "/landing/product/cuts/burgundy.png",  flood: "#8E454C", dot: "#8E4A4A" },
-  { key: "Pinstripe",  sku: "H37", card: "/landing/colorways/cw-pinstripe.jpg",       photo: "/landing/product/cuts/pinstripe.png", flood: "#C9C2B4", dot: "#C7BEAF" },
+  { key: "Cream",      sku: "H01", card: "/landing/colorways/cw-cream.jpg",           clip: "/landing/colorways/transitions/cream.mp4",     photo: "/landing/product/cuts/cream.png",     flood: "#F3E9D2", dot: "#F1E6CB" },
+  { key: "Coral",      sku: "H44", card: "/landing/colorways/cw-coral.jpg",           clip: "/landing/colorways/transitions/coral.mp4",     photo: "/landing/product/cuts/coral.png",     flood: "#E68A6B", dot: "#E08A6E" },
+  { key: "Butter",     sku: "H22", card: "/landing/colorways/cw-butter.jpg",          clip: "/landing/colorways/transitions/butter.mp4",    photo: "/landing/product/cuts/butter.png",    flood: "#ECC74F", dot: "#EAC85C" },
+  { key: "Dusty Blue", sku: "H48", card: "/landing/colorways/cw-dusty-blue.jpg",      clip: "/landing/colorways/transitions/dustyblue.mp4", photo: "/landing/product/cuts/dustyblue.png", flood: "#9DBAD0", dot: "#9FB9CE" },
+  { key: "Navy",       sku: "H19", card: "/landing/colorways/cw-navy-stripe.jpg",     clip: "/landing/colorways/transitions/navy.mp4",      photo: "/landing/product/cuts/navy.png",      flood: "#2F517A", dot: "#284A74" },
+  { key: "Burgundy",   sku: "H10", card: "/landing/colorways/cw-burgundy-stripe.jpg", clip: "/landing/colorways/transitions/burgundy.mp4",  photo: "/landing/product/cuts/burgundy.png",  flood: "#8E454C", dot: "#8E4A4A" },
+  { key: "Pinstripe",  sku: "H37", card: "/landing/colorways/cw-pinstripe.jpg",       clip: "/landing/colorways/transitions/pinstripe.mp4", photo: "/landing/product/cuts/pinstripe.png", flood: "#C9C2B4", dot: "#C7BEAF" },
 ];
 
 /* matching-tote panels for the sideways passage */
@@ -109,25 +110,6 @@ function MaskLines({ lines, italicLast, play = true, delay = 0 }: { lines: strin
   );
 }
 
-function WaveMark({ className }: { className?: string }) {
-  const reduce = useReducedMotion();
-  const wavePath = (y: number) => `M-16 ${y}c5 -5 11 5 16 0s11 5 16 0s11 5 16 0s11 5 16 0s11 5 16 0`;
-  const lines = [
-    { y: 14, stroke: "currentColor", dur: 5.5, from: 0, to: -16 },
-    { y: 22, stroke: "var(--sun)", dur: 7, from: -16, to: 0 },
-    { y: 30, stroke: "currentColor", dur: 6, from: 0, to: -16 },
-  ];
-  return (
-    <svg viewBox="0 0 40 40" fill="none" aria-hidden className={className}>
-      {lines.map((l, i) => (
-        <motion.path key={i} d={wavePath(l.y)} stroke={l.stroke} strokeWidth="2.4" strokeLinecap="round"
-          animate={reduce ? undefined : { x: [l.from, l.to] }}
-          transition={reduce ? undefined : { duration: l.dur, ease: "linear", repeat: Infinity }} />
-      ))}
-    </svg>
-  );
-}
-
 function Btn({ className, onClick, children }: { className?: string; onClick?: () => void; children: ReactNode }) {
   const reduce = useReducedMotion();
   return (
@@ -171,9 +153,8 @@ function Loader({ onDone }: { onDone?: () => void }) {
             <motion.span className="v3load-sun" aria-hidden
               initial={reduce ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 44, scale: 0.7 }}
               animate={{ opacity: 1, y: 0, scale: 1 }} transition={reduce ? { duration: 0 } : { duration: 1.7, ease: EASE, delay: 0.15 }} />
-            <WaveMark className="v3load-mark" />
-            <motion.div className="v3load-word" initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={reduce ? { duration: 0 } : { duration: 0.7, ease: "easeOut", delay: 0.5 }}>
-              SHADIEZ<i className="v3load-dot" aria-hidden />
+            <motion.div className="v3load-lockwrap" initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={reduce ? { duration: 0 } : { duration: 0.8, ease: EASE, delay: 0.35 }}>
+              <LogoLockup className="v3load-lockup" />
             </motion.div>
             <span className="v3load-tag">Something new under the sun</span>
             <div className="v3load-bar"><motion.div className="v3load-fill" initial={{ width: reduce ? "100%" : "0%" }} animate={{ width: reduce ? "100%" : ready ? "100%" : "85%" }} transition={reduce ? { duration: 0 } : { duration: ready ? 0.5 : 2.8, ease: "easeOut" }} /></div>
@@ -234,6 +215,50 @@ function ToteTrack({ items }: { items: HItem[] }) {
   );
 }
 
+/* stage media — real photo as poster; Higgsfield colour-morph clip plays on hover */
+function CwMedia({ col, priority }: { col: Colorway; priority?: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const reduce = useReducedMotion();
+  const play = () => { const v = ref.current; if (!v || reduce) return; v.currentTime = 0; v.play().catch(() => {}); };
+  const stop = () => { const v = ref.current; if (!v) return; v.pause(); v.currentTime = 0; };
+  return (
+    <span className="cw-stage" onPointerEnter={play} onPointerLeave={stop}>
+      <Image src={col.card} alt={`SHADIEZ ${col.key} shade and matching tote`} fill
+        sizes="(max-width:900px) 92vw, 620px" quality={88} style={{ objectFit: "cover" }} priority={priority} />
+      {!reduce && (
+        <video ref={ref} className="cw-clip" muted loop playsInline preload="none" poster={col.card} aria-hidden>
+          <source src={col.clip} type="video/mp4" />
+        </video>
+      )}
+      <span className="cw-tote" aria-hidden>＋ matching tote</span>
+    </span>
+  );
+}
+
+/* one colour-themed split section per canvas; photo side alternates */
+function ColorwaySection({ col, index, total, onCta }: { col: Colorway; index: number; total: number; onCta: () => void }) {
+  const flip = index % 2 === 1;
+  const tint = `color-mix(in srgb, ${col.dot} 24%, var(--cream))`;
+  const n = (x: number) => String(x).padStart(2, "0");
+  return (
+    <section className={flip ? "cw-sec flip" : "cw-sec"} style={{ background: tint }}>
+      <div className="wrap cw-sec-inner">
+        <Reveal from={flip ? "right" : "left"} className="cw-stage-wrap">
+          <CwMedia col={col} priority={index < 1} />
+        </Reveal>
+        <Reveal from={flip ? "left" : "right"} delay={0.08} className="cw-copy">
+          <span className="cw-eyebrow">{n(index + 1)} / {n(total)} · Colourway</span>
+          <h3 className="cw-name-lg">{col.key}</h3>
+          <span className="cw-sku-lg" style={{ color: `color-mix(in srgb, ${col.dot} 62%, var(--ink))` }}>{col.sku}</span>
+          <p className="cw-line">{`Solid walnut frame, ${col.key.toLowerCase()} canvas — propped at your angle, packed flat in its own matching tote.`}</p>
+          <span className="cw-meta-lg"><span className="cw-dot" style={{ background: col.dot }} aria-hidden /> Matching tote included</span>
+          <Btn className="btn btn-ink lg" onClick={onCta}>Shop {col.key}</Btn>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 export default function V3() {
   const { openDialog } = useLeadDialog();
   const [scrolled, setScrolled] = useState(false);
@@ -256,7 +281,7 @@ export default function V3() {
       {/* NAV — transparent over the hero, frosts in on scroll */}
       <header className={scrolled ? "v3head scrolled" : "v3head"}>
         <div className="wrap bar">
-          <a className="mark-link" href="#top" aria-label="SHADIEZ home"><WaveMark /> <span className="wordmark-inline">SHADIEZ</span></a>
+          <a className="mark-link" href="#top" aria-label="SHADIEZ home"><LogoMark className="mk-mark" /> <LogoWord className="mk-word" /></a>
           <nav className="links">
             <a href="#shade">Shade</a>
             <a href="#colorways">Colorways</a>
@@ -293,46 +318,17 @@ export default function V3() {
         </div>
       </section>
 
-      {/* 3 · THE CATALOG — the whole line, browsable at a glance */}
-      <section className="catalog pad" id="colorways">
-        <div className="wrap">
-          <Reveal className="catalog-head">
-            <span className="eyebrow">The line</span>
-            <h2 className="catalog-h2">Seven canvases.<br />One is yours.</h2>
-            <p className="catalog-sub">Every shade is solid walnut and cream-edged canvas — the colour is yours to choose. Each ships with its own matching tote.</p>
-          </Reveal>
-
-          <ul className="catalog-grid" aria-label="SHADIEZ colorways">
-            {COLORS.map((col, i) => (
-              <Reveal as="li" from="up" delay={Math.min(i, 3) * 0.06} className="cw-card" key={col.key}>
-                <button type="button" className="cw-card-btn" onClick={openDialog}
-                  aria-label={`Shop the ${col.key} shade, ${col.sku}`}>
-                  <span className="cw-media">
-                    <Image src={col.card} alt={`SHADIEZ ${col.key} shade and matching tote`} fill
-                      sizes="(max-width:560px) 92vw, (max-width:900px) 46vw, 300px"
-                      quality={86} style={{ objectFit: "cover" }} priority={i < 2} />
-                    <span className="cw-tote" aria-hidden>＋ tote</span>
-                  </span>
-                  <span className="cw-info">
-                    <span className="cw-name-row">
-                      <span className="cw-dot" style={{ background: col.dot }} aria-hidden />
-                      <span className="cw-name">{col.key}</span>
-                      <span className="cw-sku">{col.sku}</span>
-                    </span>
-                    <span className="cw-meta">Matching tote included</span>
-                    <span className="cw-cta">Shop {col.key} <i aria-hidden>→</i></span>
-                  </span>
-                </button>
-              </Reveal>
-            ))}
-          </ul>
-
-          <Reveal from="up" delay={0.1} className="catalog-foot">
-            <p className="catalog-note">Not sure which is yours? We’ll help you pick.</p>
-            <Btn className="btn btn-ink lg" onClick={openDialog}>Shop the Shade</Btn>
-          </Reveal>
-        </div>
-      </section>
+      {/* 3 · THE COLOURWAYS — one colour-themed split section per canvas */}
+      <div className="catalog" id="colorways">
+        <Reveal className="catalog-head">
+          <span className="eyebrow">The line</span>
+          <h2 className="catalog-h2">Seven canvases.<br />One is yours.</h2>
+          <p className="catalog-sub">Every shade is solid walnut and cream-edged canvas — each in its own colour, each with its own matching tote.</p>
+        </Reveal>
+        {COLORS.map((col, i) => (
+          <ColorwaySection key={col.key} col={col} index={i} total={COLORS.length} onCta={openDialog} />
+        ))}
+      </div>
 
       {/* 4 · LIFESTYLE — golden-hour band, then the sideways tote passage */}
       <section className="band" id="details">
@@ -365,14 +361,14 @@ export default function V3() {
       <footer className="v3foot">
         <div className="wrap foot-grid">
           <div>
-            <div className="logo"><WaveMark /> SHADIEZ</div>
+            <div className="logo"><LogoMark className="fl-mark" /> <LogoWord className="fl-word" /></div>
             <p className="bl">Something New Under The Sun.</p>
           </div>
           <div><h5>Shop</h5><ul><li><a href="#colorways">Colorways</a></li><li><a href="#shade">The shade</a></li><li><a href="#details">Totes</a></li></ul></div>
           <div><h5>Help</h5><ul><li><a href="/shipping-policy">Shipping</a></li><li><a href="/returns">Returns</a></li><li><a href="/accessibility">Accessibility</a></li></ul></div>
           <div><h5>Brand</h5><ul><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div>
         </div>
-        <div className="wrap foot-bot"><span><WaveMark className="foot-mark" /> © 2026 SHADIEZ</span><span>Privacy · Terms</span></div>
+        <div className="wrap foot-bot"><span><LogoMark className="foot-mark" /> © 2026 SHADIEZ</span><span>Privacy · Terms</span></div>
       </footer>
 
       <div className="mobile-cta"><Btn className="btn btn-amber" onClick={openDialog}>Shop the Shade</Btn></div>
